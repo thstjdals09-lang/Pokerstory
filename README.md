@@ -4,56 +4,57 @@
 
 포커가 일상 문화인 따뜻한 판타지 마을에서 생활하고 주민들과 관계를 맺으며, 짧은 판타지 포커를 즐기는 게임입니다.
 
+![마을](docs/screenshots/win_01_village.png)
+
 ## 현재 단계
 
 | 항목 | 상태 |
 |---|---|
-| 콘셉트 결정(10개 질문) | 기록 완료 |
-| 상세 기획 | **승인되지 않음** |
-| 저장소 준비 | 완료 |
-| 사전 제작 기술 조사 | 완료 (조사 자료이며 결정 사항 아님) |
-| 게임 개발 | **시작하지 않음.** 별도 승인 후 진행 |
+| 콘셉트 결정(10개 질문) | 기록 완료 ([v0.1](docs/Project20_Design_Brief_v0.1.md)) |
+| 사전 제작 기술 조사 | 완료 ([docs/preproduction/](docs/preproduction/)) |
+| 첫 플레이 명세 | [v0.2 초안](docs/design/Project20_First_Play_Spec_v0.2.md) |
+| **첫 플레이 프로토타입 (Gate 1)** | **구현 및 자동 검증 완료.** 그레이박스 그래픽 |
+| Gate 2 (플레이어 시각 검수) | 대기 중 |
 
-지금 이 저장소에는 기획 문서, 기술 조사 문서, 저장소 관리 파일만 있습니다. 게임 코드, 엔진 프로젝트, 에셋은 없습니다.
+첫 플레이에서 할 수 있는 것: 마을 도착 → 루미와 인사 → 저녁 카드룸에서 5장 원드로 포커 → 칩 획득 → 세라의 잡화점에서 등불 구매 → 집에 배치 → 루미가 등불을 알아봄 → 저장·이어하기.
+개발 내용, 검증 결과, 명세와 다르게 구현한 부분: [docs/dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md)
 
-## 기획 문서 (Source of Truth)
+## 실행
 
-- [docs/Project20_Design_Brief_v0.1.md](docs/Project20_Design_Brief_v0.1.md) (v0.1, 원본 그대로 보관)
+1. [Godot 4.7.2](https://github.com/godotengine/godot/releases/tag/4.7.2-stable)의 `Godot_v4.7.2-stable_win64.exe.zip`을 받습니다.
+2. `run_game.bat`을 실행하거나, `Godot_v4.7.2-stable_win64.exe --path game`으로 실행합니다. 경로가 다르면 `GODOT` 환경 변수를 지정합니다.
 
-기획 문서에 없는 내용은 확정된 요구사항이 아닙니다. 문서의 "아이디어 예시"는 참고용이며 제작 요구사항이 아닙니다.
+조작: WASD·방향키 이동 / E·Enter 대화·입장 / Esc 메뉴 / Tab 목표 접기 / 마우스로 카드·가구 선택
 
-## 사전 제작 기술 조사 (개발 담당 작성)
+테스트: `tools/run_tests.sh` (Git Bash). 단위 테스트 41개와 첫 플레이 전체를 자동으로 조작하는 E2E 7개 시나리오를 실행합니다.
 
-엔진, 그래픽, 시스템 규칙을 결정하지 않는 조사 자료입니다. 기획 측이 결정할 때 참고하는 용도입니다.
+## 스크린샷
+
+| 포커 | 결과 | 집 꾸미기 |
+|---|---|---|
+| ![포커](docs/screenshots/win_02_poker.png) | ![결과](docs/screenshots/win_02_poker_result.png) | ![하우징](docs/screenshots/win_03_housing.png) |
+
+## 문서
 
 | 문서 | 내용 |
 |---|---|
-| [01_ENGINE_AND_TECH_STACK.md](docs/preproduction/01_ENGINE_AND_TECH_STACK.md) | 엔진 후보(Godot, Unity, GameMaker, Defold) 비교와 제약 |
-| [02_GRAPHICS_TECHNICAL_OPTIONS.md](docs/preproduction/02_GRAPHICS_TECHNICAL_OPTIONS.md) | 2D 탑다운, 아이소메트릭, 2.5D, 3D의 구현 비용 비교 |
-| [03_CORE_SYSTEM_FEASIBILITY.md](docs/preproduction/03_CORE_SYSTEM_FEASIBILITY.md) | 핵심 시스템 10개의 기술 요소, 의존 관계, 위험 |
-| [04_AI_DEVELOPMENT_WORKFLOW.md](docs/preproduction/04_AI_DEVELOPMENT_WORKFLOW.md) | 시스템 단위 AI 개발 흐름, 테스트, 데이터·에셋 관리 |
-| [05_DESIGN_DECISIONS_REQUIRED.md](docs/preproduction/05_DESIGN_DECISIONS_REQUIRED.md) | 기획 측이 결정해야 할 질문 (개발 전 / 프로토타입 중 / 플레이 테스트 후) |
-
-## 아직 정해지지 않은 것
-
-기획 문서 4절 기준입니다. 확정되기 전에는 아래 항목을 전제로 작업하지 않습니다.
-
-- 정식 게임명, 출시 플랫폼, 싱글/멀티, 온라인 기능
-- 엔진/프레임워크, 프로그래밍 언어, 그래픽 표현, 카메라 시점, 입력 방식
-- 포커 룰, 보상, 능력 밸런스, 재화·과금 설계
-- 월드 맵, 주민·건물 수, 스토리, 퀘스트, 관계·주거·마을 발전 규칙
-- 시간 진행 로직, 현실 날짜 이벤트 운영, 저장 방식
-- 일정, 인력, 예산, MVP 범위
+| [Project20_Design_Brief_v0.1.md](docs/Project20_Design_Brief_v0.1.md) | 콘셉트 결정 (Source of Truth) |
+| [design/Project20_First_Play_Spec_v0.2.md](docs/design/Project20_First_Play_Spec_v0.2.md) | 첫 플레이 명세 (기획 담당) |
+| [dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md) | 구현 구조, 저장 형식, 검증 결과, 알려진 문제 |
+| [preproduction/](docs/preproduction/) | 엔진·그래픽·시스템·워크플로 조사, 기획 결정 필요 사항 |
+| [CLAUDE.md](CLAUDE.md) | AI 개발 규칙 |
 
 ## 저장소 구성
 
 ```
 .
-├─ docs/          # 기획 문서
-│  └─ preproduction/  # 사전 제작 기술 조사
-├─ .gitattributes # docs/ 파일을 줄바꿈 변환 없이 원본 그대로 보관
-├─ .gitignore     # OS·에디터 임시 파일만 제외 (엔진 관련 항목 없음)
-└─ README.md
+├─ game/            Godot 4.7.2 프로젝트 (data/ 콘텐츠, scripts/ 코드, tests/ 테스트)
+├─ docs/            기획·조사·개발 문서, 스크린샷
+├─ tools/           테스트 실행 스크립트
+├─ run_game.bat     Windows 실행
+└─ CLAUDE.md        AI 작업 규칙
 ```
 
-엔진이 정해지면 그에 맞춰 디렉터리 구조를 추가합니다.
+## 아직 정해지지 않은 것
+
+정식 게임명, 최종 그래픽 스타일(현재는 그레이박스), 포커 룰 최종안, 경제 밸런스, 관계 시스템, 전역 시간, 추가 주민·공간, 모바일·Steam 대응. 모두 기획 측 결정과 별도 작업 지시가 있어야 진행합니다.
