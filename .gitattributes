@@ -1,0 +1,2 @@
+# Keep design documents byte-for-byte identical to the originals
+docs/** -text
