@@ -1,0 +1,25 @@
+{
+  "npcs": [
+    {
+      "id": "npc_lumi",
+      "name": "루미",
+      "species": "여우 수인",
+      "role": "환영·동네 포커 친구",
+      "look": { "shape": "fox", "color": "#e8894a", "accent": "#fff3e0" }
+    },
+    {
+      "id": "npc_moa",
+      "name": "모아",
+      "species": "칩 요정",
+      "role": "포커 모임 안내자",
+      "look": { "shape": "fairy", "color": "#f2c94c", "accent": "#c0392b" }
+    },
+    {
+      "id": "npc_sera",
+      "name": "세라",
+      "species": "마법사",
+      "role": "작은 상점 주인",
+      "look": { "shape": "wizard", "color": "#8e6bbf", "accent": "#f5e6ff" }
+    }
+  ]
+}

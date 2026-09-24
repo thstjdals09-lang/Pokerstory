@@ -1,0 +1,10 @@
+{
+  "goals": [
+    { "text": "광장의 루미에게 인사하기", "conditions": { "flags_false": ["intro_met_lumi"] } },
+    { "text": "♣ 카드룸의 저녁 포커 모임에 가 보기", "conditions": { "max_poker_hands": 0 } },
+    { "text": "세라의 잡화점에서 작은 등불 사기 ({price_furniture.lamp_small}칩)", "conditions": { "not_owned_or_placed": "furniture.lamp_small" } },
+    { "text": "집 보관함에서 등불 배치하기", "conditions": { "not_placed_item": "furniture.lamp_small" } },
+    { "text": "루미에게 다시 말 걸기", "conditions": { "flags_false": ["lumi_lamp_reaction_seen"] } },
+    { "text": "자유롭게 지내기 — 포커, 산책, 집 꾸미기", "conditions": {} }
+  ]
+}

@@ -1,0 +1,252 @@
+{
+  "_comment": "Entries are checked top to bottom; the first entry whose npc and conditions match is shown. ref_only entries are reached only through a 'dialogue' choice.",
+  "entries": [
+    {
+      "id": "lumi_intro_cardroom",
+      "npc": "npc_lumi",
+      "conditions": { "location": "card_room", "flags_false": ["intro_met_lumi"] },
+      "marker": true,
+      "set_flags": ["intro_met_lumi"],
+      "lines": [
+        "어? 벌써 모임에 온 거야? 너, 오늘 이사 온 {player} 맞지?",
+        "나는 루미야. 여기선 저녁마다 이렇게 모여서 가볍게 카드 한 판씩 해.",
+        "규칙은 저기 칩 요정 모아가 알려 줄 거야. 준비되면 나랑 한 판 하자!"
+      ],
+      "choices": [
+        { "text": "좋아, 한 판 하자!", "action": "start_poker" },
+        { "text": "조금 둘러볼게", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_intro",
+      "npc": "npc_lumi",
+      "conditions": { "flags_false": ["intro_met_lumi"] },
+      "marker": true,
+      "set_flags": ["intro_met_lumi"],
+      "lines": [
+        "어라, 처음 보는 얼굴이네! 혹시 오늘 이사 온 {player}?",
+        "나는 루미야. 이 마을에선 다들 저녁마다 카드 한 판으로 하루를 마무리해.",
+        "광장 오른쪽 위에 ♣ 간판이 걸린 카드룸 보이지? 거기서 포커 모임이 열려.",
+        "부담 갖지 마. 이기든 지든 칩을 조금씩 받을 수 있거든. 그 칩으로 집도 꾸미고!"
+      ],
+      "choices": [
+        { "text": "포커 모임은 어디서 해?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "또 봐, 루미!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_lamp_reaction_cardroom",
+      "npc": "npc_lumi",
+      "conditions": { "location": "card_room", "placed_item": "furniture.lamp_small", "flags_false": ["lumi_lamp_reaction_seen"] },
+      "marker": true,
+      "set_flags": ["lumi_lamp_reaction_seen"],
+      "lines": [
+        "{player}! 오는 길에 너희 집 창문으로 따뜻한 불빛이 보이더라.",
+        "등불을 놓았구나! 우리 포커 모임에서 받은 칩으로 산 거지? 헤헤, 괜히 내가 뿌듯하네.",
+        "그럼 오늘 밤도 한 판 할래?"
+      ],
+      "choices": [
+        { "text": "좋아, 한 판 하자!", "action": "start_poker" },
+        { "text": "다음에 하자", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_lamp_reaction",
+      "npc": "npc_lumi",
+      "conditions": { "placed_item": "furniture.lamp_small", "flags_false": ["lumi_lamp_reaction_seen"] },
+      "marker": true,
+      "set_flags": ["lumi_lamp_reaction_seen"],
+      "lines": [
+        "{player}! 지나가다 봤는데, 너희 집 창문으로 따뜻한 불빛이 새어 나오더라.",
+        "등불을 놓았구나! 우리 포커 모임에서 받은 칩으로 산 거지? 헤헤, 괜히 내가 뿌듯하네.",
+        "골목이 한결 환해졌어. 오늘 밤에도 카드룸에서 기다릴게!"
+      ],
+      "choices": [
+        { "text": "고마워, 루미!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_cardroom_default",
+      "npc": "npc_lumi",
+      "conditions": { "location": "card_room" },
+      "lines": [
+        "오늘 밤 카드도 잘 섞였어. 한 판 할래?"
+      ],
+      "choices": [
+        { "text": "좋아, 한 판 하자!", "action": "start_poker" },
+        { "text": "다음에 하자", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_after_lamp",
+      "npc": "npc_lumi",
+      "conditions": { "flags_true": ["lumi_lamp_reaction_seen"] },
+      "lines": [
+        "네 집 등불, 밤에 지나가면 참 예쁘더라.",
+        "카드룸은 언제든 열려 있어. 생각나면 놀러 와!"
+      ],
+      "choices": [
+        { "text": "포커 모임은 어디서 해?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "또 봐, 루미!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_before_poker",
+      "npc": "npc_lumi",
+      "conditions": { "max_poker_hands": 0 },
+      "lines": [
+        "카드룸은 광장 오른쪽 위, ♣ 간판이 걸린 건물이야.",
+        "언제 가도 저녁 모임이 열려 있으니까 편할 때 와!"
+      ],
+      "choices": [
+        { "text": "포커 모임은 어떤 거야?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "알았어!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_lamp_not_placed",
+      "npc": "npc_lumi",
+      "conditions": { "owns_or_placed_item": "furniture.lamp_small", "not_placed_item": "furniture.lamp_small" },
+      "lines": [
+        "앗, 세라네 등불 샀구나!",
+        "집에 들어가서 보관함으로 꾸미기를 하면 원하는 자리에 놓을 수 있어."
+      ],
+      "choices": [
+        { "text": "해 볼게!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_default",
+      "npc": "npc_lumi",
+      "conditions": {},
+      "lines": [
+        "{player}, 오늘은 어떻게 지내?",
+        "세라네 잡화점에 작은 등불이 들어왔대. 칩 {price_furniture.lamp_small}개면 살 수 있다던데?"
+      ],
+      "choices": [
+        { "text": "포커 모임은 어디서 해?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "또 봐, 루미!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_poker_info",
+      "npc": "npc_lumi",
+      "ref_only": true,
+      "lines": [
+        "포커 모임은 ♣ 카드룸에서 열려. 광장에서 오른쪽 위로 가면 돼.",
+        "카드 5장 받고 한 번만 바꾸는 짧은 게임이야. 참가비는 없고, 져도 칩을 조금 받아!"
+      ],
+      "choices": [
+        { "text": "고마워!", "action": "close" }
+      ]
+    },
+
+    {
+      "id": "moa_first",
+      "npc": "npc_moa",
+      "conditions": { "flags_false": ["moa_met"] },
+      "marker": true,
+      "set_flags": ["moa_met"],
+      "lines": [
+        "어서 와요, 어서 와요! 저는 칩 요정 모아예요.",
+        "여기 포커는 짧아요. 카드 5장을 받고, 최대 {max_discards}장까지 딱 한 번 바꾼 다음 족보를 비교해요.",
+        "참가비는 없어요! 이기면 {reward_win}칩, 비기면 {reward_draw}칩, 져도 {reward_lose}칩을 드려요.",
+        "처음 참가하면 결과와 상관없이 보너스 {first_play_bonus}칩도 있어요!"
+      ],
+      "choices": [
+        { "text": "한 판 해보기", "action": "start_poker" },
+        { "text": "규칙 자세히 듣기", "action": "dialogue", "arg": "moa_rules" },
+        { "text": "족보 보기", "action": "dialogue", "arg": "moa_hands" },
+        { "text": "나중에 할게요", "action": "close" }
+      ]
+    },
+    {
+      "id": "moa_default",
+      "npc": "npc_moa",
+      "conditions": {},
+      "lines": [
+        "오늘도 한 판 하실래요? 칩은 제가 반짝반짝 닦아 뒀어요!"
+      ],
+      "choices": [
+        { "text": "한 판 해보기", "action": "start_poker" },
+        { "text": "규칙 자세히 듣기", "action": "dialogue", "arg": "moa_rules" },
+        { "text": "족보 보기", "action": "dialogue", "arg": "moa_hands" },
+        { "text": "나중에 할게요", "action": "close" }
+      ]
+    },
+    {
+      "id": "moa_rules",
+      "npc": "npc_moa",
+      "ref_only": true,
+      "lines": [
+        "순서는 간단해요. 먼저 카드 5장을 받아요.",
+        "바꾸고 싶은 카드를 최대 {max_discards}장 골라서 딱 한 번 교체해요. 안 바꾸고 그대로 승부해도 돼요.",
+        "그다음 둘 다 패를 공개하고, 족보가 높은 쪽이 이겨요.",
+        "'별빛 감각'을 쓰면 교체하기 전에 루미의 지금 패가 원페어 이상인지 딱 한 번 알 수 있어요. 카드 자체는 안 보여요!",
+        "루미는 짝이 맞은 카드는 남기고 나머지를 바꾸는 규칙대로만 해요. 당신 카드는 절대 안 훔쳐봐요."
+      ],
+      "choices": [
+        { "text": "한 판 해보기", "action": "start_poker" },
+        { "text": "족보 보기", "action": "dialogue", "arg": "moa_hands" },
+        { "text": "알겠어요", "action": "close" }
+      ]
+    },
+    {
+      "id": "moa_hands",
+      "npc": "npc_moa",
+      "ref_only": true,
+      "lines": [
+        "족보는 높은 순서대로 이래요.",
+        "스트레이트 플러시 › 포카드 › 풀하우스 › 플러시 › 스트레이트 › 트리플 › 투페어 › 원페어 › 하이카드",
+        "같은 족보면 더 높은 숫자가 이겨요. 무늬로는 승부를 가리지 않아요. 숫자까지 완전히 같으면 무승부!"
+      ],
+      "choices": [
+        { "text": "한 판 해보기", "action": "start_poker" },
+        { "text": "규칙 자세히 듣기", "action": "dialogue", "arg": "moa_rules" },
+        { "text": "알겠어요", "action": "close" }
+      ]
+    },
+
+    {
+      "id": "sera_lamp_placed",
+      "npc": "npc_sera",
+      "conditions": { "placed_item": "furniture.lamp_small", "flags_false": ["sera_lamp_reaction_seen"] },
+      "marker": true,
+      "set_flags": ["sera_lamp_reaction_seen"],
+      "lines": [
+        "어머, 그 등불 벌써 자리를 찾았군요?",
+        "불씨가 좋은 집을 만나면 빛이 한결 부드러워지거든요. 잘 어울릴 거예요."
+      ],
+      "choices": [
+        { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
+        { "text": "또 올게요", "action": "close" }
+      ]
+    },
+    {
+      "id": "sera_first",
+      "npc": "npc_sera",
+      "conditions": { "flags_false": ["sera_met"] },
+      "set_flags": ["sera_met"],
+      "lines": [
+        "어서 오세요, 세라의 잡화점이에요.",
+        "마법 불씨로 켜는 작은 등불이 요즘 인기랍니다. 칩 {price_furniture.lamp_small}개예요."
+      ],
+      "choices": [
+        { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
+        { "text": "구경만 할게요", "action": "close" }
+      ]
+    },
+    {
+      "id": "sera_default",
+      "npc": "npc_sera",
+      "conditions": {},
+      "lines": [
+        "오늘은 무엇을 찾으세요?"
+      ],
+      "choices": [
+        { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
+        { "text": "또 올게요", "action": "close" }
+      ]
+    }
+  ]
+}

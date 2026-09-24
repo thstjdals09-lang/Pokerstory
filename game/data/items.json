@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "id": "furniture.lamp_small",
+      "name": "작은 등불",
+      "category": "furniture",
+      "price": 50,
+      "placeable": true,
+      "description": "마법 불씨로 켜는 작은 등불. 갓에 스페이드 문양이 새겨져 있다.",
+      "placeholder": { "shape": "lamp", "color": "#ffd27a" }
+    }
+  ]
+}

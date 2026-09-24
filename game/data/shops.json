@@ -1,0 +1,9 @@
+{
+  "shops": {
+    "sera_shop": {
+      "name": "세라의 잡화점",
+      "owner": "npc_sera",
+      "items": ["furniture.lamp_small"]
+    }
+  }
+}

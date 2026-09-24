@@ -1,0 +1,43 @@
+{
+  "rules": {
+    "hand_size": 5,
+    "max_discards": 3,
+    "opponent": "npc_lumi"
+  },
+  "economy": {
+    "starting_chips": 0,
+    "entry_fee": 0,
+    "reward_win": 60,
+    "reward_draw": 30,
+    "reward_lose": 20,
+    "first_play_bonus": 40
+  },
+  "player_ability": "ability.star_sense",
+  "abilities": [
+    {
+      "id": "ability.star_sense",
+      "name": "별빛 감각",
+      "uses_per_match": 1,
+      "effect": "reveal_opponent_pair_or_better",
+      "description": "교체하기 전에 한 번, 루미의 지금 패가 원페어 이상인지만 알려 줘요. 카드 자체는 보이지 않아요.",
+      "result_true": "별빛 감각: 루미의 지금 패는 원페어 이상이에요.",
+      "result_false": "별빛 감각: 루미의 지금 패는 원페어보다 약해요."
+    }
+  ],
+  "opponent_lines": {
+    "win": "와, 내가 졌다! 다음 판은 안 봐줄 거야.",
+    "draw": "완전히 같은 패라니, 우리 마음이 통했나 봐!",
+    "lose": "괜찮아, 카드는 내일도 섞이니까! 한 판 더 할래?"
+  },
+  "hand_help": [
+    ["스트레이트 플러시", "같은 무늬로 이어진 5장  (예: 5♥ 6♥ 7♥ 8♥ 9♥)"],
+    ["포카드", "같은 숫자 4장"],
+    ["풀하우스", "같은 숫자 3장 + 같은 숫자 2장"],
+    ["플러시", "같은 무늬 5장"],
+    ["스트레이트", "이어진 숫자 5장  (A-2-3-4-5가 가장 낮음)"],
+    ["트리플", "같은 숫자 3장"],
+    ["투페어", "같은 숫자 2장이 두 쌍"],
+    ["원페어", "같은 숫자 2장"],
+    ["하이카드", "아무 짝도 없을 때, 가장 높은 카드로 비교"]
+  ]
+}

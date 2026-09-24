@@ -1,0 +1,182 @@
+{
+  "locations": {
+    "village_square": {
+      "name": "마을 광장",
+      "size": [1600, 1100],
+      "lighting": "day",
+      "interior": false,
+      "ground": "#a3c982",
+      "path_color": "#e6d3a3",
+      "bounds_inset": 20,
+      "paths": [
+        [760, 320, 80, 780],
+        [180, 520, 1240, 80],
+        [310, 350, 60, 170],
+        [1230, 370, 60, 150]
+      ],
+      "plazas": [
+        { "center": [800, 560], "radius": 170, "color": "#ecdcb4" }
+      ],
+      "decor": [
+        { "type": "fountain", "pos": [800, 560], "r": 54, "solid": true },
+        { "type": "flowers", "rect": [540, 700, 120, 40] },
+        { "type": "flowers", "rect": [960, 700, 120, 40] },
+        { "type": "tree", "pos": [80, 80], "r": 30, "solid": true },
+        { "type": "tree", "pos": [560, 90], "r": 28, "solid": true },
+        { "type": "tree", "pos": [1040, 80], "r": 28, "solid": true },
+        { "type": "tree", "pos": [1500, 100], "r": 32, "solid": true },
+        { "type": "tree", "pos": [90, 420], "r": 30, "solid": true },
+        { "type": "tree", "pos": [1520, 420], "r": 30, "solid": true },
+        { "type": "tree", "pos": [120, 800], "r": 32, "solid": true },
+        { "type": "tree", "pos": [420, 760], "r": 28, "solid": true },
+        { "type": "tree", "pos": [560, 900], "r": 30, "solid": true },
+        { "type": "tree", "pos": [1080, 800], "r": 28, "solid": true },
+        { "type": "tree", "pos": [1250, 900], "r": 32, "solid": true },
+        { "type": "tree", "pos": [1480, 760], "r": 30, "solid": true },
+        { "type": "tree", "pos": [640, 1010], "r": 26, "solid": true },
+        { "type": "tree", "pos": [1000, 990], "r": 28, "solid": true }
+      ],
+      "buildings": [
+        {
+          "id": "shop_building",
+          "label": "세라의 잡화점 ♦",
+          "rect": [180, 150, 320, 200],
+          "wall": "#f0d9b5",
+          "roof": "#b5655b",
+          "door": [340, 350],
+          "target": "small_shop",
+          "spawn": "from_village",
+          "prompt": "잡화점 들어가기"
+        },
+        {
+          "id": "home_building",
+          "label": "내 집 ♥",
+          "rect": [640, 110, 320, 210],
+          "wall": "#f5e3c8",
+          "roof": "#6f8f4e",
+          "door": [800, 320],
+          "target": "player_home",
+          "spawn": "from_village",
+          "prompt": "집에 들어가기"
+        },
+        {
+          "id": "card_room_building",
+          "label": "카드룸 ♣",
+          "rect": [1100, 150, 320, 220],
+          "wall": "#e9d6c0",
+          "roof": "#35507a",
+          "door": [1260, 370],
+          "target": "card_room",
+          "spawn": "from_village",
+          "prompt": "카드룸 들어가기 (저녁 포커 모임)",
+          "marker": "♣ 포커 모임"
+        }
+      ],
+      "signs": [
+        {
+          "id": "sign_entrance",
+          "pos": [880, 1000],
+          "title": "안내 표지판",
+          "text": "↑ 광장 · 내 집 (♥)\n↖ 세라의 잡화점 (♦)\n↗ 카드룸 · 저녁 포커 모임 (♣)"
+        },
+        {
+          "id": "sign_card_room",
+          "pos": [1170, 470],
+          "title": "카드룸 게시판",
+          "text": "♣ 동네 포커 모임 ♣\n매일 저녁, 누구나 환영해요. 참가비는 없어요!\n— 칩 요정 모아"
+        }
+      ],
+      "npcs": [
+        { "id": "npc_lumi", "pos": [900, 650] }
+      ],
+      "spawns": {
+        "default": [800, 1040],
+        "from_small_shop": [340, 415],
+        "from_player_home": [800, 385],
+        "from_card_room": [1260, 435]
+      }
+    },
+
+    "player_home": {
+      "name": "내 집",
+      "size": [960, 640],
+      "lighting": "day",
+      "interior": true,
+      "floor": "#dcbf94",
+      "wall": "#8b6a50",
+      "bounds_inset": 28,
+      "decor": [
+        { "type": "window", "rect": [400, 4, 160, 22] },
+        { "type": "rug", "rect": [380, 300, 200, 130], "color": "#c97b63" },
+        { "type": "rect", "rect": [80, 90, 170, 120], "color": "#9fb8d9", "label": "침대", "solid": true },
+        { "type": "rect", "rect": [600, 300, 170, 90], "color": "#a9784f", "label": "탁자", "solid": true },
+        { "type": "rect", "rect": [800, 80, 90, 60], "color": "#7d5a3c", "label": "보관함", "solid": true }
+      ],
+      "slots": [
+        { "id": "slot_window", "name": "창가", "rect": [448, 40, 64, 60] },
+        { "id": "slot_table", "name": "탁자 위", "rect": [653, 305, 64, 60] },
+        { "id": "slot_bedside", "name": "침대 옆", "rect": [268, 96, 64, 64] }
+      ],
+      "interactables": [
+        { "id": "home_decorate", "kind": "home_edit", "pos": [845, 165], "radius": 64, "prompt": "집 꾸미기 (보관함)" }
+      ],
+      "exits": [
+        { "id": "exit_home", "pos": [480, 626], "target": "village_square", "spawn": "from_player_home", "prompt": "마을로 나가기" }
+      ],
+      "spawns": { "default": [480, 560], "from_village": [480, 560] }
+    },
+
+    "card_room": {
+      "name": "카드룸",
+      "size": [960, 640],
+      "lighting": "evening",
+      "interior": true,
+      "caption": "저녁 · 카드룸\n동네 포커 모임이 열렸어요",
+      "floor": "#7a4a3f",
+      "wall": "#3d2a25",
+      "bounds_inset": 28,
+      "decor": [
+        { "type": "rug", "rect": [300, 120, 360, 320], "color": "#5e3a33" },
+        { "type": "glow", "pos": [110, 110], "r": 90 },
+        { "type": "glow", "pos": [850, 110], "r": 90 },
+        { "type": "glow", "pos": [480, 280], "r": 210 },
+        { "type": "felt_table", "pos": [480, 280], "r": 110, "solid": true },
+        { "type": "rect", "rect": [60, 400, 120, 60], "color": "#5a3d2e", "label": "칩 선반", "solid": true }
+      ],
+      "npcs": [
+        { "id": "npc_lumi", "pos": [640, 240] },
+        { "id": "npc_moa", "pos": [300, 520] }
+      ],
+      "interactables": [
+        { "id": "poker_table", "kind": "poker_table", "pos": [480, 410], "radius": 70, "prompt": "포커 한 판 해보기" }
+      ],
+      "exits": [
+        { "id": "exit_card_room", "pos": [480, 626], "target": "village_square", "spawn": "from_card_room", "prompt": "마을로 나가기" }
+      ],
+      "spawns": { "default": [480, 560], "from_village": [480, 560] }
+    },
+
+    "small_shop": {
+      "name": "세라의 잡화점",
+      "size": [960, 640],
+      "lighting": "day",
+      "interior": true,
+      "floor": "#ead7b3",
+      "wall": "#7a5c45",
+      "bounds_inset": 28,
+      "decor": [
+        { "type": "rect", "rect": [60, 60, 200, 50], "color": "#9c7a55", "label": "선반", "solid": true },
+        { "type": "rect", "rect": [700, 60, 200, 50], "color": "#9c7a55", "label": "선반", "solid": true },
+        { "type": "rect", "rect": [280, 190, 400, 56], "color": "#b08a60", "label": "계산대", "solid": true },
+        { "type": "item_display", "pos": [160, 150], "item": "furniture.lamp_small" }
+      ],
+      "npcs": [
+        { "id": "npc_sera", "pos": [480, 150], "interact_radius": 120 }
+      ],
+      "exits": [
+        { "id": "exit_shop", "pos": [480, 626], "target": "village_square", "spawn": "from_small_shop", "prompt": "마을로 나가기" }
+      ],
+      "spawns": { "default": [480, 560], "from_village": [480, 560] }
+    }
+  }
+}

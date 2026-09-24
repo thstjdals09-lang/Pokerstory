@@ -1,0 +1,58 @@
+class_name SaveSystem
+extends RefCounted
+## Single-slot JSON save with a version field.
+## Writes go to <path>.tmp first, the previous save is kept as <path>.bak, then the tmp file
+## replaces the save, so a crash mid-write never destroys the last good save.
+
+
+static func save(state: GameState, path: String) -> Error:
+	var tmp := path + ".tmp"
+	var f := FileAccess.open(tmp, FileAccess.WRITE)
+	if f == null:
+		return FileAccess.get_open_error()
+	f.store_string(JSON.stringify(state.to_dict(), "  "))
+	f.close()
+	var bak := path + ".bak"
+	if FileAccess.file_exists(path):
+		if FileAccess.file_exists(bak):
+			DirAccess.remove_absolute(bak)
+		var err := DirAccess.rename_absolute(path, bak)
+		if err != OK:
+			return err
+	return DirAccess.rename_absolute(tmp, path)
+
+
+## Returns {"ok": true, "state": GameState} or {"ok": false, "error": code, "message": text}.
+## Error codes: no_save, corrupt, too_new, unsupported_old. A rejected file is never modified.
+static func load_state(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return _fail("no_save", "저장된 게임이 없어요.")
+	var parsed = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY or not parsed.has("save_version"):
+		return _fail("corrupt", "저장 파일을 읽을 수 없어요. 파일이 손상되었을 수 있어요.")
+	var version := int(parsed["save_version"])
+	if version > GameState.SAVE_VERSION:
+		return _fail("too_new", "이 저장 파일은 더 새로운 버전의 게임에서 만들어졌어요 (저장 v%d, 현재 게임은 v%d까지 읽을 수 있어요)." % [version, GameState.SAVE_VERSION])
+	while version < GameState.SAVE_VERSION:
+		var next := _migrate(parsed, version)
+		if next.is_empty():
+			return _fail("unsupported_old", "이 저장 파일(v%d)은 지원하지 않는 이전 버전이에요." % version)
+		parsed = next
+		version = int(parsed["save_version"])
+	return {"ok": true, "state": GameState.from_dict(parsed)}
+
+
+static func delete(path: String) -> void:
+	for p in [path, path + ".tmp", path + ".bak"]:
+		if FileAccess.file_exists(p):
+			DirAccess.remove_absolute(p)
+
+
+## Upgrades a save dictionary by one version. Add a case here whenever SAVE_VERSION increases.
+## Returns an empty dictionary when no migration exists.
+static func _migrate(_data: Dictionary, _from_version: int) -> Dictionary:
+	return {}
+
+
+static func _fail(code: String, message: String) -> Dictionary:
+	return {"ok": false, "error": code, "message": message}
