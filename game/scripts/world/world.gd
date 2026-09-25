@@ -1,7 +1,8 @@
 extends Node2D
 ## One playable location built from data/locations.json: drawing, collision, residents,
 ## doors, signs and other interactables, the player and the camera.
-## Emits intents; Main decides what they do.
+## Residents appear only where their placement matches the current time of day, and the
+## whole location is tinted in the evening. Emits intents; Main decides what they do.
 
 signal interacted(target: Dictionary)
 signal focus_changed(target: Dictionary)
@@ -28,6 +29,7 @@ var input_enabled := false:
 		if player:
 			player.input_enabled = value
 var _last_player_pos := Vector2.ZERO
+var _pickup_view: Node2D
 
 
 func build(p_location_id: String, spawn_key: String, spawn_position = null) -> void:
@@ -56,12 +58,16 @@ func build(p_location_id: String, spawn_key: String, spawn_position = null) -> v
 	camera.make_current()
 	_update_camera()
 
-	if loc.get("lighting", "day") == "evening":
+	if Game.state.time_of_day == "evening":
 		canvas_modulate = CanvasModulate.new()
 		canvas_modulate.color = EVENING_TINT
 		add_child(canvas_modulate)
+	_pickup_view = PickupView.new()
+	add_child(_pickup_view)
+	sync_job_pickups()
 	refresh_markers()
 	Game.state_changed.connect(refresh_markers)
+	Game.job_changed.connect(sync_job_pickups)
 
 
 func is_evening() -> bool:
@@ -93,6 +99,8 @@ func _build_obstacles() -> void:
 func _build_interactables() -> void:
 	var uid := 0
 	for placement in loc.get("npcs", []):
+		if not DataDB.placement_active(placement, Game.state.time_of_day):
+			continue
 		var def: Dictionary = Game.data.npcs[placement["id"]]
 		var node := NpcScript.new()
 		node.position = Geo.vec(placement["pos"])
@@ -110,6 +118,8 @@ func _build_interactables() -> void:
 		interactables.append({
 			"uid": uid, "kind": "door", "id": b["id"], "pos": Geo.vec(b["door"]), "radius": 56.0,
 			"prompt": b.get("prompt", "들어가기"), "target": b["target"], "spawn": b["spawn"],
+			"requires_time": b.get("requires_time", ""), "closed_title": b.get("closed_title", ""),
+			"closed_text": b.get("closed_text", ""), "wait_choice": b.get("wait_choice", ""),
 		})
 	for e in loc.get("exits", []):
 		uid += 1
@@ -213,6 +223,27 @@ func find_interactable(kind: String, id: String) -> Dictionary:
 	return {}
 
 
+## Rebuilds the odd-job pickup spots from Game.job (only in the job's location).
+func sync_job_pickups() -> void:
+	interactables = interactables.filter(func(it): return it["kind"] != "job_pickup")
+	var shown := {}
+	var run: PlazaJob = Game.job
+	if run != null and Game.data.jobs[run.job_id].get("location", "") == location_id:
+		for spot_id in run.remaining():
+			var spot: Dictionary = run.spots[spot_id]
+			shown[spot_id] = spot
+			interactables.append({
+				"uid": 1000 + int(str(spot_id).get_slice("_", 1)), "kind": "job_pickup", "id": spot_id,
+				"pos": spot["pos"], "radius": 34.0,
+				"prompt": "흩어진 카드 줍기" if spot["kind"] == "card" else "흩어진 칩 줍기",
+			})
+	_pickup_view.spots = shown
+	_pickup_view.queue_redraw()
+	if focused.get("kind", "") == "job_pickup":
+		focused = {}
+		focus_changed.emit(focused)
+
+
 func refresh_markers() -> void:
 	if Game.state == null:
 		return
@@ -229,3 +260,25 @@ func set_edit_state(edit: bool, slot_id: String = "", item_id: String = "") -> v
 
 func slot_at_mouse() -> String:
 	return view.slot_at(get_global_mouse_position())
+
+
+## Draws the scattered cards and chips of an odd-job run.
+class PickupView extends Node2D:
+	var spots := {}
+
+	func _draw() -> void:
+		for id in spots:
+			var p: Vector2 = spots[id]["pos"]
+			draw_circle(p + Vector2(0, 6), 12, Color(0, 0, 0, 0.18))
+			if spots[id]["kind"] == "card":
+				var card := Rect2(Vector2(-9, -12), Vector2(18, 24))
+				draw_set_transform(p, 0.35, Vector2.ONE)
+				draw_rect(card, Color("#fffdf8"))
+				draw_rect(card, Color("#8a5a3c"), false, 2.0)
+				draw_circle(Vector2.ZERO, 4, Color("#c0392b"))
+				draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+			else:
+				draw_circle(p, 10, Color("#c8553d"))
+				draw_circle(p, 10, Color("#fff3d6"), false, 2.5)
+				draw_circle(p, 4, Color("#fff3d6"))
+			draw_arc(p, 16, 0, TAU, 24, Color(1, 0.92, 0.5, 0.8), 2.0)

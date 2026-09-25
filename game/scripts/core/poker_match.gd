@@ -17,7 +17,7 @@ var player_eval := {}
 var opponent_eval := {}
 ## 1 = player wins, 0 = draw, -1 = player loses. Valid only in SHOWDOWN.
 var outcome := 0
-## Set by PokerRewards.settle so a finished hand is paid out exactly once.
+## Set by PokerEconomy.settle or fold so a hand is resolved exactly once.
 var settled := false
 var _ability_uses := {}
 

@@ -2,7 +2,9 @@ class_name DataDB
 extends RefCounted
 ## Loads all game content from JSON files under data/ and checks cross-references.
 
-const DIALOGUE_ACTIONS := ["close", "start_poker", "open_shop", "dialogue"]
+const DIALOGUE_ACTIONS := ["close", "start_poker", "open_shop", "dialogue", "accept_quest", "complete_quest"]
+const TIMES := ["day", "evening"]
+const ECONOMY_KEYS := ["starting_chips", "stake", "payout_win", "payout_draw", "payout_lose"]
 
 var items := {}
 var item_order: Array = []
@@ -13,6 +15,8 @@ var shops := {}
 var poker := {}
 var abilities := {}
 var goals: Array = []
+var quests := {}
+var jobs := {}
 
 
 ## Loads every data file and validates it. Returns a list of error messages (empty = OK).
@@ -32,6 +36,10 @@ func load_all(dir: String) -> Array:
 	for a in poker.get("abilities", []):
 		abilities[a["id"]] = a
 	goals = _read(dir + "/goals.json", errors).get("goals", [])
+	for q in _read(dir + "/quests.json", errors).get("quests", []):
+		quests[q["id"]] = q
+	for j in _read(dir + "/jobs.json", errors).get("jobs", []):
+		jobs[j["id"]] = j
 	if errors.is_empty():
 		errors.append_array(validate())
 	return errors
@@ -43,6 +51,22 @@ func item_price(item_id: String) -> int:
 
 func npc_name(npc_id: String) -> String:
 	return str(npcs.get(npc_id, {}).get("name", npc_id))
+
+
+## True when a placement ("time": "day" | "evening" | "any", default "any") is active at `time`.
+static func placement_active(placement: Dictionary, time: String) -> bool:
+	var t := str(placement.get("time", "any"))
+	return t == "any" or t == time
+
+
+## Location ids where `npc_id` stands at `time`. Valid data has at most one.
+func npc_locations(npc_id: String, time: String) -> Array:
+	var out: Array = []
+	for loc_id in locations:
+		for p in locations[loc_id].get("npcs", []):
+			if p["id"] == npc_id and placement_active(p, time):
+				out.append(loc_id)
+	return out
 
 
 ## Cross-reference checks between data files.
@@ -62,6 +86,9 @@ func validate() -> Array:
 	for e in dialogue:
 		for c in e.get("choices", []):
 			var action: String = c.get("action", "")
+			errors.append_array(_check_conditions(c.get("conditions", {}), "dialogue %s choice" % e["id"]))
+			if action in ["accept_quest", "complete_quest"] and not quests.has(c.get("arg", "")):
+				errors.append("dialogue %s: unknown quest %s" % [e["id"], c.get("arg", "")])
 			if not DIALOGUE_ACTIONS.has(action):
 				errors.append("dialogue %s: unknown action %s" % [e["id"], action])
 			if action == "dialogue" and not entry_ids.has(c.get("arg", "")):
@@ -79,6 +106,8 @@ func validate() -> Array:
 		for n in loc.get("npcs", []):
 			if not npcs.has(n["id"]):
 				errors.append("location %s: unknown npc %s" % [loc_id, n["id"]])
+			if not (str(n.get("time", "any")) in ["any", "day", "evening"]):
+				errors.append("location %s: bad time for %s" % [loc_id, n["id"]])
 		var doors: Array = []
 		doors.append_array(loc.get("buildings", []))
 		doors.append_array(loc.get("exits", []))
@@ -92,6 +121,31 @@ func validate() -> Array:
 			if deco.get("type", "") == "item_display" and not items.has(deco.get("item", "")):
 				errors.append("location %s: display of unknown item %s" % [loc_id, deco.get("item", "")])
 
+	# A resident stands in at most one place at any time of day.
+	for npc_id in npcs:
+		for t in TIMES:
+			var where := npc_locations(npc_id, t)
+			if where.size() > 1:
+				errors.append("npc %s is in %s at the same time (%s)" % [npc_id, str(where), t])
+
+	for quest_id in quests:
+		var q: Dictionary = quests[quest_id]
+		for key in ["giver", "target"]:
+			if not npcs.has(q.get(key, "")):
+				errors.append("quest %s: unknown %s" % [quest_id, key])
+		if int(q.get("reward", -1)) < 0:
+			errors.append("quest %s: reward missing" % quest_id)
+		if q.has("complete_dialogue") and not entry_ids.has(q["complete_dialogue"]):
+			errors.append("quest %s: missing complete_dialogue" % quest_id)
+	for job_id in jobs:
+		var j: Dictionary = jobs[job_id]
+		if int(j.get("reward", -1)) < 0 or int(j.get("count", 0)) <= 0:
+			errors.append("job %s: reward/count missing" % job_id)
+		if (j.get("spots", []) as Array).size() < int(j.get("count", 0)):
+			errors.append("job %s: fewer spots than count" % job_id)
+		if not locations.has(j.get("location", "")):
+			errors.append("job %s: unknown location" % job_id)
+
 	for shop_id in shops:
 		for item_id in shops[shop_id].get("items", []):
 			if not items.has(item_id):
@@ -100,7 +154,7 @@ func validate() -> Array:
 			errors.append("shop %s: unknown owner" % shop_id)
 
 	var econ: Dictionary = poker.get("economy", {})
-	for key in ["starting_chips", "entry_fee", "reward_win", "reward_draw", "reward_lose", "first_play_bonus"]:
+	for key in ECONOMY_KEYS:
 		if not econ.has(key) or int(econ[key]) < 0:
 			errors.append("poker economy: %s missing or negative" % key)
 	if not abilities.has(poker.get("player_ability", "")):
@@ -118,8 +172,12 @@ func _check_conditions(cond: Dictionary, where: String) -> Array:
 	for key in cond:
 		if not Conditions.KNOWN_KEYS.has(key):
 			errors.append("%s: unknown condition %s" % [where, key])
-		elif key in ["placed_item", "not_placed_item", "owns_or_placed_item", "not_owned_or_placed"] and not items.has(cond[key]):
+		elif key in Conditions.ITEM_KEYS and not items.has(cond[key]):
 			errors.append("%s: unknown item %s" % [where, cond[key]])
+		elif key in Conditions.QUEST_KEYS and not quests.has(cond[key]):
+			errors.append("%s: unknown quest %s" % [where, cond[key]])
+		elif key == "time" and not TIMES.has(cond[key]):
+			errors.append("%s: unknown time %s" % [where, cond[key]])
 		elif key == "location" and not locations.has(cond[key]):
 			errors.append("%s: unknown location %s" % [where, cond[key]])
 	return errors

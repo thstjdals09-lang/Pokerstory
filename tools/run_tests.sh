@@ -17,7 +17,7 @@ if [ "$MODE" = "unit" ] || [ "$MODE" = "all" ]; then
 fi
 
 if [ "$MODE" = "e2e" ] || [ "$MODE" = "all" ]; then
-  for scenario in win draw lose resume_a resume_b resume_c reject; do
+  for scenario in win draw lose broke resume_a resume_b resume_c migrate reject; do
     save="user://e2e_$(echo "$scenario" | sed 's/_[abc]$//').json"
     echo "== e2e: $scenario =="
     "$GODOT" --headless --path "$GAME" -- --e2e="$scenario" --save-path="$save" || status=1

@@ -50,7 +50,18 @@ static func delete(path: String) -> void:
 
 ## Upgrades a save dictionary by one version. Add a case here whenever SAVE_VERSION increases.
 ## Returns an empty dictionary when no migration exists.
-static func _migrate(_data: Dictionary, _from_version: int) -> Dictionary:
+static func _migrate(data: Dictionary, from_version: int) -> Dictionary:
+	match from_version:
+		1:
+			# v1 -> v2 (Design Correction 02): time of day, quests, pending stake.
+			# The chip balance is kept as it is; the new-game starting chips never apply to old saves.
+			var d := data.duplicate(true)
+			d["save_version"] = 2
+			d["time_of_day"] = "evening" if str(d.get("current_scene", "")) == "card_room" else "day"
+			d["quests"] = {}
+			d["pending_poker_stake"] = 0
+			d["jobs_completed"] = 0
+			return d
 	return {}
 
 

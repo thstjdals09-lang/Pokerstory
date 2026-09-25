@@ -5,12 +5,12 @@
     "opponent": "npc_lumi"
   },
   "economy": {
-    "starting_chips": 0,
-    "entry_fee": 0,
-    "reward_win": 60,
-    "reward_draw": 30,
-    "reward_lose": 20,
-    "first_play_bonus": 40
+    "_source": "Economy v0.2.1 (approved). docs/design/Project20_Economy_v0.2.1.md",
+    "starting_chips": 100,
+    "stake": 20,
+    "payout_win": 40,
+    "payout_draw": 20,
+    "payout_lose": 0
   },
   "player_ability": "ability.star_sense",
   "abilities": [

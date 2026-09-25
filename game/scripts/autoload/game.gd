@@ -4,6 +4,8 @@ extends Node
 
 signal state_changed
 signal toast_requested(text: String)
+## The current odd-job run started, progressed, finished or was cancelled.
+signal job_changed
 
 const DEFAULT_SAVE_PATH := "user://save_slot_1.json"
 const DEFAULT_PLAYER_NAME := "여행자"
@@ -31,6 +33,8 @@ var save_path := DEFAULT_SAVE_PATH
 var debug_deck_queue: Array = []
 ## Seed of the most recent random deck, printed so a hand can be reproduced.
 var last_deck_seed := 0
+## The odd job in progress (not saved), or null.
+var job: PlazaJob = null
 var _rng := RandomNumberGenerator.new()
 
 
@@ -75,6 +79,12 @@ func load_game() -> Dictionary:
 	var result := SaveSystem.load_state(save_path)
 	if result["ok"]:
 		state = result["state"]
+		job = null
+		# A hand interrupted by a crash or forced kill: its stake comes back once.
+		var refunded := PokerEconomy.void_pending(state)
+		result["refunded_stake"] = refunded
+		if refunded > 0:
+			save_game()
 		state_changed.emit()
 	return result
 
@@ -92,6 +102,7 @@ func save_game() -> bool:
 
 func end_session() -> void:
 	state = null
+	job = null
 
 
 func set_location(location_id: String) -> void:
@@ -121,15 +132,22 @@ func text_vars() -> Dictionary:
 	}
 	var econ := poker_economy()
 	for k in econ:
-		vars[k] = int(econ[k])
+		if not str(k).begins_with("_"):
+			vars[k] = int(econ[k])
 	for id in data.items:
 		vars["price_" + id] = data.item_price(id)
+	for id in data.quests:
+		vars["reward_" + id] = int(data.quests[id].get("reward", 0))
+	for id in data.jobs:
+		vars["reward_" + id] = int(data.jobs[id].get("reward", 0))
 	return vars
 
 
 func current_goal() -> String:
 	if state == null:
 		return ""
+	if job != null:
+		return "아르바이트 · 광장의 카드와 칩 줍기 (%d / %d)" % [job.collected.size(), job.total()]
 	for g in data.goals:
 		if Conditions.check(g.get("conditions", {}), state, state.current_scene):
 			return DialogueResolver.format_line(g["text"], text_vars())
@@ -150,11 +168,20 @@ func player_ability() -> Dictionary:
 	return data.abilities.get(data.poker.get("player_ability", ""), {})
 
 
-## Starts a hand. Returns null if the entry fee cannot be paid (the fee is 0 in v0.2).
+func poker_stake() -> int:
+	return PokerEconomy.stake(poker_economy())
+
+
+func can_join_poker() -> bool:
+	return state != null and PokerEconomy.can_join(state, poker_economy())
+
+
+## Starts a hand and takes the stake (saved at once). Returns null if the player cannot join.
 func create_poker_match() -> PokerMatch:
-	var fee := int(poker_economy().get("entry_fee", 0))
-	if fee > 0 and not state.spend_chips(fee, "poker_entry"):
+	if not PokerEconomy.place_stake(state, poker_economy()):
 		return null
+	save_game()
+	state_changed.emit()
 	var deck: Deck
 	if not debug_deck_queue.is_empty():
 		deck = Deck.stacked(debug_deck_queue.pop_front())
@@ -167,11 +194,86 @@ func create_poker_match() -> PokerMatch:
 
 ## Pays out a finished hand once, then saves.
 func settle_match(m: PokerMatch) -> Dictionary:
-	var result := PokerRewards.settle(state, m, poker_economy())
+	var result := PokerEconomy.settle(state, m, poker_economy())
 	if result["ok"]:
 		save_game()
 		state_changed.emit()
 	return result
+
+
+## Leaving the table before the showdown: the hand is folded and the stake is not returned.
+func fold_match(m: PokerMatch) -> Dictionary:
+	var result := PokerEconomy.fold(state, m)
+	if result["ok"]:
+		save_game()
+		state_changed.emit()
+	return result
+
+
+# --- time of day -------------------------------------------------------------
+
+func set_time(time: String) -> void:
+	if time != "day" and time != "evening":
+		return
+	state.time_of_day = time
+	save_game()
+	state_changed.emit()
+
+
+# --- quests ------------------------------------------------------------------
+
+func accept_quest(quest_id: String) -> bool:
+	if not data.quests.has(quest_id) or not QuestBook.accept(state, quest_id):
+		return false
+	save_game()
+	state_changed.emit()
+	return true
+
+
+func complete_quest(quest_id: String) -> Dictionary:
+	if not data.quests.has(quest_id):
+		return {"ok": false}
+	var result := QuestBook.complete(state, data.quests[quest_id])
+	if result["ok"]:
+		save_game()
+		state_changed.emit()
+	return result
+
+
+# --- odd jobs ----------------------------------------------------------------
+
+func start_job(job_id: String) -> bool:
+	if job != null or not data.jobs.has(job_id):
+		return false
+	job = PlazaJob.create(data.jobs[job_id], _rng)
+	job_changed.emit()
+	state_changed.emit()
+	return true
+
+
+## Collects one spot. Pays the reward only when the last spot is collected.
+## Returns {"ok": bool, "collected": n, "total": n, "done": bool, "reward": n}.
+func collect_job_spot(spot_id: String) -> Dictionary:
+	if job == null:
+		return {"ok": false}
+	var result := job.collect(state, spot_id)
+	if not result["ok"]:
+		return result
+	if result["done"]:
+		job = null
+		save_game()
+	job_changed.emit()
+	state_changed.emit()
+	return result
+
+
+func cancel_job() -> bool:
+	if job == null:
+		return false
+	job = null
+	job_changed.emit()
+	state_changed.emit()
+	return true
 
 
 # --- shop and home -----------------------------------------------------------

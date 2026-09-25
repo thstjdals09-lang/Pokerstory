@@ -20,6 +20,7 @@ var confirm_leave_button: Button
 var opponent_views: Array = []
 var player_views: Array = []
 
+var _header: Label
 var _ability := {}
 var _selected: Array = []
 var _ability_text := ""
@@ -34,6 +35,7 @@ var _result_detail: Label
 var _result_line: Label
 var _help_panel: PanelContainer
 var _confirm_panel: PanelContainer
+var _confirm_label: Label
 
 
 func _ready() -> void:
@@ -51,7 +53,8 @@ func _ready() -> void:
 	col.add_theme_constant_override("separation", 8)
 	add_child(col)
 
-	var header := UiKit.label("저녁 포커 모임 · 5장 원드로", 22, Color("#f3dfc1"))
+	_header = UiKit.label("", 22, Color("#f3dfc1"))
+	var header := _header
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(header)
 
@@ -172,7 +175,8 @@ func _build_confirm_panel() -> void:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 10)
 	_confirm_panel.add_child(box)
-	box.add_child(UiKit.label("지금 나가면 이번 판은 무효예요 (칩 변화 없음). 나갈까요?", 18))
+	_confirm_label = UiKit.label("", 18)
+	box.add_child(_confirm_label)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 10)
@@ -207,6 +211,8 @@ func start(m: PokerMatch) -> void:
 func refresh() -> void:
 	var showdown := match_ref.phase == PokerMatch.Phase.SHOWDOWN
 	var opp_name := Game.data.npc_name(str(Game.poker_rules().get("opponent", "")))
+	var stake := Game.poker_stake()
+	_header.text = "저녁 포커 모임 · 5장 원드로 · 판돈 %d칩 (나 %d + %s %d)    보유 칩 %d" % [stake * 2, stake, opp_name, stake, Game.state.chips_balance]
 	for i in 5:
 		# Opponent cards are handed to the UI only at showdown.
 		if showdown:
@@ -237,6 +243,10 @@ func refresh() -> void:
 	stand_button.disabled = showdown
 	leave_button.disabled = false
 	_result_panel.visible = showdown
+	if showdown:
+		var can_again := Game.can_join_poker()
+		again_button.disabled = not can_again
+		again_button.text = "한 판 더 (참가금 %d)" % stake if can_again else "칩 부족 (%d 필요)" % stake
 
 
 func toggle_card(i: int) -> void:
@@ -276,11 +286,18 @@ func do_stand() -> void:
 func _finish() -> void:
 	_selected.clear()
 	last_result = Game.settle_match(match_ref)
-	var key: String = last_result.get("outcome", PokerRewards.outcome_key(match_ref.outcome))
+	var key: String = last_result.get("outcome", PokerEconomy.outcome_key(match_ref.outcome))
 	_result_title.text = {"win": "승리!", "draw": "무승부", "lose": "아쉽게 졌어요"}[key]
-	var lines: Array = ["결과 보상  +%d 칩" % int(last_result.get("base", 0))]
-	if int(last_result.get("bonus", 0)) > 0:
-		lines.append("첫 참가 보너스  +%d 칩" % int(last_result["bonus"]))
+	var paid_in := int(last_result.get("stake", 0))
+	var payout := int(last_result.get("payout", 0))
+	var lines: Array = []
+	match key:
+		"win":
+			lines.append("판돈 %d칩 획득  (순이익 +%d)" % [payout, payout - paid_in])
+		"draw":
+			lines.append("참가금 %d칩 돌려받음  (손익 0)" % payout)
+		_:
+			lines.append("참가금 %d칩을 잃었어요  (순손실 -%d)" % [paid_in, paid_in - payout])
 	lines.append("보유 칩  %d" % Game.state.chips_balance)
 	_result_detail.text = "\n".join(lines)
 	var opp_name := Game.data.npc_name(str(Game.poker_rules().get("opponent", "")))
@@ -301,11 +318,13 @@ func _hide_confirm() -> void:
 
 func _confirm_leave() -> void:
 	_hide_confirm()
+	Game.fold_match(match_ref)
 	exit_requested.emit()
 
 
 func request_leave() -> void:
 	if match_ref != null and match_ref.phase == PokerMatch.Phase.DRAW:
+		_confirm_label.text = "지금 일어나면 이번 판은 포기로 처리되어 참가금 %d칩을 돌려받지 못해요. 일어날까요?" % Game.poker_stake()
 		_confirm_panel.get_parent().visible = true
 		confirm_leave_button.grab_focus.call_deferred()
 	else:

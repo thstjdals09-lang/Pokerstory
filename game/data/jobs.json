@@ -1,0 +1,16 @@
+{
+  "jobs": [
+    {
+      "id": "job.plaza_cleanup",
+      "name": "광장 정리 아르바이트",
+      "location": "village_square",
+      "reward": 10,
+      "count": 5,
+      "description": "광장에 흩어진 카드와 칩 5개를 주워 정리해 주세요. 끝까지 정리하면 보수로 칩 {reward_job.plaza_cleanup}개를 드려요.",
+      "spots": [
+        [690, 470], [910, 470], [680, 640], [950, 560],
+        [760, 700], [860, 720], [640, 560], [820, 450]
+      ]
+    }
+  ]
+}

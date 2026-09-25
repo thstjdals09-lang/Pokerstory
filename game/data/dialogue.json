@@ -1,5 +1,5 @@
 {
-  "_comment": "Entries are checked top to bottom; the first entry whose npc and conditions match is shown. ref_only entries are reached only through a 'dialogue' choice.",
+  "_comment": "Entries are checked top to bottom; the first entry whose npc and conditions match is shown. ref_only entries are reached only through a 'dialogue' choice. A choice with 'conditions' is shown only when they hold.",
   "entries": [
     {
       "id": "lumi_intro_cardroom",
@@ -10,7 +10,7 @@
       "lines": [
         "어? 벌써 모임에 온 거야? 너, 오늘 이사 온 {player} 맞지?",
         "나는 루미야. 여기선 저녁마다 이렇게 모여서 가볍게 카드 한 판씩 해.",
-        "규칙은 저기 칩 요정 모아가 알려 줄 거야. 준비되면 나랑 한 판 하자!"
+        "참가금은 칩 {stake}개야. 규칙은 저기 칩 요정 모아가 알려 줄 거야. 준비되면 나랑 한 판 하자!"
       ],
       "choices": [
         { "text": "좋아, 한 판 하자!", "action": "start_poker" },
@@ -26,12 +26,26 @@
       "lines": [
         "어라, 처음 보는 얼굴이네! 혹시 오늘 이사 온 {player}?",
         "나는 루미야. 이 마을에선 다들 저녁마다 카드 한 판으로 하루를 마무리해.",
-        "광장 오른쪽 위에 ♣ 간판이 걸린 카드룸 보이지? 거기서 포커 모임이 열려.",
-        "부담 갖지 마. 이기든 지든 칩을 조금씩 받을 수 있거든. 그 칩으로 집도 꾸미고!"
+        "광장 오른쪽 위에 ♣ 간판이 걸린 카드룸 보이지? 저녁이 되면 거기서 포커 모임이 열려.",
+        "칩 {stake}개를 걸고 하는 가벼운 판이야. 칩이 모자라면 광장 아르바이트 게시판도 있으니까 걱정 마!"
       ],
       "choices": [
-        { "text": "포커 모임은 어디서 해?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "포커 모임은 어떻게 해?", "action": "dialogue", "arg": "lumi_poker_info" },
         { "text": "또 봐, 루미!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_quest_delivery",
+      "npc": "npc_lumi",
+      "conditions": { "quest_active": "quest.sera_delivery" },
+      "marker": true,
+      "lines": [
+        "어? 그 꾸러미, 세라네 가게 거 아니야?",
+        "마법 불씨 꾸러미구나! 마침 카드룸 등불 불씨가 다 떨어졌었는데."
+      ],
+      "choices": [
+        { "text": "꾸러미 건네기", "action": "complete_quest", "arg": "quest.sera_delivery" },
+        { "text": "나중에 줄게", "action": "close" }
       ]
     },
     {
@@ -42,7 +56,7 @@
       "set_flags": ["lumi_lamp_reaction_seen"],
       "lines": [
         "{player}! 오는 길에 너희 집 창문으로 따뜻한 불빛이 보이더라.",
-        "등불을 놓았구나! 우리 포커 모임에서 받은 칩으로 산 거지? 헤헤, 괜히 내가 뿌듯하네.",
+        "등불을 놓았구나! 헤헤, 이웃집에 불이 켜지니까 괜히 내가 뿌듯하네.",
         "그럼 오늘 밤도 한 판 할래?"
       ],
       "choices": [
@@ -58,8 +72,8 @@
       "set_flags": ["lumi_lamp_reaction_seen"],
       "lines": [
         "{player}! 지나가다 봤는데, 너희 집 창문으로 따뜻한 불빛이 새어 나오더라.",
-        "등불을 놓았구나! 우리 포커 모임에서 받은 칩으로 산 거지? 헤헤, 괜히 내가 뿌듯하네.",
-        "골목이 한결 환해졌어. 오늘 밤에도 카드룸에서 기다릴게!"
+        "등불을 놓았구나! 헤헤, 이웃집에 불이 켜지니까 괜히 내가 뿌듯하네.",
+        "골목이 한결 환해졌어. 저녁엔 카드룸에서 기다릴게!"
       ],
       "choices": [
         { "text": "고마워, 루미!", "action": "close" }
@@ -70,7 +84,7 @@
       "npc": "npc_lumi",
       "conditions": { "location": "card_room" },
       "lines": [
-        "오늘 밤 카드도 잘 섞였어. 한 판 할래?"
+        "오늘 밤 카드도 잘 섞였어. 참가금 {stake}칩, 한 판 할래?"
       ],
       "choices": [
         { "text": "좋아, 한 판 하자!", "action": "start_poker" },
@@ -83,10 +97,10 @@
       "conditions": { "flags_true": ["lumi_lamp_reaction_seen"] },
       "lines": [
         "네 집 등불, 밤에 지나가면 참 예쁘더라.",
-        "카드룸은 언제든 열려 있어. 생각나면 놀러 와!"
+        "카드룸은 저녁마다 열려 있어. 생각나면 놀러 와!"
       ],
       "choices": [
-        { "text": "포커 모임은 어디서 해?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "포커 모임은 어떻게 해?", "action": "dialogue", "arg": "lumi_poker_info" },
         { "text": "또 봐, 루미!", "action": "close" }
       ]
     },
@@ -96,10 +110,10 @@
       "conditions": { "max_poker_hands": 0 },
       "lines": [
         "카드룸은 광장 오른쪽 위, ♣ 간판이 걸린 건물이야.",
-        "언제 가도 저녁 모임이 열려 있으니까 편할 때 와!"
+        "모임은 저녁에 열려. 카드룸 앞에서 기다리거나 집에서 쉬다 보면 금방 저녁이야!"
       ],
       "choices": [
-        { "text": "포커 모임은 어떤 거야?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "포커 모임은 어떻게 해?", "action": "dialogue", "arg": "lumi_poker_info" },
         { "text": "알았어!", "action": "close" }
       ]
     },
@@ -124,7 +138,7 @@
         "세라네 잡화점에 작은 등불이 들어왔대. 칩 {price_furniture.lamp_small}개면 살 수 있다던데?"
       ],
       "choices": [
-        { "text": "포커 모임은 어디서 해?", "action": "dialogue", "arg": "lumi_poker_info" },
+        { "text": "포커 모임은 어떻게 해?", "action": "dialogue", "arg": "lumi_poker_info" },
         { "text": "또 봐, 루미!", "action": "close" }
       ]
     },
@@ -133,11 +147,24 @@
       "npc": "npc_lumi",
       "ref_only": true,
       "lines": [
-        "포커 모임은 ♣ 카드룸에서 열려. 광장에서 오른쪽 위로 가면 돼.",
-        "카드 5장 받고 한 번만 바꾸는 짧은 게임이야. 참가비는 없고, 져도 칩을 조금 받아!"
+        "포커 모임은 저녁에 ♣ 카드룸에서 열려. 광장에서 오른쪽 위로 가면 돼.",
+        "카드 5장 받고 한 번만 바꾸는 짧은 게임이야. 둘 다 칩 {stake}개씩 걸고, 이긴 쪽이 {payout_win}칩을 다 가져가.",
+        "칩이 모자라면 광장 아르바이트 게시판을 봐. 카드랑 칩만 주워도 보수를 줘!"
       ],
       "choices": [
         { "text": "고마워!", "action": "close" }
+      ]
+    },
+    {
+      "id": "lumi_quest_thanks",
+      "npc": "npc_lumi",
+      "ref_only": true,
+      "lines": [
+        "고마워, {player}! 이걸로 오늘 밤 카드룸 등불을 환하게 켤 수 있겠다.",
+        "세라가 약속한 수고비 칩 {reward_quest.sera_delivery}개는 벌써 네 주머니에 들어갔을걸?"
+      ],
+      "choices": [
+        { "text": "천만에!", "action": "close" }
       ]
     },
 
@@ -150,8 +177,8 @@
       "lines": [
         "어서 와요, 어서 와요! 저는 칩 요정 모아예요.",
         "여기 포커는 짧아요. 카드 5장을 받고, 최대 {max_discards}장까지 딱 한 번 바꾼 다음 족보를 비교해요.",
-        "참가비는 없어요! 이기면 {reward_win}칩, 비기면 {reward_draw}칩, 져도 {reward_lose}칩을 드려요.",
-        "처음 참가하면 결과와 상관없이 보너스 {first_play_bonus}칩도 있어요!"
+        "참가금은 칩 {stake}개예요. 루미도 {stake}칩을 걸어요. 이기면 판돈 {payout_win}칩을 모두 가져가고, 비기면 {payout_draw}칩을 돌려받고, 지면 참가금을 잃어요.",
+        "칩이 {stake}개보다 적으면 참가할 수 없어요. 그럴 땐 광장 아르바이트 게시판에서 칩을 모아 오세요!"
       ],
       "choices": [
         { "text": "한 판 해보기", "action": "start_poker" },
@@ -165,7 +192,7 @@
       "npc": "npc_moa",
       "conditions": {},
       "lines": [
-        "오늘도 한 판 하실래요? 칩은 제가 반짝반짝 닦아 뒀어요!"
+        "오늘도 한 판 하실래요? 참가금은 칩 {stake}개예요. 칩은 제가 반짝반짝 닦아 뒀어요!"
       ],
       "choices": [
         { "text": "한 판 해보기", "action": "start_poker" },
@@ -179,9 +206,10 @@
       "npc": "npc_moa",
       "ref_only": true,
       "lines": [
-        "순서는 간단해요. 먼저 카드 5장을 받아요.",
+        "자리에 앉으면 참가금 {stake}칩을 걸고 카드 5장을 받아요.",
         "바꾸고 싶은 카드를 최대 {max_discards}장 골라서 딱 한 번 교체해요. 안 바꾸고 그대로 승부해도 돼요.",
-        "그다음 둘 다 패를 공개하고, 족보가 높은 쪽이 이겨요.",
+        "그다음 둘 다 패를 공개하고, 족보가 높은 쪽이 판돈 {payout_win}칩을 가져가요. 비기면 참가금을 돌려받아요.",
+        "승부 전에 자리에서 일어나면 포기로 처리돼서 참가금은 돌아오지 않아요.",
         "'별빛 감각'을 쓰면 교체하기 전에 루미의 지금 패가 원페어 이상인지 딱 한 번 알 수 있어요. 카드 자체는 안 보여요!",
         "루미는 짝이 맞은 카드는 남기고 나머지를 바꾸는 규칙대로만 해요. 당신 카드는 절대 안 훔쳐봐요."
       ],
@@ -219,6 +247,7 @@
       ],
       "choices": [
         { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
+        { "text": "부탁하실 일 있으세요?", "action": "dialogue", "arg": "sera_quest_offer", "conditions": { "quest_not_started": "quest.sera_delivery" } },
         { "text": "또 올게요", "action": "close" }
       ]
     },
@@ -226,14 +255,42 @@
       "id": "sera_first",
       "npc": "npc_sera",
       "conditions": { "flags_false": ["sera_met"] },
+      "marker": true,
       "set_flags": ["sera_met"],
       "lines": [
         "어서 오세요, 세라의 잡화점이에요.",
-        "마법 불씨로 켜는 작은 등불이 요즘 인기랍니다. 칩 {price_furniture.lamp_small}개예요."
+        "마법 불씨로 켜는 작은 등불이 요즘 인기랍니다. 칩 {price_furniture.lamp_small}개예요.",
+        "그리고… 마침 일손이 필요했는데, 혹시 시간 있으세요?"
+      ],
+      "choices": [
+        { "text": "무슨 일인데요?", "action": "dialogue", "arg": "sera_quest_offer", "conditions": { "quest_not_started": "quest.sera_delivery" } },
+        { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
+        { "text": "구경만 할게요", "action": "close" }
+      ]
+    },
+    {
+      "id": "sera_quest_active",
+      "npc": "npc_sera",
+      "conditions": { "quest_active": "quest.sera_delivery" },
+      "lines": [
+        "꾸러미는 루미에게 전해 주면 돼요. 낮엔 광장, 저녁엔 카드룸에 있을 거예요."
       ],
       "choices": [
         { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
-        { "text": "구경만 할게요", "action": "close" }
+        { "text": "다녀올게요", "action": "close" }
+      ]
+    },
+    {
+      "id": "sera_quest_done",
+      "npc": "npc_sera",
+      "conditions": { "quest_completed": "quest.sera_delivery", "flags_false": ["sera_quest_thanked"] },
+      "set_flags": ["sera_quest_thanked"],
+      "lines": [
+        "루미가 꾸러미를 잘 받았대요. 도와줘서 정말 고마워요!"
+      ],
+      "choices": [
+        { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
+        { "text": "또 올게요", "action": "close" }
       ]
     },
     {
@@ -245,7 +302,21 @@
       ],
       "choices": [
         { "text": "상점 보기", "action": "open_shop", "arg": "sera_shop" },
+        { "text": "부탁하실 일 있으세요?", "action": "dialogue", "arg": "sera_quest_offer", "conditions": { "quest_not_started": "quest.sera_delivery" } },
         { "text": "또 올게요", "action": "close" }
+      ]
+    },
+    {
+      "id": "sera_quest_offer",
+      "npc": "npc_sera",
+      "ref_only": true,
+      "lines": [
+        "루미에게 이 마법 불씨 꾸러미를 전해 줄 수 있을까요? 카드룸 등불에 쓸 거래요.",
+        "루미는 낮엔 광장, 저녁엔 카드룸에 있어요. 전해 주면 수고비로 칩 {reward_quest.sera_delivery}개 드릴게요."
+      ],
+      "choices": [
+        { "text": "맡을게요", "action": "accept_quest", "arg": "quest.sera_delivery" },
+        { "text": "다음에요", "action": "close" }
       ]
     }
   ]

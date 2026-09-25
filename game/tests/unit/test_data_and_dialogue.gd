@@ -16,13 +16,17 @@ func test_data_loads_without_errors() -> void:
 
 
 func test_spec_values() -> void:
+	# Economy v0.2.1 (approved)
 	var econ: Dictionary = db.poker["economy"]
-	check_eq(int(econ["entry_fee"]), 0, "entry fee 0")
-	check_eq(int(econ["reward_win"]), 60, "win 60")
-	check_eq(int(econ["reward_draw"]), 30, "draw 30")
-	check_eq(int(econ["reward_lose"]), 20, "lose 20")
-	check_eq(int(econ["first_play_bonus"]), 40, "bonus 40")
+	check_eq(int(econ["starting_chips"]), 100, "start 100")
+	check_eq(int(econ["stake"]), 20, "stake 20")
+	check_eq(int(econ["payout_win"]), 40, "win returns 40")
+	check_eq(int(econ["payout_draw"]), 20, "draw returns 20")
+	check_eq(int(econ["payout_lose"]), 0, "loss returns 0")
+	check(not econ.has("first_play_bonus") and not econ.has("reward_lose"), "no bonus, no loss reward")
 	check_eq(db.item_price(LAMP), 50, "lamp 50")
+	check_eq(int(db.jobs["job.plaza_cleanup"]["reward"]), 10, "job 10")
+	check_eq(int(db.quests["quest.sera_delivery"]["reward"]), 30, "quest 30")
 	check_eq(int(db.poker["rules"]["max_discards"]), 3, "max 3 discards")
 	for id in ["npc_lumi", "npc_moa", "npc_sera"]:
 		check(db.npcs.has(id), "npc " + id)
@@ -47,24 +51,23 @@ func test_lumi_dialogue_progression() -> void:
 	check_eq(_entry("npc_lumi", "village_square", s), "lumi_after_lamp", "follow-up after reaction")
 
 
-func test_goal_progression() -> void:
+func test_quest_dialogue_progression() -> void:
 	var s := GameState.new()
-	var goal := func() -> String:
-		for g in db.goals:
-			if Conditions.check(g["conditions"], s, "village_square"):
-				return g["text"]
-		return ""
-	check(goal.call().contains("루미에게 인사"), "goal 1")
 	s.set_flag("intro_met_lumi")
-	check(goal.call().contains("포커 모임"), "goal 2")
-	s.poker_hands_completed = 1
-	check(goal.call().contains("등불 사기"), "goal 3")
-	s.grant_item(LAMP)
-	check(goal.call().contains("배치"), "goal 4")
-	s.place_item("slot_window", LAMP)
-	check(goal.call().contains("다시 말 걸기"), "goal 5")
-	s.set_flag("lumi_lamp_reaction_seen")
-	check(goal.call().contains("자유롭게"), "goal 6")
+	check_eq(_entry("npc_sera", "small_shop", s), "sera_first", "Sera greets")
+	s.set_flag("sera_met")
+	check_eq(_entry("npc_sera", "small_shop", s), "sera_default", "Sera repeat")
+	s.quests["quest.sera_delivery"] = "active"
+	check_eq(_entry("npc_sera", "small_shop", s), "sera_quest_active", "Sera reminds")
+	check_eq(_entry("npc_lumi", "village_square", s), "lumi_quest_delivery", "Lumi receives by day")
+	check_eq(_entry("npc_lumi", "card_room", s), "lumi_quest_delivery", "Lumi receives by evening")
+	s.quests["quest.sera_delivery"] = "completed"
+	check(_entry("npc_lumi", "village_square", s) != "lumi_quest_delivery", "no delivery after completion")
+	check_eq(_entry("npc_sera", "small_shop", s), "sera_quest_done", "Sera thanks once")
+	s.set_flag("sera_quest_thanked")
+	check_eq(_entry("npc_sera", "small_shop", s), "sera_default", "then back to default")
+	var offer_choice: Dictionary = DialogueResolver.find(db.dialogue, "sera_default")["choices"][1]
+	check(not Conditions.check(offer_choice["conditions"], s), "offer choice hidden after completion")
 
 
 func test_format_line() -> void:

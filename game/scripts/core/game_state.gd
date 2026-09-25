@@ -2,16 +2,24 @@ class_name GameState
 extends RefCounted
 ## All persistent progress of one save slot. SaveSystem writes it as JSON via to_dict().
 
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 
 var player_name := "여행자"
 ## Single in-game currency. Never negative; every change is recorded in chips_ledger.
 var chips_balance := 0
 var chips_ledger: Array = []
-## Named story/progress flags, e.g. intro_met_lumi, first_poker_bonus_claimed, lumi_lamp_reaction_seen.
+## Named story/progress flags, e.g. intro_met_lumi, lumi_lamp_reaction_seen.
 var flags := {}
 var poker_hands_completed := 0
-var poker_record := {"win": 0, "draw": 0, "lose": 0}
+var poker_record := {"win": 0, "draw": 0, "lose": 0, "fold": 0}
+## Stake already taken from the balance for a hand that has not been settled yet.
+## Non-zero only while a hand is in progress (or after a crash mid-hand; see PokerEconomy.void_pending).
+var pending_poker_stake := 0
+## "day" or "evening". Changes only through player actions (rest, waiting for the gathering).
+var time_of_day := "day"
+## quest_id -> "active" | "completed". Missing = not started.
+var quests := {}
+var jobs_completed := 0
 ## item_id -> count held in storage (not placed).
 var owned_items := {}
 ## Item ids the player has ever obtained (collection book).
@@ -135,6 +143,10 @@ func to_dict() -> Dictionary:
 		"flags": flags.duplicate(),
 		"poker_hands_completed": poker_hands_completed,
 		"poker_record": poker_record.duplicate(),
+		"pending_poker_stake": pending_poker_stake,
+		"time_of_day": time_of_day,
+		"quests": quests.duplicate(),
+		"jobs_completed": jobs_completed,
 		"owned_items": owned_items.duplicate(),
 		"collection": collection.duplicate(),
 		"home_placements": home_placements.duplicate(true),
@@ -162,6 +174,12 @@ static func from_dict(d: Dictionary) -> GameState:
 	var rec: Dictionary = d.get("poker_record", {})
 	for k in s.poker_record:
 		s.poker_record[k] = int(rec.get(k, 0))
+	s.pending_poker_stake = maxi(0, int(d.get("pending_poker_stake", 0)))
+	s.time_of_day = "evening" if str(d.get("time_of_day", "day")) == "evening" else "day"
+	var q: Dictionary = d.get("quests", {})
+	for k in q:
+		s.quests[str(k)] = str(q[k])
+	s.jobs_completed = int(d.get("jobs_completed", 0))
 	var owned: Dictionary = d.get("owned_items", {})
 	for k in owned:
 		if int(owned[k]) > 0:

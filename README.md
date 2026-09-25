@@ -4,7 +4,7 @@
 
 포커가 일상 문화인 따뜻한 판타지 마을에서 생활하고 주민들과 관계를 맺으며, 짧은 판타지 포커를 즐기는 게임입니다.
 
-![마을](docs/screenshots/win_01_village.png)
+![마을](docs/screenshots/win_01_village_day.png)
 
 ## 현재 단계
 
@@ -13,10 +13,11 @@
 | 콘셉트 결정(10개 질문) | 기록 완료 ([v0.1](docs/Project20_Design_Brief_v0.1.md)) |
 | 사전 제작 기술 조사 | 완료 ([docs/preproduction/](docs/preproduction/)) |
 | 첫 플레이 명세 | [v0.2 초안](docs/design/Project20_First_Play_Spec_v0.2.md) |
-| **첫 플레이 프로토타입 (Gate 1)** | **구현 및 자동 검증 완료.** 그레이박스 그래픽 |
+| 설계 수정 02 / 경제 v0.2.1 | [수정 기록](docs/design/Project20_Design_Correction_02.md), [경제 (승인)](docs/design/Project20_Economy_v0.2.1.md) |
+| **첫 플레이 프로토타입** | **수정 02 반영 및 자동 검증 완료.** 그레이박스 그래픽 |
 | Gate 2 (플레이어 시각 검수) | 대기 중 |
 
-첫 플레이에서 할 수 있는 것: 마을 도착 → 루미와 인사 → 저녁 카드룸에서 5장 원드로 포커 → 칩 획득 → 세라의 잡화점에서 등불 구매 → 집에 배치 → 루미가 등불을 알아봄 → 저장·이어하기.
+첫 플레이에서 할 수 있는 것: 칩 100개로 시작 → 광장의 루미와 인사 → 세라의 배달 의뢰(+30) → 저녁까지 기다려 카드룸 포커(참가금 20, 승리 시 40 반환) → 칩이 떨어지면 광장 아르바이트(+10, 반복 가능) → 등불 구매·배치 → 집에서 자고 낮이 되면 루미가 등불을 알아봄 → 저장·이어하기.
 개발 내용, 검증 결과, 명세와 다르게 구현한 부분: [docs/dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md)
 
 ## 실행
@@ -26,13 +27,17 @@
 
 조작: WASD·방향키 이동 / E·Enter 대화·입장 / Esc 메뉴 / Tab 목표 접기 / 마우스로 카드·가구 선택
 
-테스트: `tools/run_tests.sh` (Git Bash). 단위 테스트 41개와 첫 플레이 전체를 자동으로 조작하는 E2E 7개 시나리오를 실행합니다.
+테스트: `tools/run_tests.sh` (Git Bash). 단위 테스트 54개와 게임을 자동으로 조작하는 E2E 9개 시나리오를 실행합니다.
 
 ## 스크린샷
 
-| 포커 | 결과 | 집 꾸미기 |
+| 저녁 카드룸 | 포커 결과 | 저녁 마을 |
 |---|---|---|
-| ![포커](docs/screenshots/win_02_poker.png) | ![결과](docs/screenshots/win_02_poker_result.png) | ![하우징](docs/screenshots/win_03_housing.png) |
+| ![카드룸](docs/screenshots/win_02_card_room_evening.png) | ![결과](docs/screenshots/win_03_poker_result.png) | ![저녁 마을](docs/screenshots/win_04_village_evening.png) |
+
+| 광장 아르바이트 | 집 꾸미기 |
+|---|---|
+| ![아르바이트](docs/screenshots/broke_06_odd_job.png) | ![하우징](docs/screenshots/win_05_housing.png) |
 
 ## 문서
 
@@ -40,6 +45,8 @@
 |---|---|
 | [Project20_Design_Brief_v0.1.md](docs/Project20_Design_Brief_v0.1.md) | 콘셉트 결정 (Source of Truth) |
 | [design/Project20_First_Play_Spec_v0.2.md](docs/design/Project20_First_Play_Spec_v0.2.md) | 첫 플레이 명세 (기획 담당) |
+| [design/Project20_Economy_v0.2.1.md](docs/design/Project20_Economy_v0.2.1.md) | 칩 경제 (승인 확정값) |
+| [design/Project20_Design_Correction_02.md](docs/design/Project20_Design_Correction_02.md) | 설계 수정 02: 불일치, 변경 내용, 기획 확인 요청 |
 | [dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md) | 구현 구조, 저장 형식, 검증 결과, 알려진 문제 |
 | [preproduction/](docs/preproduction/) | 엔진·그래픽·시스템·워크플로 조사, 기획 결정 필요 사항 |
 | [CLAUDE.md](CLAUDE.md) | AI 개발 규칙 |
@@ -57,4 +64,4 @@
 
 ## 아직 정해지지 않은 것
 
-정식 게임명, 최종 그래픽 스타일(현재는 그레이박스), 포커 룰 최종안, 경제 밸런스, 관계 시스템, 전역 시간, 추가 주민·공간, 모바일·Steam 대응. 모두 기획 측 결정과 별도 작업 지시가 있어야 진행합니다.
+정식 게임명, 최종 그래픽 스타일(현재는 그레이박스), 포커 룰 최종안, 관계 시스템, 주민 스케줄, 추가 주민·공간, 모바일·Steam 대응. 모두 기획 측 결정과 별도 작업 지시가 있어야 진행합니다.

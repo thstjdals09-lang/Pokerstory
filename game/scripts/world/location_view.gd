@@ -28,7 +28,12 @@ func setup(p_loc: Dictionary) -> void:
 			marker.size = Vector2(160, 22)
 			add_child(marker)
 	for d in loc.get("decor", []):
-		if d.has("label"):
+		if d.get("type", "") == "board":
+			var bl := WorldLabel.make(d.get("label", ""), 14, Color("#fff3d6"))
+			bl.position = Geo.vec(d["pos"]) + Vector2(-60, -62)
+			bl.size = Vector2(120, 18)
+			add_child(bl)
+		elif d.has("label") and d.has("rect"):
 			var r := Geo.rect(d["rect"])
 			var l := WorldLabel.make(d["label"], 14, Color.WHITE)
 			l.position = r.position
@@ -192,6 +197,16 @@ func _draw_decor(d: Dictionary) -> void:
 			for i in 4:
 				var q := p + Vector2.from_angle(TAU * i / 4.0) * (r - 30)
 				draw_string(UI_FONT, q + Vector2(-10, 7), suits[i], HORIZONTAL_ALIGNMENT_CENTER, 20, 18, Color(1, 1, 1, 0.6))
+		"board":
+			var p := Geo.vec(d["pos"])
+			draw_rect(Rect2(p.x - 30, p.y - 10, 6, 34), Color("#6b4a32"))
+			draw_rect(Rect2(p.x + 24, p.y - 10, 6, 34), Color("#6b4a32"))
+			var board := Rect2(p.x - 40, p.y - 44, 80, 38)
+			draw_rect(board, Color("#b98a5a"))
+			draw_rect(board, DARK, false, 2.0)
+			draw_rect(Rect2(p.x - 32, p.y - 38, 22, 26), Color("#fff8ec"))
+			draw_rect(Rect2(p.x - 4, p.y - 36, 18, 20), Color("#ffe9a8"))
+			draw_circle(Vector2(p.x + 24, p.y - 28), 6, Color("#c8553d"))
 		"item_display":
 			var item: Dictionary = Game.data.items.get(d["item"], {})
 			ItemArt.draw_item(self, item.get("placeholder", {}), Geo.vec(d["pos"]), 1.2)

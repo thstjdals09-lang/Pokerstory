@@ -3,7 +3,6 @@
     "village_square": {
       "name": "마을 광장",
       "size": [1600, 1100],
-      "lighting": "day",
       "interior": false,
       "ground": "#a3c982",
       "path_color": "#e6d3a3",
@@ -19,6 +18,7 @@
       ],
       "decor": [
         { "type": "fountain", "pos": [800, 560], "r": 54, "solid": true },
+        { "type": "board", "pos": [620, 470], "label": "아르바이트" },
         { "type": "flowers", "rect": [540, 700, 120, 40] },
         { "type": "flowers", "rect": [960, 700, 120, 40] },
         { "type": "tree", "pos": [80, 80], "r": 30, "solid": true },
@@ -69,7 +69,11 @@
           "target": "card_room",
           "spawn": "from_village",
           "prompt": "카드룸 들어가기 (저녁 포커 모임)",
-          "marker": "♣ 포커 모임"
+          "marker": "♣ 포커 모임 (저녁)",
+          "requires_time": "evening",
+          "closed_title": "카드룸",
+          "closed_text": "문에 '저녁 모임' 팻말이 걸려 있어요. 포커 모임은 저녁에 열려요.",
+          "wait_choice": "저녁까지 기다렸다가 들어가기 (시간이 저녁으로 바뀌어요)"
         }
       ],
       "signs": [
@@ -83,11 +87,14 @@
           "id": "sign_card_room",
           "pos": [1170, 470],
           "title": "카드룸 게시판",
-          "text": "♣ 동네 포커 모임 ♣\n매일 저녁, 누구나 환영해요. 참가비는 없어요!\n— 칩 요정 모아"
+          "text": "♣ 동네 포커 모임 ♣\n매일 저녁, 누구나 환영해요. 참가금은 칩 20개!\n칩이 모자라면 광장 아르바이트 게시판을 봐 주세요.\n— 칩 요정 모아"
         }
       ],
       "npcs": [
-        { "id": "npc_lumi", "pos": [900, 650] }
+        { "id": "npc_lumi", "pos": [900, 650], "time": "day" }
+      ],
+      "interactables": [
+        { "id": "job_board", "kind": "job_board", "pos": [620, 470], "radius": 60, "prompt": "아르바이트 게시판 보기" }
       ],
       "spawns": {
         "default": [800, 1040],
@@ -100,7 +107,6 @@
     "player_home": {
       "name": "내 집",
       "size": [960, 640],
-      "lighting": "day",
       "interior": true,
       "floor": "#dcbf94",
       "wall": "#8b6a50",
@@ -118,7 +124,8 @@
         { "id": "slot_bedside", "name": "침대 옆", "rect": [268, 96, 64, 64] }
       ],
       "interactables": [
-        { "id": "home_decorate", "kind": "home_edit", "pos": [845, 165], "radius": 64, "prompt": "집 꾸미기 (보관함)" }
+        { "id": "home_decorate", "kind": "home_edit", "pos": [845, 165], "radius": 64, "prompt": "집 꾸미기 (보관함)" },
+        { "id": "home_bed", "kind": "rest", "pos": [165, 232], "radius": 56, "prompt": "침대에서 쉬기" }
       ],
       "exits": [
         { "id": "exit_home", "pos": [480, 626], "target": "village_square", "spawn": "from_player_home", "prompt": "마을로 나가기" }
@@ -129,7 +136,6 @@
     "card_room": {
       "name": "카드룸",
       "size": [960, 640],
-      "lighting": "evening",
       "interior": true,
       "caption": "저녁 · 카드룸\n동네 포커 모임이 열렸어요",
       "floor": "#7a4a3f",
@@ -144,8 +150,8 @@
         { "type": "rect", "rect": [60, 400, 120, 60], "color": "#5a3d2e", "label": "칩 선반", "solid": true }
       ],
       "npcs": [
-        { "id": "npc_lumi", "pos": [640, 240] },
-        { "id": "npc_moa", "pos": [300, 520] }
+        { "id": "npc_lumi", "pos": [640, 240], "time": "evening" },
+        { "id": "npc_moa", "pos": [300, 520], "time": "evening" }
       ],
       "interactables": [
         { "id": "poker_table", "kind": "poker_table", "pos": [480, 410], "radius": 70, "prompt": "포커 한 판 해보기" }
@@ -159,7 +165,6 @@
     "small_shop": {
       "name": "세라의 잡화점",
       "size": [960, 640],
-      "lighting": "day",
       "interior": true,
       "floor": "#ead7b3",
       "wall": "#7a5c45",

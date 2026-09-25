@@ -1,11 +1,15 @@
 extends Node
-## End-to-end first-play driver (spec v0.2 P0-P8, Gate 1).
+## End-to-end driver for the first-play loop (spec v0.2 + Design Correction 02 + Economy v0.2.1).
 ## Runs inside the real game (Main scene + Game autoload). Movement and interaction use real
 ## input actions; buttons and cards are triggered through the same signals a mouse click emits.
 ## Exits with code 0 when every check passed, 1 otherwise.
 ##   godot --headless --path game -- --e2e=<scenario> --save-path=user://e2e.json [--shots=<abs dir>]
-## Scenarios: win, draw, lose (full loop per poker outcome), resume_a/b/c (three separate
-## processes: quit mid-game, continue, continue again), reject (unreadable saves).
+## Scenarios:
+##   win, draw, lose     full loop per poker outcome (time of day, quest, stake, lamp, rest)
+##   broke               lose everything -> blocked from poker -> odd jobs -> play again
+##   resume_a/b/c        three processes: quit mid-hand, continue (stake refund), continue again
+##   migrate             a version-1 save keeps its chips
+##   reject              unreadable saves
 
 const DECKS := {
 	# Deal order is player, opponent, player, ... then draws. See tests/unit/test_poker_match.gd.
@@ -13,8 +17,9 @@ const DECKS := {
 	"draw": ["KS", "KD", "KH", "KC", "9C", "9H", "7D", "7S", "4S", "4H", "9D", "7H", "4C"],
 	"lose": ["2C", "AH", "5D", "AC", "8H", "6S", "JS", "9C", "3D", "TD", "4S", "7C", "KH"],
 }
-const EXPECTED_FIRST := {"win": 100, "draw": 70, "lose": 60}
+const NET := {"win": 20, "draw": 0, "lose": -20}
 const LAMP := "furniture.lamp_small"
+const QUEST := "quest.sera_delivery"
 
 var main: Node
 var _failures: Array = []
@@ -33,12 +38,16 @@ func run(scenario: String) -> void:
 	match scenario:
 		"win", "draw", "lose":
 			await _first_play(scenario)
+		"broke":
+			await _broke()
 		"resume_a":
 			await _resume_a()
 		"resume_b":
 			await _resume_b()
 		"resume_c":
 			await _resume_c()
+		"migrate":
+			await _migrate()
 		"reject":
 			await _reject()
 		_:
@@ -49,317 +58,388 @@ func run(scenario: String) -> void:
 # --- scenarios -------------------------------------------------------------------
 
 func _first_play(outcome: String) -> void:
-	SaveSystem.delete(Game.save_path)
-	main.show_title()
-	await _frames(3)
-	_check(main.ui_mode == "title", "P0 title shown")
-	_check(main.title.continue_button.disabled, "P0 continue disabled without a save")
-
-	# P0 new game with a name
-	main.title.new_game_button.pressed.emit()
-	await _frames(2)
-	main.title.name_edit.text = "테스터"
-	main.title.start_button.pressed.emit()
-	await _wait_world("village_square")
-	_check_eq(Game.state.player_name, "테스터", "P0 player name")
-	_check_eq(Game.state.chips_balance, 0, "P0 starting chips")
-	_check(main.tutorial.visible and main.tutorial.step == 1, "P0 tutorial step 1 (move)")
-	_check(main.hud._goal_label.text.contains("루미에게 인사"), "P0 goal points to Lumi")
+	await _new_game("테스터")
+	_check_eq(Game.state.chips_balance, 100, "new game starts with 100 chips")
+	_check_eq(Game.state.time_of_day, "day", "new game starts in the day")
+	_check(main.tutorial.visible and main.tutorial.step == 1, "tutorial step 1 (move)")
 
 	# movement and collision with real input
 	var start: Vector2 = main.world.player.position
 	Input.action_press("move_up")
 	await _physics(24)
 	Input.action_release("move_up")
-	_check(main.world.player.position.distance_to(start) > 60.0, "P0 player moves with input")
-	_check_eq(main.tutorial.step, 2, "P0 tutorial advances to step 2 (talk)")
+	_check(main.world.player.position.distance_to(start) > 60.0, "player moves with input")
+	_check_eq(main.tutorial.step, 2, "tutorial advances to step 2 (talk)")
 	main.world.player.position = Vector2(260, 380)
 	await _physics(2)
 	Input.action_press("move_up")
 	await _physics(40)
 	Input.action_release("move_up")
-	_check(main.world.player.position.y >= 362.0, "P0 building blocks movement (y=%.1f)" % main.world.player.position.y)
+	_check(main.world.player.position.y >= 362.0, "building blocks movement")
 
-	# P1 greet Lumi
+	# Lumi stands in the plaza by day
+	_check(main.world.npc_nodes.has("npc_lumi"), "day: Lumi in the plaza")
 	await _go_to("npc", "npc_lumi")
-	_check(main.hud.prompt_text().contains("루미"), "P1 prompt shows Lumi")
-	_check(main.world.npc_nodes["npc_lumi"].show_marker, "P1 Lumi shows the new-dialogue marker")
-	await _shot("01_village")
+	await _shot("01_village_day")
 	await _press("interact")
-	_check_eq(main.ui_mode, "dialogue", "P1 dialogue opens")
-	_check_eq(main.last_entry_id, "lumi_intro", "P1 first meeting dialogue")
-	_check(main.dialogue.current_line().contains("테스터"), "P1 Lumi uses the player's name")
-	_check_eq(main.tutorial.step, 0, "P0 tutorial finished after first interaction")
-	_check(Game.state.get_flag("tutorial_done"), "P0 tutorial flag saved")
-	await _read_to_choices()
-	await _choose("dialogue")
-	_check_eq(main.last_entry_id, "lumi_poker_info", "P2 poker info reachable from Lumi's menu")
+	_check_eq(main.last_entry_id, "lumi_intro", "first meeting")
+	_check(main.dialogue.current_line().contains("테스터"), "Lumi uses the player's name")
 	await _read_to_choices()
 	await _choose("close")
-	_check_eq(main.ui_mode, "world", "P1 back to world")
-	_check(Game.state.get_flag("intro_met_lumi"), "P1 intro flag set")
-	_check(_saved().get("flags", {}).get("intro_met_lumi", false), "P1 intro flag saved to disk")
-	_check(not main.world.npc_nodes["npc_lumi"].show_marker, "P1 marker cleared")
-	await _talk("npc_lumi")
-	_check_eq(main.last_entry_id, "lumi_before_poker", "P1 repeat dialogue differs from the first")
-	await _close_dialogue()
-	_check(main.hud._goal_label.text.contains("포커 모임"), "P2 goal points to poker")
+	_check(Game.state.get_flag("intro_met_lumi"), "intro flag")
 
-	# P2 shop before poker: browsing allowed, buying blocked by chips
+	# Sera's one-time request
 	await _enter("door", "shop_building", "small_shop")
 	await _talk("npc_sera")
-	_check_eq(main.last_entry_id, "sera_first", "P2 Sera greets")
+	_check_eq(main.last_entry_id, "sera_first", "Sera greets")
 	await _read_to_choices()
-	await _choose("open_shop")
-	_check_eq(main.ui_mode, "shop", "P2 shop opens")
-	var buy: Button = main.shop.buy_buttons[LAMP]
-	_check(buy.disabled and buy.text.contains("칩 부족"), "P2 lamp not affordable at 0 chips (%s)" % buy.text)
-	main.shop.close_button.pressed.emit()
-	await _frames(2)
-	_check_eq(main.ui_mode, "world", "P2 shop closes")
+	await _choose("dialogue")
+	_check_eq(main.last_entry_id, "sera_quest_offer", "Sera offers the delivery")
+	await _read_to_choices()
+	await _choose("accept_quest")
+	_check_eq(QuestBook.state_of(Game.state, QUEST), "active", "quest accepted")
+	_check(main.hud._goal_label.text.contains("꾸러미"), "goal shows the delivery")
+	_check(_saved().get("quests", {}).get(QUEST, "") == "active", "quest state saved")
+	await _talk("npc_sera")
+	_check_eq(main.last_entry_id, "sera_quest_active", "Sera reminds while active")
+	await _close_dialogue()
 	await _enter("door", "exit_shop", "village_square")
 
-	# P2 signs
-	await _go_to("sign", "sign_card_room")
+	# The card room is closed by day: wait for the evening at its door
+	await _go_to("door", "card_room_building")
 	await _press("interact")
-	_check(main.dialogue.current_line().contains("포커 모임"), "P2 card room notice readable")
-	await _press("interact")
-	_check_eq(main.ui_mode, "world", "P2 sign closes")
+	_check_eq(main.ui_mode, "dialogue", "closed door explains the gathering is in the evening")
+	_check(main.dialogue.current_line().contains("저녁"), "closed-door text")
+	await _read_to_choices()
+	await _choose("wait_and_enter")
+	await _wait_world("card_room")
+	_check_eq(Game.state.time_of_day, "evening", "waiting made it evening")
+	_check(main.world.is_evening(), "evening lighting")
+	_check(main.world.npc_nodes.has("npc_lumi"), "evening: Lumi in the card room")
+	await _shot("02_card_room_evening", 170)
 
-	# P3 evening gathering
-	await _enter("door", "card_room_building", "card_room")
-	_check(main.world.is_evening(), "P3 card room uses evening lighting")
-	await _shot("02_card_room", 170)
+	# Deliver the parcel to Lumi (evening -> card room)
+	await _talk("npc_lumi")
+	_check_eq(main.last_entry_id, "lumi_quest_delivery", "Lumi recognises the parcel")
+	await _read_to_choices()
+	await _choose("complete_quest")
+	_check_eq(QuestBook.state_of(Game.state, QUEST), "completed", "quest completed")
+	_check_eq(Game.state.chips_balance, 130, "quest pays 30 once")
+	_check_eq(main.last_entry_id, "lumi_quest_thanks", "Lumi thanks")
+	await _read_to_choices()
+	await _choose("close")
+	await _talk("npc_lumi")
+	_check(main.last_entry_id != "lumi_quest_delivery", "no second delivery")
+	_check_eq(Game.state.chips_balance, 130, "no second quest reward")
+	await _close_dialogue()
+
+	# Poker with the fixed stake
 	await _talk("npc_moa")
-	_check_eq(main.last_entry_id, "moa_first", "P3 Moa explains the rules")
+	_check_eq(main.last_entry_id, "moa_first", "Moa explains the stake")
+	_check(main.dialogue.current_line() != "", "Moa speaks")
 	await _read_to_choices()
 	Game.debug_deck_queue = [DECKS[outcome], DECKS["lose"]]
 	await _choose("start_poker")
-	_check_eq(main.ui_mode, "poker", "P3 poker starts from Moa's menu")
-	_check_eq(main._caption.modulate.a, 0.0, "P3 location caption never covers the poker table")
-
-	# P4 the hand
+	_check_eq(main.ui_mode, "poker", "poker starts")
+	_check_eq(Game.state.chips_balance, 110, "stake 20 taken when the hand starts")
+	_check_eq(Game.state.pending_poker_stake, 20, "stake pending")
+	_check_eq(int(_saved().get("pending_poker_stake", -1)), 20, "pending stake saved")
 	var poker = main.poker
 	for v in poker.opponent_views:
-		_check(v.card == null, "P4 opponent card hidden before showdown")
-	_check(poker.player_views[0].card != null, "P4 player cards shown")
+		_check(v.card == null, "opponent hidden before showdown")
 	poker.ability_button.pressed.emit()
 	await _frames(1)
-	_check(poker._ability_label.text.contains("원페어 이상"), "P4 Star Sense answers pair-or-better")
-	_check(poker.ability_button.disabled, "P4 Star Sense used up")
-	for v in poker.opponent_views:
-		_check(v.card == null, "P4 opponent still hidden after Star Sense")
+	_check(poker._ability_label.text.contains("원페어 이상"), "Star Sense answers")
 	if outcome == "win":
 		poker.player_views[4].pressed.emit(4)
 		await _frames(1)
-		_check(poker.draw_button.text.contains("1장"), "P4 one card selected")
-		await _shot("02_poker")
+		await _shot("03_poker")
 		poker.draw_button.pressed.emit()
 	else:
-		await _shot("02_poker")
+		await _shot("03_poker")
 		poker.stand_button.pressed.emit()
 	await _frames(2)
-
-	# P5 payout
-	_check_eq(poker.match_ref.outcome, {"win": 1, "draw": 0, "lose": -1}[outcome], "P5 outcome " + outcome)
-	_check_eq(Game.state.chips_balance, EXPECTED_FIRST[outcome], "P5 chips after first hand")
-	_check_eq(int(poker.last_result["bonus"]), 40, "P5 first-play bonus paid")
-	_check(Game.state.get_flag("first_poker_bonus_claimed"), "P5 bonus flag")
-	_check(poker._result_panel.visible, "P5 result shown")
-	for v in poker.opponent_views:
-		_check(v.card != null, "P5 opponent cards revealed at showdown")
+	_check_eq(poker.match_ref.outcome, {"win": 1, "draw": 0, "lose": -1}[outcome], "outcome " + outcome)
+	_check_eq(Game.state.chips_balance, 130 + NET[outcome], "net %d after the hand" % NET[outcome])
+	_check_eq(Game.state.pending_poker_stake, 0, "nothing pending after showdown")
 	_check_ledger()
-	_check_eq(int(_saved().get("chips_balance", -1)), EXPECTED_FIRST[outcome], "P5 payout saved")
-	await _shot("02_poker_result")
+	_check_eq(int(_saved().get("chips_balance", -1)), 130 + NET[outcome], "settlement saved")
+	await _shot("03_poker_result")
 	poker.again_button.pressed.emit()
 	await _frames(2)
-	_check_eq(poker.match_ref.phase, PokerMatch.Phase.DRAW, "P8 another hand starts")
 	poker.stand_button.pressed.emit()
 	await _frames(2)
-	_check_eq(int(poker.last_result["bonus"]), 0, "P5 no second bonus")
-	var after_two: int = EXPECTED_FIRST[outcome] + 20
-	_check_eq(Game.state.chips_balance, after_two, "P5 second hand pays base only")
-	_check_eq(Game.state.poker_hands_completed, 2, "P5 two hands counted")
+	var after_poker: int = 130 + NET[outcome] - 20
+	_check_eq(Game.state.chips_balance, after_poker, "second hand lost: -20, no consolation")
 	poker.result_leave_button.pressed.emit()
 	await _frames(2)
-	_check_eq(main.ui_mode, "world", "P5 back to the card room")
-	await _talk("npc_lumi")
-	_check_eq(main.last_entry_id, "lumi_cardroom_default", "P3 Lumi at the table offers a hand")
-	await _read_to_choices()
-	await _choose("close")
-	await _enter("door", "exit_card_room", "village_square")
-	_check(not main.world.is_evening(), "P8 village is free-roam daytime again")
 
-	# P6 buy the lamp
+	# Evening persists outside; Lumi is not duplicated in the plaza
+	await _enter("door", "exit_card_room", "village_square")
+	_check_eq(Game.state.time_of_day, "evening", "still evening after leaving the card room")
+	_check(main.world.is_evening(), "village is lit for the evening")
+	_check(not main.world.npc_nodes.has("npc_lumi"), "evening: Lumi is not in the plaza")
+	await _shot("04_village_evening")
+
+	# Buy and place the lamp
 	await _enter("door", "shop_building", "small_shop")
+	_check(main.world.is_evening(), "evening inside the shop too")
 	await _talk("npc_sera")
-	_check_eq(main.last_entry_id, "sera_default", "P6 Sera repeat line")
+	_check_eq(main.last_entry_id, "sera_quest_done", "Sera thanks for the delivery")
 	await _read_to_choices()
 	await _choose("open_shop")
-	buy = main.shop.buy_buttons[LAMP]
-	_check(not buy.disabled, "P6 lamp affordable")
-	buy.pressed.emit()
+	main.shop.buy_buttons[LAMP].pressed.emit()
 	await _frames(2)
-	_check_eq(Game.state.chips_balance, after_two - 50, "P6 lamp costs 50")
-	_check_eq(Game.state.owned_count(LAMP), 1, "P6 lamp in storage")
-	_check(Game.state.collection.has(LAMP), "P7 lamp recorded in collection")
-	_check_ledger()
+	_check_eq(Game.state.chips_balance, after_poker - 50, "lamp costs 50")
 	main.shop.close_button.pressed.emit()
 	await _frames(2)
 	await _enter("door", "exit_shop", "village_square")
-	await _talk("npc_lumi")
-	_check_eq(main.last_entry_id, "lumi_lamp_not_placed", "P6 Lumi hints how to place the lamp")
-	await _read_to_choices()
-	await _choose("close")
-
-	# P6 place it at home
 	await _enter("door", "home_building", "player_home")
 	await _go_to("home_edit", "home_decorate")
 	await _press("interact")
-	_check_eq(main.ui_mode, "home_edit", "P6 decorate mode opens")
 	var edit = main.home_edit
-	_check(edit.item_buttons.has(LAMP), "P6 lamp listed in storage")
 	edit.item_buttons[LAMP].pressed.emit()
 	await _frames(1)
 	edit.slot_buttons["slot_window"].pressed.emit()
 	await _frames(1)
-	_check(not edit.confirm_button.disabled, "P6 confirm enabled with item and empty slot")
-	await _shot("03_housing_preview")
 	edit.confirm_button.pressed.emit()
 	await _frames(2)
-	_check_eq(Game.state.placement_at("slot_window"), LAMP, "P6 lamp placed by the window")
-	_check_eq(Game.state.owned_count(LAMP), 0, "P6 storage empty")
-	_check_eq(Game.state.chips_balance, after_two - 50, "P6 placing costs nothing")
-	var saved_places: Array = _saved().get("home_placements", [])
-	_check(saved_places.size() == 1 and saved_places[0]["slot"] == "slot_window", "P6 placement saved to disk")
-	await _shot("03_housing")
+	_check_eq(Game.state.placement_at("slot_window"), LAMP, "lamp placed")
+	await _shot("05_housing")
 	edit.close_button.pressed.emit()
 	await _frames(2)
-	_check_eq(main.ui_mode, "world", "P6 decorate mode closes")
-	await _enter("door", "exit_home", "village_square")
-	await _enter("door", "home_building", "player_home")
-	_check_eq(Game.state.placement_at("slot_window"), LAMP, "P6 lamp still there after re-entering")
-	await _enter("door", "exit_home", "village_square")
 
-	# P7 Lumi remembers
-	_check(main.world.npc_nodes["npc_lumi"].show_marker, "P7 Lumi has something new to say")
-	await _talk("npc_lumi")
-	_check_eq(main.last_entry_id, "lumi_lamp_reaction", "P7 Lumi reacts to the lamp")
-	_check(main.dialogue.current_line().contains("불빛"), "P7 reaction mentions the light")
-	await _read_to_choices()
-	await _choose("close")
-	_check(Game.state.get_flag("lumi_lamp_reaction_seen"), "P7 reaction flag")
-	await _talk("npc_lumi")
-	_check_eq(main.last_entry_id, "lumi_after_lamp", "P7 follow-up line differs")
-	await _read_to_choices()
-	await _choose("close")
-	_check(main.hud._goal_label.text.contains("자유롭게"), "P8 goal is free play")
-
-	# collection book via the menu
+	# Save and reload keeps the evening
 	await _press("menu")
-	_check_eq(main.ui_mode, "menu", "P8 menu opens with Esc")
-	main.menu.collection_button.pressed.emit()
-	await _frames(1)
-	_check(main.menu.collection_text().contains("작은 등불") and main.menu.collection_text().contains("1 / 1"), "P7 collection shows the lamp: " + main.menu.collection_text())
-	main.menu.show_main()
-
-	# P8 save, back to title, continue
-	var chips_before: int = Game.state.chips_balance
 	main.menu.title_button.pressed.emit()
 	await _frames(3)
-	_check_eq(main.ui_mode, "title", "P8 back at title")
-	_check(not main.title.continue_button.disabled, "P8 continue available")
 	main.title.continue_button.pressed.emit()
-	await _wait_world("village_square")
-	_check_eq(Game.state.chips_balance, chips_before, "P8 chips restored")
-	_check_eq(Game.state.placement_at("slot_window"), LAMP, "P8 placement restored")
-	_check(Game.state.get_flag("lumi_lamp_reaction_seen"), "P8 flags restored")
+	await _wait_world("player_home")
+	_check_eq(Game.state.time_of_day, "evening", "evening restored after reload")
+	_check(main.world.is_evening(), "evening lighting after reload")
+	_check_eq(Game.state.chips_balance, after_poker - 50, "chips restored")
+
+	# Rest at home: back to day, Lumi back in the plaza
+	await _go_to("rest", "home_bed")
+	await _press("interact")
+	_check(main.dialogue.current_line().contains("아침"), "bed offers sleeping until morning")
+	await _read_to_choices()
+	await _choose("set_time")
+	await _wait_world("player_home")
+	_check_eq(Game.state.time_of_day, "day", "resting makes it day")
+	_check(not main.world.is_evening(), "day lighting")
+	await _enter("door", "exit_home", "village_square")
+	_check(main.world.npc_nodes.has("npc_lumi"), "day: Lumi back in the plaza")
+	await _talk("npc_lumi")
+	_check_eq(main.last_entry_id, "lumi_lamp_reaction", "Lumi reacts to the lamp")
+	await _close_dialogue()
+	_check_eq(Game.state.chips_balance, after_poker - 50, "final balance")
+	_check_ledger()
+
+
+## Lose everything, get blocked, recover through odd jobs, and play again.
+func _broke() -> void:
+	await _new_game("파산")
+	# The bed also turns day into evening.
+	await _enter("door", "home_building", "player_home")
+	await _go_to("rest", "home_bed")
+	await _press("interact")
+	_check(main.dialogue.current_line().contains("저녁"), "bed offers resting until evening")
+	await _read_to_choices()
+	await _choose("set_time")
+	await _wait_world("player_home")
+	_check_eq(Game.state.time_of_day, "evening", "rested until evening")
+	await _enter("door", "exit_home", "village_square")
+	await _enter("door", "card_room_building", "card_room")
+	await _talk("npc_lumi")
+	_check_eq(main.last_entry_id, "lumi_intro_cardroom", "met Lumi first at the card room")
+	await _close_dialogue()
+
+	# A hand left early is folded: the stake is lost.
+	await _go_to("poker_table", "poker_table")
+	Game.debug_deck_queue = [DECKS["win"]]
+	await _press("interact")
+	_check_eq(Game.state.chips_balance, 80, "stake taken")
+	main.poker.leave_button.pressed.emit()
+	await _frames(1)
+	_check(main.poker._confirm_label.text.contains("돌려받지 못해요"), "leave warns about the stake")
+	main.poker.confirm_leave_button.pressed.emit()
+	await _frames(2)
+	_check_eq(main.ui_mode, "world", "left the table")
+	_check_eq(Game.state.chips_balance, 80, "fold: stake not returned")
+	_check_eq(Game.state.pending_poker_stake, 0, "fold resolved")
+	_check_eq(Game.state.poker_record["fold"], 1, "fold recorded")
+
+	# Four losses: 80 -> 0.
+	await _go_to("poker_table", "poker_table")
+	Game.debug_deck_queue = [DECKS["lose"], DECKS["lose"], DECKS["lose"], DECKS["lose"]]
+	await _press("interact")
+	for i in 4:
+		main.poker.stand_button.pressed.emit()
+		await _frames(2)
+		if i < 3:
+			main.poker.again_button.pressed.emit()
+			await _frames(2)
+	_check_eq(Game.state.chips_balance, 0, "lost everything")
+	_check(main.poker.again_button.disabled and main.poker.again_button.text.contains("칩 부족"), "cannot play another hand at 0")
+	main.poker.result_leave_button.pressed.emit()
+	await _frames(2)
+	await _talk("npc_moa")
+	await _read_to_choices()
+	await _choose("start_poker")
+	_check_eq(main.ui_mode, "world", "blocked from poker below the stake")
+	_check(main.hud.toast_text().contains("아르바이트"), "hint points to the odd job")
+	_check(main.hud._goal_label.text.contains("아르바이트"), "goal points to the odd job")
+	_check_eq(Game.state.chips_balance, 0, "still 0")
+
+	# A cancelled run pays nothing.
+	await _enter("door", "exit_card_room", "village_square")
+	await _start_job()
+	var ids: Array = Game.job.remaining()
+	await _collect_spot(ids[0])
+	await _collect_spot(ids[1])
+	await _enter("door", "shop_building", "small_shop")
+	_check(Game.job == null, "leaving the plaza cancels the job")
+	_check_eq(Game.state.chips_balance, 0, "cancelled job pays nothing")
+	await _enter("door", "exit_shop", "village_square")
+
+	# Two full runs: 0 -> 20.
+	for run in 2:
+		await _start_job()
+		ids = Game.job.remaining()
+		# Pressing interact again and again on one spot does not pay.
+		await _collect_spot(ids[0])
+		for k in 5:
+			await _press("interact")
+		_check_eq(Game.job.collected.size(), 1, "repeated presses collect one spot only")
+		_check_eq(Game.state.chips_balance, run * 10, "no pay mid-run")
+		await _go_to("job_board", "job_board")
+		await _press("interact")
+		_check(main.dialogue.current_line().contains("1 / 5"), "board shows progress, pays nothing")
+		await _press("interact")
+		if run == 0:
+			await _shot("06_odd_job")
+		for n in range(1, ids.size()):
+			await _collect_spot(ids[n])
+		_check(Game.job == null, "run finished")
+		_check_eq(Game.state.chips_balance, (run + 1) * 10, "10 chips per completed run")
+	_check_eq(Game.state.jobs_completed, 2, "two runs counted")
+	_check_ledger()
+
+	# Back to the table.
+	await _enter("door", "card_room_building", "card_room")
+	await _go_to("poker_table", "poker_table")
+	Game.debug_deck_queue = [DECKS["win"]]
+	await _press("interact")
+	_check_eq(main.ui_mode, "poker", "can play again with 20 chips")
+	_check_eq(Game.state.chips_balance, 0, "stake taken")
+	main.poker.stand_button.pressed.emit()
+	await _frames(2)
+	_check_eq(Game.state.chips_balance, 40, "win returns the 40-chip pot")
 
 
 func _resume_a() -> void:
-	SaveSystem.delete(Game.save_path)
-	main.show_title()
-	await _frames(2)
-	main.title.new_game_button.pressed.emit()
-	await _frames(1)
-	main.title.name_edit.text = "재개"
-	main.title.start_button.pressed.emit()
-	await _wait_world("village_square")
-	# Go to the gathering before meeting anyone: Lumi introduces herself there.
-	await _enter("door", "card_room_building", "card_room")
-	await _talk("npc_lumi")
-	_check_eq(main.last_entry_id, "lumi_intro_cardroom", "alt order: Lumi introduces herself at the card room")
+	await _new_game("재개")
+	await _go_to("door", "card_room_building")
+	await _press("interact")
 	await _read_to_choices()
-	Game.debug_deck_queue = [DECKS["lose"]]
-	await _choose("start_poker")
-	_check_eq(main.ui_mode, "poker", "alt order: poker from Lumi's invitation")
-	main.poker.stand_button.pressed.emit()
-	await _frames(2)
-	_check_eq(Game.state.chips_balance, 60, "loss + bonus = 60")
-	main.poker.again_button.pressed.emit()
-	await _frames(2)
-	_check_eq(main.poker.match_ref.phase, PokerMatch.Phase.DRAW, "second hand in progress")
+	await _choose("wait_and_enter")
+	await _wait_world("card_room")
+	await _go_to("poker_table", "poker_table")
+	await _press("interact")
+	_check_eq(main.ui_mode, "poker", "hand in progress")
 	var saved := _saved()
-	_check_eq(int(saved.get("chips_balance", -1)), 60, "saved chips before abrupt quit")
-	_check_eq(int(saved.get("poker_hands_completed", -1)), 1, "unfinished hand not counted")
-	print("[e2e] quitting mid-hand without saving (simulated force close)")
+	_check_eq(int(saved.get("chips_balance", -1)), 80, "saved balance without the stake")
+	_check_eq(int(saved.get("pending_poker_stake", -1)), 20, "saved pending stake")
+	print("[e2e] quitting mid-hand without saving (simulated crash)")
 
 
 func _resume_b() -> void:
 	await _frames(2)
-	_check(not main.title.continue_button.disabled, "continue enabled")
 	main.title.continue_button.pressed.emit()
 	await _wait_world("card_room")
-	_check_eq(Game.state.chips_balance, 60, "chips restored after abrupt quit")
-	_check(Game.state.get_flag("first_poker_bonus_claimed"), "bonus flag restored")
-	_check_eq(Game.state.poker_hands_completed, 1, "hand count restored")
+	_check_eq(Game.state.chips_balance, 100, "interrupted hand refunded once")
+	_check_eq(Game.state.pending_poker_stake, 0, "nothing pending")
+	_check_eq(Game.state.chips_ledger.back()["reason"], "poker_void_refund", "refund in the ledger")
+	_check(main.hud.toast_text().contains("돌려받았어요"), "refund explained")
+	_check_eq(Game.state.time_of_day, "evening", "evening restored")
+	_check(main.world.npc_nodes.has("npc_lumi"), "Lumi in the card room after reload")
 	await _go_to("poker_table", "poker_table")
-	Game.debug_deck_queue = [DECKS["lose"]]
+	Game.debug_deck_queue = [DECKS["win"]]
 	await _press("interact")
-	_check_eq(main.ui_mode, "poker", "poker from the table")
 	main.poker.stand_button.pressed.emit()
 	await _frames(2)
-	_check_eq(int(main.poker.last_result["bonus"]), 0, "no duplicate bonus after resume")
-	_check_eq(Game.state.chips_balance, 80, "80 after second loss")
+	_check_eq(Game.state.chips_balance, 120, "win after resume")
 	main.poker.result_leave_button.pressed.emit()
 	await _frames(2)
 	await _enter("door", "exit_card_room", "village_square")
 	await _enter("door", "shop_building", "small_shop")
 	await _talk("npc_sera")
 	await _read_to_choices()
-	await _choose("open_shop")
-	main.shop.buy_buttons[LAMP].pressed.emit()
-	await _frames(1)
-	main.shop.close_button.pressed.emit()
-	await _frames(1)
-	_check_eq(Game.state.chips_balance, 30, "lamp bought")
-	await _enter("door", "exit_shop", "village_square")
-	await _enter("door", "home_building", "player_home")
-	await _go_to("home_edit", "home_decorate")
-	await _press("interact")
-	main.home_edit.item_buttons[LAMP].pressed.emit()
-	main.home_edit.slot_buttons["slot_table"].pressed.emit()
-	main.home_edit.confirm_button.pressed.emit()
-	await _frames(1)
-	main.home_edit.close_button.pressed.emit()
-	await _frames(1)
-	_check_eq(Game.state.placement_at("slot_table"), LAMP, "lamp on the table")
+	await _choose("dialogue")
+	await _read_to_choices()
+	await _choose("accept_quest")
 	await _press("menu")
 	main.menu.save_button.pressed.emit()
 	await _frames(1)
-	_check(main.menu._status.text.contains("저장했어요"), "menu save confirms")
+	_check(main.menu._status.text.contains("저장했어요"), "saved")
 
 
 func _resume_c() -> void:
 	await _frames(2)
 	main.title.continue_button.pressed.emit()
-	await _wait_world("player_home")
-	_check_eq(Game.state.chips_balance, 30, "chips after restart")
-	_check_eq(Game.state.placement_at("slot_table"), LAMP, "placement after restart")
-	_check_eq(Game.state.owned_count(LAMP), 0, "storage after restart")
-	await _enter("door", "exit_home", "village_square")
+	await _wait_world("small_shop")
+	_check_eq(QuestBook.state_of(Game.state, QUEST), "active", "quest restored as active")
+	_check_eq(Game.state.chips_balance, 120, "balance restored")
+	_check_eq(Game.state.chips_ledger.back()["reason"], "poker_payout_win", "no refund repeated")
+	await _enter("door", "exit_shop", "village_square")
+	_check(not main.world.npc_nodes.has("npc_lumi"), "evening: no Lumi in the plaza")
+	await _enter("door", "card_room_building", "card_room")
+	# First meeting comes first; the parcel is handed over when talking again.
 	await _talk("npc_lumi")
-	_check_eq(main.last_entry_id, "lumi_lamp_reaction", "Lumi reacts after restart")
+	_check_eq(main.last_entry_id, "lumi_intro_cardroom", "Lumi introduces herself first")
+	await _close_dialogue()
+	await _talk("npc_lumi")
+	_check_eq(main.last_entry_id, "lumi_quest_delivery", "deliver after restart")
+	await _read_to_choices()
+	await _choose("complete_quest")
+	_check_eq(Game.state.chips_balance, 150, "quest pays 30")
+	await _read_to_choices()
+	await _choose("close")
+	# reload inside the same process: no second reward
+	await _press("menu")
+	main.menu.title_button.pressed.emit()
+	await _frames(3)
+	main.title.continue_button.pressed.emit()
+	await _wait_world("card_room")
+	await _talk("npc_lumi")
+	_check(main.last_entry_id != "lumi_quest_delivery", "no delivery after reload")
+	_check_eq(Game.state.chips_balance, 150, "no duplicate quest reward after reload")
+	var quest_entries := 0
+	for e in Game.state.chips_ledger:
+		if str(e["reason"]).begins_with("quest:"):
+			quest_entries += 1
+	_check_eq(quest_entries, 1, "one quest payment in the ledger")
+
+
+func _migrate() -> void:
+	var v1 := {
+		"save_version": 1, "player_name": "옛날", "chips_balance": 60,
+		"chips_ledger": [{"seq": 1, "delta": 60, "reason": "poker_lose", "balance": 60}],
+		"flags": {"intro_met_lumi": true, "first_poker_bonus_claimed": true, "tutorial_done": true},
+		"poker_hands_completed": 1, "poker_record": {"win": 0, "draw": 0, "lose": 1},
+		"owned_items": {}, "collection": [], "home_placements": [],
+		"current_scene": "card_room", "player_position": [480, 560],
+	}
+	_write_save(JSON.stringify(v1))
+	main.show_title()
+	await _frames(2)
+	main.title.continue_button.pressed.emit()
+	await _wait_world("card_room")
+	_check_eq(Game.state.chips_balance, 60, "v1 balance kept, not reset to 100")
+	_check_eq(Game.state.time_of_day, "evening", "card room save becomes evening")
+	_check(main.world.npc_nodes.has("npc_lumi"), "Lumi present")
+	_check_eq(int(_saved().get("save_version", -1)), 2, "saved as v2")
 
 
 func _reject() -> void:
@@ -370,7 +450,7 @@ func _reject() -> void:
 	main.title.continue_button.pressed.emit()
 	await _frames(2)
 	_check_eq(main.ui_mode, "title", "newer save: stays on title")
-	_check(main.title._message.text.contains("새로운 버전"), "newer save: message shown (%s)" % main.title._message.text)
+	_check(main.title._message.text.contains("새로운 버전"), "newer save: message shown")
 	_check_eq(FileAccess.get_file_as_string(Game.save_path), future, "newer save: file untouched")
 	_write_save("{ broken")
 	main.title.continue_button.pressed.emit()
@@ -385,10 +465,35 @@ func _reject() -> void:
 	main.title.start_button.pressed.emit()
 	await _wait_world("village_square")
 	_check_eq(Game.state.player_name, Game.DEFAULT_PLAYER_NAME, "empty name uses the default")
-	_check_eq(int(_saved().get("save_version", -1)), GameState.SAVE_VERSION, "fresh save written")
+	_check_eq(Game.state.chips_balance, 100, "new game gets 100 chips")
 
 
 # --- helpers ---------------------------------------------------------------------
+
+func _new_game(player_name: String) -> void:
+	SaveSystem.delete(Game.save_path)
+	main.show_title()
+	await _frames(3)
+	main.title.new_game_button.pressed.emit()
+	await _frames(1)
+	main.title.name_edit.text = player_name
+	main.title.start_button.pressed.emit()
+	await _wait_world("village_square")
+
+
+func _start_job() -> void:
+	await _go_to("job_board", "job_board")
+	await _press("interact")
+	await _read_to_choices()
+	await _choose("start_job")
+	_check(Game.job != null, "job started")
+	await _physics(2)
+
+
+func _collect_spot(spot_id: String) -> void:
+	await _go_to("job_pickup", spot_id)
+	await _press("interact")
+
 
 func _frames(n: int) -> void:
 	for i in n:
@@ -424,12 +529,14 @@ func _approach(target: Dictionary) -> Vector2:
 			return pos + Vector2(0, 40)
 		"door":
 			return pos + (Vector2(0, -30) if main.world.loc.get("interior", false) else Vector2(0, 30))
-		"sign":
+		"sign", "job_board":
 			return pos + Vector2(0, 30)
+		"job_pickup":
+			return pos
 	return pos + Vector2(0, 8)
 
 
-## Places the player next to a target (walking there is covered by the movement checks) and
+## Places the player next to a target (walking is covered by the movement checks) and
 ## verifies the world focuses it through its normal proximity logic.
 func _go_to(kind: String, id: String) -> void:
 	var target: Dictionary = main.world.find_interactable(kind, id)
@@ -477,6 +584,8 @@ func _enter(kind: String, id: String, expected_location: String) -> void:
 
 
 func _wait_world(location: String) -> void:
+	# Wait for any transition to start and finish.
+	await _frames(2)
 	for i in 240:
 		if main.ui_mode == "world" and main.world != null and main.world.location_id == location:
 			await _physics(2)
