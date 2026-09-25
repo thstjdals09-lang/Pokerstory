@@ -4,7 +4,10 @@ extends Node3D
 ## around it, props filling the space, paths to every door, trees and fences framing the edges).
 ## The same buildings, doors and gates as the game data (locations.json) keep their links; only the
 ## 3D placement differs. Metres; the camera looks from +Z. Run with run_diorama.bat (Forward+).
-## Keys: WASD / arrows walk, T day <-> evening, Esc quit.
+## Keys: WASD / arrows walk, T day <-> evening, F1 edit mode, Esc quit.
+## Edit mode (F1): sliders for the camera and the selected building. Click a building to select it,
+## drag it on the ground, Q / E turn it; mouse wheel zooms, right-drag orbits, middle-drag pans.
+## "저장" writes diorama/layout.json, which is loaded on the next start.
 ## Screenshot mode: -- --shot=<png> [--evening] quits after saving one frame.
 
 const PX := 0.01
@@ -25,6 +28,21 @@ var _hud_icon: TextureRect
 var _prompt: Control
 var _lumi: Node3D
 var _shot := ""
+const LAYOUT_FILE := "res://diorama/layout.json"
+## Editable camera (edit mode sliders; saved to layout.json).
+var cam := {"dist": 40.0, "pitch": 42.0, "fov": 15.5, "yaw": 0.0, "cx": 0.3, "cz": -1.5, "lean": 0.3}
+var _buildings: Array = []
+var _building_roots: Array = []
+var _pave_root: Node3D
+var _pave_dirty := 0.0
+var _edit := false
+var _edit_panel: PanelContainer
+var _sel := 0
+var _sel_label: Label
+var _sliders := {}
+var _dragging := ""
+var _drag_from := Vector2.ZERO
+var _sel_ring: MeshInstance3D
 
 
 func _ready() -> void:
@@ -33,15 +51,20 @@ func _ready() -> void:
 			_shot = a.get_slice("=", 1)
 		if a == "--evening":
 			_evening = true
+	_buildings = BUILDINGS.duplicate(true)
+	_load_layout()
 	_build_world_env()
 	_build_ground()
-	for b in BUILDINGS:
-		_build_building(b)
+	for i in _buildings.size():
+		_building_roots.append(_build_building(_buildings[i]))
 	_build_decor()
 	_build_people()
 	_build_camera()
 	_build_hud()
+	_build_editor()
 	_apply_time()
+	if "--edit" in OS.get_cmdline_user_args():
+		_set_edit(true)
 	if _shot != "":
 		_take_shot.call_deferred()
 
@@ -191,6 +214,7 @@ func _apply_time() -> void:
 		_env.ambient_light_energy = 0.45
 		_env.glow_intensity = 0.3
 		_env.tonemap_exposure = 0.82
+	_night_lights = _night_lights.filter(func(l): return is_instance_valid(l))
 	for l in _night_lights:
 		l.visible = _evening
 	for g in _glows:
@@ -202,13 +226,13 @@ func _apply_time() -> void:
 func _build_camera() -> void:
 	_cam = Camera3D.new()
 	# A long lens from far away: little size difference front to back, steady verticals.
-	_cam.fov = 15.5
+	_cam.fov = cam["fov"]
 	var attrs := CameraAttributesPractical.new()
 	attrs.dof_blur_far_enabled = true
-	attrs.dof_blur_far_distance = CAM_DIST + 6.0
+	attrs.dof_blur_far_distance = float(cam["dist"]) + 6.0
 	attrs.dof_blur_far_transition = 6.0
 	attrs.dof_blur_near_enabled = true
-	attrs.dof_blur_near_distance = CAM_DIST - 5.0
+	attrs.dof_blur_near_distance = float(cam["dist"]) - 5.0
 	attrs.dof_blur_near_transition = 4.0
 	attrs.dof_blur_amount = 0.07
 	_cam.attributes = attrs
@@ -217,19 +241,18 @@ func _build_camera() -> void:
 	_follow(1.0)
 
 
-const CAM_DIST := 40.0
-const CAM_PITCH := deg_to_rad(42.0)
-## The frame stays on the square; it leans a little toward the player.
-const CAM_CENTRE := Vector3(0.3, 0, -1.5)
-
-
 func _follow(weight: float) -> void:
-	var lean := (_player.position - CAM_CENTRE) * 0.3
+	var centre := Vector3(cam["cx"], 0, cam["cz"])
+	var lean := (_player.position - centre) * float(cam["lean"])
 	lean.x = clampf(lean.x, -1.6, 1.6)
 	lean.z = clampf(lean.z, -1.0, 1.2)
 	lean.y = 0.0
-	var focus := CAM_CENTRE + lean
-	var back := Vector3(0, sin(CAM_PITCH), cos(CAM_PITCH)) * CAM_DIST
+	var focus := centre + lean
+	var pitch := deg_to_rad(float(cam["pitch"]))
+	var back := Vector3(0, sin(pitch), cos(pitch)).rotated(Vector3.UP, deg_to_rad(float(cam["yaw"]))) * float(cam["dist"])
+	_cam.fov = cam["fov"]
+	_cam.attributes.dof_blur_far_distance = float(cam["dist"]) + 6.0
+	_cam.attributes.dof_blur_near_distance = float(cam["dist"]) - 5.0
 	_cam.position = _cam.position.lerp(focus + back, weight)
 	_cam.look_at(_cam.position - back, Vector3.UP)
 
@@ -240,7 +263,7 @@ func _paved(c: Vector2) -> bool:
 	if c.length() < PLAZA_R:
 		return true
 	var ends: Array = [GATE_AT + Vector2(0, 4.0), Vector2(0.6, 9.0)]
-	for b in BUILDINGS:
+	for b in _buildings:
 		ends.append(_door_world(b))
 	for e in ends:
 		if Geometry2D.get_closest_point_to_segment(c, Vector2.ZERO, e).distance_to(c) < 0.8:
@@ -249,7 +272,7 @@ func _paved(c: Vector2) -> bool:
 
 
 func _in_building(c: Vector2, pad: float = 0.0) -> bool:
-	for b in BUILDINGS:
+	for b in _buildings:
 		var rot: float = b["rot"]
 		var rel: Vector2 = c - Vector2(b["at"])
 		var local := Vector2(rel.x * cos(rot) - rel.y * sin(rot), rel.x * sin(rot) + rel.y * cos(rot))
@@ -288,6 +311,15 @@ func _build_ground() -> void:
 	_solid_box(Vector3(0, 1, 7.6), Vector3(24, 2, 1))
 	_solid_box(Vector3(-9.6, 1, 0), Vector3(1, 2, 20))
 	_solid_box(Vector3(9.6, 1, 0), Vector3(1, 2, 20))
+	_build_paving()
+
+
+## Paving and lawn tufts follow the buildings' doors; rebuilt after a building moves.
+func _build_paving() -> void:
+	if _pave_root != null:
+		_pave_root.queue_free()
+	_pave_root = Node3D.new()
+	add_child(_pave_root)
 	# Paving: rings around the fountain, then laid stones out to the doors and the gate.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
@@ -333,7 +365,7 @@ func _build_ground() -> void:
 		mm.set_instance_color(i, sand[rng.randi() % sand.size()])
 	var mmi := MultiMeshInstance3D.new()
 	mmi.multimesh = mm
-	add_child(mmi)
+	_pave_root.add_child(mmi)
 	# Mortar under the stones.
 	var mortar := MultiMesh.new()
 	mortar.transform_format = MultiMesh.TRANSFORM_3D
@@ -352,7 +384,7 @@ func _build_ground() -> void:
 		mortar.set_instance_transform(i, Transform3D(Basis(), Vector3(cells[i].x, 0.004, cells[i].y)))
 	var mo := MultiMeshInstance3D.new()
 	mo.multimesh = mortar
-	add_child(mo)
+	_pave_root.add_child(mo)
 	_scatter_grass(rng)
 
 
@@ -381,7 +413,7 @@ func _scatter_grass(rng: RandomNumberGenerator) -> void:
 		tuft.set_instance_color(i, Color("#557a2e").lerp(Color("#9dba55"), rng.randf()))
 	var ti := MultiMeshInstance3D.new()
 	ti.multimesh = tuft
-	add_child(ti)
+	_pave_root.add_child(ti)
 
 
 # --- buildings -----------------------------------------------------------------------------------
@@ -413,7 +445,7 @@ func _door_world(b: Dictionary) -> Vector2:
 	return Vector2(b["at"]) + Vector2(local.x * cos(rot) + local.y * sin(rot), -local.x * sin(rot) + local.y * cos(rot))
 
 
-func _build_building(b: Dictionary) -> void:
+func _build_building(b: Dictionary) -> Node3D:
 	var st: Dictionary = STYLES.get(b["id"], STYLES["home_building"])
 	var w: float = b["w"]
 	var d: float = b["d"]
@@ -429,7 +461,8 @@ func _build_building(b: Dictionary) -> void:
 	body.add_child(bcs)
 	body.position = Vector3(0, 1, 0)
 	root.add_child(body)
-	var h: float = st["h"]
+	var h: float = float(b.get("h", st["h"]))
+	body.set_meta("building", b["id"])
 	var wall := _mat(Color(st["wall"]))
 	var trim := _mat(Color(st["trim"]))
 	var stone := _mat(Color("#a79a88"))
@@ -495,6 +528,8 @@ func _build_building(b: Dictionary) -> void:
 			_box(root, Vector3(0.15, 0.03, 0.02), Vector3(dx + 0.07, 0.35 + h + 0.45, d / 2.0 + 0.16), trim)
 			for bx in [-0.75, 0.75]:
 				_box(root, Vector3(0.3, 0.8, 0.03), Vector3(dx + bx, 0.35 + h * 0.4, d / 2.0 + 0.09), _mat(Color("#6a4a8e")))
+
+	return root
 
 
 ## A club: three balls and a stem, facing the camera.
@@ -892,7 +927,7 @@ func _build_hud() -> void:
 	_prompt.position = Vector2(640 - 90, 640)
 	_prompt.visible = false
 	layer.add_child(_prompt)
-	var hint := UiKit.label("3D 시안 · WASD 이동 · T 낮/저녁 · Esc 종료", 14, Color(1, 1, 1, 0.85))
+	var hint := UiKit.label("3D 시안 · WASD 이동 · T 낮/저녁 · F1 편집 · Esc 종료", 14, Color(1, 1, 1, 0.85))
 	hint.position = Vector2(16, 690)
 	layer.add_child(hint)
 	_apply_time()
@@ -913,14 +948,22 @@ func _physics_process(delta: float) -> void:
 		_player_body.position.y = 0.0
 	for b in _bobbers:
 		b[0].position.y = b[1] + sin(_t * b[2]) * b[3]
-	_follow(clampf(delta * 5.0, 0.0, 1.0))
+	_follow(1.0 if _edit else clampf(delta * 5.0, 0.0, 1.0))
+	if _pave_dirty > 0.0:
+		_pave_dirty -= delta
+		if _pave_dirty <= 0.0:
+			_build_paving()
 	if _lumi != null:
 		_prompt.visible = _player.position.distance_to(_lumi.position) < 1.3
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _edit:
+		_edit_input(event)
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_T:
+		if event.keycode == KEY_F1:
+			_set_edit(not _edit)
+		elif event.keycode == KEY_T:
 			_evening = not _evening
 			_apply_time()
 		elif event.keycode == KEY_ESCAPE:
@@ -934,3 +977,252 @@ func _take_shot() -> void:
 	get_viewport().get_texture().get_image().save_png(_shot)
 	print("[diorama] screenshot ", _shot)
 	get_tree().quit()
+
+
+# --- edit mode -----------------------------------------------------------------------------------
+
+const BUILDING_NAMES := {"home_building": "내 집", "shop_building": "잡화점", "card_room_building": "카드룸", "community_hall_building": "마을 회관"}
+
+
+func _load_layout() -> void:
+	if not FileAccess.file_exists(LAYOUT_FILE):
+		return
+	var data = JSON.parse_string(FileAccess.get_file_as_string(LAYOUT_FILE))
+	if not data is Dictionary:
+		return
+	for k in data.get("camera", {}):
+		if cam.has(k):
+			cam[k] = float(data["camera"][k])
+	for saved in data.get("buildings", []):
+		for b in _buildings:
+			if b["id"] == saved.get("id", ""):
+				b["at"] = Vector2(float(saved["at"][0]), float(saved["at"][1]))
+				b["rot"] = deg_to_rad(float(saved["rot_deg"]))
+				for k in ["w", "d", "h", "door"]:
+					if saved.has(k):
+						b[k] = float(saved[k])
+
+
+func _save_layout() -> void:
+	var out := {"camera": cam.duplicate(), "buildings": []}
+	for b in _buildings:
+		out["buildings"].append({"id": b["id"], "at": [snappedf(b["at"].x, 0.01), snappedf(b["at"].y, 0.01)],
+			"rot_deg": snappedf(rad_to_deg(b["rot"]), 0.1), "w": snappedf(b["w"], 0.01), "d": snappedf(b["d"], 0.01),
+			"h": snappedf(float(b.get("h", STYLES[b["id"]]["h"])), 0.01), "door": b["door"]})
+	var f := FileAccess.open(LAYOUT_FILE, FileAccess.WRITE)
+	if f == null:
+		_sel_label.text = "저장 실패: " + LAYOUT_FILE
+		return
+	f.store_string(JSON.stringify(out, "  "))
+	f.close()
+	_sel_label.text = "저장됨: diorama/layout.json"
+
+
+func _reset_layout() -> void:
+	cam = {"dist": 40.0, "pitch": 42.0, "fov": 15.5, "yaw": 0.0, "cx": 0.3, "cz": -1.5, "lean": 0.3}
+	_buildings = BUILDINGS.duplicate(true)
+	for i in _buildings.size():
+		_rebuild_building(i)
+	_pave_dirty = 0.05
+	_sync_sliders()
+
+
+func _build_editor() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 5
+	add_child(layer)
+	_edit_panel = UiKit.panel(UiKit.PAPER, 12)
+	_edit_panel.position = Vector2(1280 - 356, 64)
+	_edit_panel.custom_minimum_size = Vector2(340, 0)
+	_edit_panel.visible = false
+	layer.add_child(_edit_panel)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 2)
+	_edit_panel.add_child(col)
+	col.add_child(UiKit.label("카메라", 17, UiKit.ACCENT))
+	_slider_row(col, "cam.dist", "거리", 15, 80, 0.5)
+	_slider_row(col, "cam.fov", "줌 (화각)", 6, 60, 0.5)
+	_slider_row(col, "cam.pitch", "내려다보는 각도", 15, 85, 1)
+	_slider_row(col, "cam.yaw", "좌우 회전", -60, 60, 1)
+	_slider_row(col, "cam.cx", "중심 X", -8, 8, 0.1)
+	_slider_row(col, "cam.cz", "중심 Z", -8, 8, 0.1)
+	_slider_row(col, "cam.lean", "따라가기", 0, 1, 0.05)
+	var head := HBoxContainer.new()
+	col.add_child(head)
+	var prev := UiKit.button("◀", 40, false)
+	prev.pressed.connect(func(): _select((_sel + _buildings.size() - 1) % _buildings.size()))
+	var next := UiKit.button("▶", 40, false)
+	next.pressed.connect(func(): _select((_sel + 1) % _buildings.size()))
+	_sel_label = UiKit.label("", 17, UiKit.ACCENT)
+	_sel_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(prev)
+	head.add_child(_sel_label)
+	head.add_child(next)
+	_slider_row(col, "b.x", "위치 X", -12, 12, 0.05)
+	_slider_row(col, "b.z", "위치 Z", -12, 12, 0.05)
+	_slider_row(col, "b.rot", "방향 (도)", -180, 180, 1)
+	_slider_row(col, "b.w", "폭", 1.5, 8, 0.05)
+	_slider_row(col, "b.d", "깊이", 1.5, 8, 0.05)
+	_slider_row(col, "b.h", "벽 높이", 1.2, 5, 0.05)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	col.add_child(row)
+	var save := UiKit.button("저장", 90, false)
+	save.pressed.connect(_save_layout)
+	var reset := UiKit.button("처음 값", 90, false)
+	reset.pressed.connect(_reset_layout)
+	row.add_child(save)
+	row.add_child(reset)
+	col.add_child(UiKit.wrap_label("건물 클릭: 선택 · 드래그: 이동 · Q/E: 회전\n휠: 줌 · 오른쪽 드래그: 회전 · 가운데 드래그: 이동 · F1: 닫기", 13, UiKit.MUTED))
+	_sel_ring = MeshInstance3D.new()
+	var torus := TorusMesh.new()
+	torus.inner_radius = 0.95
+	torus.outer_radius = 1.0
+	_sel_ring.mesh = torus
+	var rm := _mat(Color("#ffd23f"), 0.3)
+	rm.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_sel_ring.material_override = rm
+	_sel_ring.visible = false
+	add_child(_sel_ring)
+	_select(0)
+
+
+func _slider_row(parent: Control, key: String, label: String, lo: float, hi: float, step: float) -> void:
+	var row := HBoxContainer.new()
+	parent.add_child(row)
+	var l := UiKit.label(label, 14)
+	l.custom_minimum_size = Vector2(104, 0)
+	row.add_child(l)
+	var sl := HSlider.new()
+	sl.min_value = lo
+	sl.max_value = hi
+	sl.step = step
+	sl.custom_minimum_size = Vector2(120, 22)
+	sl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sl.focus_mode = Control.FOCUS_NONE
+	row.add_child(sl)
+	var val := UiKit.label("", 13, UiKit.MUTED)
+	val.custom_minimum_size = Vector2(46, 0)
+	row.add_child(val)
+	_sliders[key] = [sl, val]
+	sl.value_changed.connect(func(v: float): _on_slider(key, v))
+
+
+func _on_slider(key: String, v: float) -> void:
+	_sliders[key][1].text = str(snappedf(v, 0.01))
+	if key.begins_with("cam."):
+		cam[key.substr(4)] = v
+		return
+	var b: Dictionary = _buildings[_sel]
+	match key:
+		"b.x":
+			b["at"] = Vector2(v, b["at"].y)
+		"b.z":
+			b["at"] = Vector2(b["at"].x, v)
+		"b.rot":
+			b["rot"] = deg_to_rad(v)
+		"b.w", "b.d", "b.h":
+			b[key.substr(2)] = v
+	_rebuild_building(_sel)
+	_pave_dirty = 0.35
+
+
+func _sync_sliders() -> void:
+	for k in cam:
+		if _sliders.has("cam." + k):
+			_sliders["cam." + k][0].set_value_no_signal(cam[k])
+			_sliders["cam." + k][1].text = str(snappedf(cam[k], 0.01))
+	var b: Dictionary = _buildings[_sel]
+	var vals := {"b.x": b["at"].x, "b.z": b["at"].y, "b.rot": rad_to_deg(b["rot"]), "b.w": b["w"], "b.d": b["d"],
+		"b.h": float(b.get("h", STYLES[b["id"]]["h"]))}
+	for k in vals:
+		_sliders[k][0].set_value_no_signal(vals[k])
+		_sliders[k][1].text = str(snappedf(vals[k], 0.01))
+	_sel_label.text = BUILDING_NAMES.get(b["id"], b["id"])
+	_sel_ring.position = Vector3(b["at"].x, 0.05, b["at"].y)
+	var r := maxf(float(b["w"]), float(b["d"])) * 0.62
+	_sel_ring.scale = Vector3(r, 1, r)
+
+
+func _select(i: int) -> void:
+	_sel = i
+	_sync_sliders()
+
+
+func _rebuild_building(i: int) -> void:
+	if i < _building_roots.size() and is_instance_valid(_building_roots[i]):
+		_building_roots[i].queue_free()
+	var root := _build_building(_buildings[i])
+	if i < _building_roots.size():
+		_building_roots[i] = root
+	else:
+		_building_roots.append(root)
+	_night_lights = _night_lights.filter(func(l): return is_instance_valid(l) and not l.is_queued_for_deletion())
+	_apply_time()
+	if i == _sel:
+		_sync_sliders()
+
+
+func _set_edit(on: bool) -> void:
+	_edit = on
+	_edit_panel.visible = on
+	_sel_ring.visible = on
+	_sync_sliders()
+
+
+func _ground_point(screen: Vector2) -> Variant:
+	return Plane(Vector3.UP, 0.0).intersects_ray(_cam.project_ray_origin(screen), _cam.project_ray_normal(screen))
+
+
+func _edit_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mb := event as InputEventMouseButton
+		if mb.pressed and mb.button_index == MOUSE_BUTTON_WHEEL_UP:
+			cam["fov"] = clampf(float(cam["fov"]) - 0.8, 6.0, 60.0)
+			_sync_sliders()
+		elif mb.pressed and mb.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			cam["fov"] = clampf(float(cam["fov"]) + 0.8, 6.0, 60.0)
+			_sync_sliders()
+		elif mb.button_index == MOUSE_BUTTON_LEFT:
+			if mb.pressed:
+				var from := _cam.project_ray_origin(mb.position)
+				var q := PhysicsRayQueryParameters3D.create(from, from + _cam.project_ray_normal(mb.position) * 200.0)
+				var hit := get_world_3d().direct_space_state.intersect_ray(q)
+				if not hit.is_empty() and hit["collider"].has_meta("building"):
+					for i in _buildings.size():
+						if _buildings[i]["id"] == hit["collider"].get_meta("building"):
+							_select(i)
+					_dragging = "building"
+			else:
+				_dragging = ""
+		elif mb.button_index == MOUSE_BUTTON_RIGHT:
+			_dragging = "orbit" if mb.pressed else ""
+			_drag_from = mb.position
+		elif mb.button_index == MOUSE_BUTTON_MIDDLE:
+			_dragging = "pan" if mb.pressed else ""
+			_drag_from = mb.position
+	elif event is InputEventMouseMotion:
+		var mm := event as InputEventMouseMotion
+		match _dragging:
+			"building":
+				var p = _ground_point(mm.position)
+				if p != null:
+					_buildings[_sel]["at"] = Vector2(snappedf(p.x, 0.05), snappedf(p.z, 0.05))
+					_rebuild_building(_sel)
+					_pave_dirty = 0.35
+			"orbit":
+				cam["yaw"] = clampf(float(cam["yaw"]) - mm.relative.x * 0.25, -60.0, 60.0)
+				cam["pitch"] = clampf(float(cam["pitch"]) + mm.relative.y * 0.2, 15.0, 85.0)
+				_sync_sliders()
+			"pan":
+				var k := float(cam["dist"]) * tan(deg_to_rad(float(cam["fov"]) / 2.0)) / 360.0
+				var yaw := deg_to_rad(float(cam["yaw"]))
+				var d := Vector2(-mm.relative.x, -mm.relative.y) * k * 2.0
+				cam["cx"] = clampf(float(cam["cx"]) + d.x * cos(yaw) + d.y * sin(yaw), -8.0, 8.0)
+				cam["cz"] = clampf(float(cam["cz"]) - d.x * sin(yaw) + d.y * cos(yaw), -8.0, 8.0)
+				_sync_sliders()
+	elif event is InputEventKey and event.pressed:
+		if event.keycode == KEY_Q or event.keycode == KEY_E:
+			_buildings[_sel]["rot"] += deg_to_rad(5.0 if event.keycode == KEY_Q else -5.0)
+			_rebuild_building(_sel)
+			_pave_dirty = 0.35
