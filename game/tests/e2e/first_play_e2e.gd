@@ -386,7 +386,7 @@ func _migrate() -> void:
 	await _wait_world("card_room")
 	_check_eq(Game.state.chips_balance, 60, "v1 balance kept (not reset to 40)")
 	_check_eq(Game.state.time_of_day, "evening", "card room save becomes evening")
-	_check_eq(int(_saved().get("save_version", -1)), 3, "saved as v3")
+	_check_eq(int(_saved().get("save_version", -1)), GameState.SAVE_VERSION, "saved as current version")
 
 	# v2 from the previous build: stake paid, cards never saved.
 	var v2 := {
@@ -413,7 +413,7 @@ func _migrate() -> void:
 	_check_eq(Game.state.chips_balance, 80, "no refund and no second charge")
 	_check_eq(_ledger_count("poker_stake"), 1, "still one stake")
 	_check(not (_saved().get("poker_in_progress", {}) as Dictionary).is_empty(), "the new hand is saved at once")
-	_check_eq(int(_saved().get("save_version", -1)), 3, "rewritten as v3 at once")
+	_check_eq(int(_saved().get("save_version", -1)), GameState.SAVE_VERSION, "rewritten as current version at once")
 	var first_hand := _codes(main.poker.match_ref.player_hand)
 	# Loading the same save again must resume that hand, not deal another (R2).
 	for attempt in 2:

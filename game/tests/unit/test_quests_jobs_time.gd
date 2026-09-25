@@ -52,7 +52,7 @@ func test_job_pays_only_after_every_spot() -> void:
 	check_eq(s.chips_balance, 10, "paid 10")
 	check(not run.collect(s, ids[0])["ok"], "finished run pays nothing more")
 	check_eq(s.chips_ledger.size(), 1, "one ledger entry")
-	check_eq(s.chips_ledger[0]["reason"], "job:job.plaza_cleanup", "ledger reason")
+	check_eq(s.chips_ledger[0]["reason"], "job:job.plaza_cleanup:1", "ledger reason (run number keeps each run distinct)")
 
 
 func test_job_is_repeatable_from_zero_chips() -> void:
@@ -120,7 +120,7 @@ func test_v1_save_migrates_without_touching_chips() -> void:
 	check_eq(s.quests, {}, "no quests yet")
 	check_eq(s.pending_poker_stake, 0, "nothing pending")
 	check_eq(s.poker_in_progress, {}, "no saved hand")
-	check_eq(s.to_dict()["save_version"], 3, "written back as v3")
+	check_eq(s.to_dict()["save_version"], GameState.SAVE_VERSION, "written back as current version")
 	SaveSystem.delete(PATH)
 
 

@@ -1,13 +1,788 @@
 {
-  "items": [
-    {
-      "id": "furniture.lamp_small",
-      "name": "작은 등불",
-      "category": "furniture",
-      "price": 50,
-      "placeable": true,
-      "description": "마법 불씨로 켜는 작은 등불. 갓에 스페이드 문양이 새겨져 있다.",
-      "placeholder": { "shape": "lamp", "color": "#ffd27a" }
-    }
-  ]
+ "_comment": "Legacy lamp keeps its id (C3). Catalog of 64 from 04_life/06_ITEM_CATALOG_64; mementos only from events.",
+ "legacy_id_map": {
+  "item.furniture.small_lamp": "furniture.lamp_small"
+ },
+ "items": [
+  {
+   "id": "furniture.lamp_small",
+   "name": "작은 등불",
+   "category": "furniture",
+   "price": 50,
+   "placeable": true,
+   "description": "마법 불씨로 켜는 작은 등불. 갓에 스페이드 문양이 새겨져 있다.",
+   "placeholder": {
+    "shape": "lamp",
+    "color": "#ffd27a"
+   }
+  },
+  {
+   "id": "item.furniture.01_01",
+   "name": "낡은 원목 스툴 · 1번 문양",
+   "category": "furniture",
+   "price": 20,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.furniture.01_02",
+   "name": "하트 쿠션 · 1번 문양",
+   "category": "furniture",
+   "price": 30,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.decor.01_03",
+   "name": "네잎 벽걸이 · 1번 문양",
+   "category": "decor",
+   "price": 25,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.decor.01_04",
+   "name": "등불 꽃병 · 1번 문양",
+   "category": "decor",
+   "price": 35,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.clothing.01_05",
+   "name": "밤산책 외투 · 1번 문양",
+   "category": "clothing",
+   "price": 45,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.card_back.01_06",
+   "name": "별무늬 카드 뒷면 · 1번 문양",
+   "category": "card_back",
+   "price": 40,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.chip_style.01_07",
+   "name": "조약돌 칩 장식 · 1번 문양",
+   "category": "chip_style",
+   "price": 40,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.memento.01_08",
+   "name": "옛날 축제 우표 · 1번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "숲길 안내판에서 찾은 옛 문양 기록.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#e07a5f"
+   }
+  },
+  {
+   "id": "item.furniture.02_01",
+   "name": "낡은 원목 스툴 · 2번 문양",
+   "category": "furniture",
+   "price": 25,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.furniture.02_02",
+   "name": "하트 쿠션 · 2번 문양",
+   "category": "furniture",
+   "price": 35,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.decor.02_03",
+   "name": "네잎 벽걸이 · 2번 문양",
+   "category": "decor",
+   "price": 30,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.decor.02_04",
+   "name": "등불 꽃병 · 2번 문양",
+   "category": "decor",
+   "price": 40,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.clothing.02_05",
+   "name": "밤산책 외투 · 2번 문양",
+   "category": "clothing",
+   "price": 50,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.card_back.02_06",
+   "name": "별무늬 카드 뒷면 · 2번 문양",
+   "category": "card_back",
+   "price": 45,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.chip_style.02_07",
+   "name": "조약돌 칩 장식 · 2번 문양",
+   "category": "chip_style",
+   "price": 45,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.memento.02_08",
+   "name": "옛날 축제 우표 · 2번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "카드룸 게시판에 '모두 환영'을 적은 날의 기념 우표.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#f2cc8f"
+   }
+  },
+  {
+   "id": "item.furniture.03_01",
+   "name": "낡은 원목 스툴 · 3번 문양",
+   "category": "furniture",
+   "price": 30,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.furniture.03_02",
+   "name": "하트 쿠션 · 3번 문양",
+   "category": "furniture",
+   "price": 40,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.decor.03_03",
+   "name": "네잎 벽걸이 · 3번 문양",
+   "category": "decor",
+   "price": 35,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.decor.03_04",
+   "name": "등불 꽃병 · 3번 문양",
+   "category": "decor",
+   "price": 45,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.clothing.03_05",
+   "name": "밤산책 외투 · 3번 문양",
+   "category": "clothing",
+   "price": 55,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.card_back.03_06",
+   "name": "별무늬 카드 뒷면 · 3번 문양",
+   "category": "card_back",
+   "price": 50,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.chip_style.03_07",
+   "name": "조약돌 칩 장식 · 3번 문양",
+   "category": "chip_style",
+   "price": 50,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.memento.03_08",
+   "name": "옛날 축제 우표 · 3번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "두 테이블이 함께 놓인 날의 기념 우표.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#81b29a"
+   }
+  },
+  {
+   "id": "item.furniture.04_01",
+   "name": "낡은 원목 스툴 · 4번 문양",
+   "category": "furniture",
+   "price": 35,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.furniture.04_02",
+   "name": "하트 쿠션 · 4번 문양",
+   "category": "furniture",
+   "price": 45,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.decor.04_03",
+   "name": "네잎 벽걸이 · 4번 문양",
+   "category": "decor",
+   "price": 40,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.decor.04_04",
+   "name": "등불 꽃병 · 4번 문양",
+   "category": "decor",
+   "price": 50,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.clothing.04_05",
+   "name": "밤산책 외투 · 4번 문양",
+   "category": "clothing",
+   "price": 60,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.card_back.04_06",
+   "name": "별무늬 카드 뒷면 · 4번 문양",
+   "category": "card_back",
+   "price": 55,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.chip_style.04_07",
+   "name": "조약돌 칩 장식 · 4번 문양",
+   "category": "chip_style",
+   "price": 55,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.memento.04_08",
+   "name": "옛날 축제 우표 · 4번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "축제 준비를 도운 사람에게 주는 우표.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#3d8bb4"
+   }
+  },
+  {
+   "id": "item.furniture.05_01",
+   "name": "낡은 원목 스툴 · 5번 문양",
+   "category": "furniture",
+   "price": 40,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.furniture.05_02",
+   "name": "하트 쿠션 · 5번 문양",
+   "category": "furniture",
+   "price": 50,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.decor.05_03",
+   "name": "네잎 벽걸이 · 5번 문양",
+   "category": "decor",
+   "price": 45,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.decor.05_04",
+   "name": "등불 꽃병 · 5번 문양",
+   "category": "decor",
+   "price": 55,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.clothing.05_05",
+   "name": "밤산책 외투 · 5번 문양",
+   "category": "clothing",
+   "price": 65,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.card_back.05_06",
+   "name": "별무늬 카드 뒷면 · 5번 문양",
+   "category": "card_back",
+   "price": 60,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.chip_style.05_07",
+   "name": "조약돌 칩 장식 · 5번 문양",
+   "category": "chip_style",
+   "price": 60,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.memento.05_08",
+   "name": "옛날 축제 우표 · 5번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "광장 벤치가 생긴 날의 기념 우표.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#9b72cf"
+   }
+  },
+  {
+   "id": "item.furniture.06_01",
+   "name": "낡은 원목 스툴 · 6번 문양",
+   "category": "furniture",
+   "price": 45,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.furniture.06_02",
+   "name": "하트 쿠션 · 6번 문양",
+   "category": "furniture",
+   "price": 55,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.decor.06_03",
+   "name": "네잎 벽걸이 · 6번 문양",
+   "category": "decor",
+   "price": 50,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.decor.06_04",
+   "name": "등불 꽃병 · 6번 문양",
+   "category": "decor",
+   "price": 60,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.clothing.06_05",
+   "name": "밤산책 외투 · 6번 문양",
+   "category": "clothing",
+   "price": 70,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.card_back.06_06",
+   "name": "별무늬 카드 뒷면 · 6번 문양",
+   "category": "card_back",
+   "price": 65,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.chip_style.06_07",
+   "name": "조약돌 칩 장식 · 6번 문양",
+   "category": "chip_style",
+   "price": 65,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.memento.06_08",
+   "name": "옛날 축제 우표 · 6번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "첫 네잎 저녁제의 기념 우표.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#e8a0bf"
+   }
+  },
+  {
+   "id": "item.furniture.07_01",
+   "name": "낡은 원목 스툴 · 7번 문양",
+   "category": "furniture",
+   "price": 50,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.furniture.07_02",
+   "name": "하트 쿠션 · 7번 문양",
+   "category": "furniture",
+   "price": 60,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.decor.07_03",
+   "name": "네잎 벽걸이 · 7번 문양",
+   "category": "decor",
+   "price": 55,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.decor.07_04",
+   "name": "등불 꽃병 · 7번 문양",
+   "category": "decor",
+   "price": 65,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.clothing.07_05",
+   "name": "밤산책 외투 · 7번 문양",
+   "category": "clothing",
+   "price": 75,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.card_back.07_06",
+   "name": "별무늬 카드 뒷면 · 7번 문양",
+   "category": "card_back",
+   "price": 70,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.chip_style.07_07",
+   "name": "조약돌 칩 장식 · 7번 문양",
+   "category": "chip_style",
+   "price": 70,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.memento.07_08",
+   "name": "옛날 축제 우표 · 7번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "축제 다음 날 아침의 기념 우표.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#c9a227"
+   }
+  },
+  {
+   "id": "item.furniture.08_01",
+   "name": "낡은 원목 스툴 · 8번 문양",
+   "category": "furniture",
+   "price": 55,
+   "placeable": true,
+   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "placeholder": {
+    "shape": "stool",
+    "color": "#6d9dc5"
+   }
+  },
+  {
+   "id": "item.furniture.08_02",
+   "name": "하트 쿠션 · 8번 문양",
+   "category": "furniture",
+   "price": 65,
+   "placeable": true,
+   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "placeholder": {
+    "shape": "cushion",
+    "color": "#6d9dc5"
+   }
+  },
+  {
+   "id": "item.decor.08_03",
+   "name": "네잎 벽걸이 · 8번 문양",
+   "category": "decor",
+   "price": 60,
+   "placeable": true,
+   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "placeholder": {
+    "shape": "wall_hanging",
+    "color": "#6d9dc5"
+   }
+  },
+  {
+   "id": "item.decor.08_04",
+   "name": "등불 꽃병 · 8번 문양",
+   "category": "decor",
+   "price": 70,
+   "placeable": true,
+   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "placeholder": {
+    "shape": "vase",
+    "color": "#6d9dc5"
+   }
+  },
+  {
+   "id": "item.clothing.08_05",
+   "name": "밤산책 외투 · 8번 문양",
+   "category": "clothing",
+   "price": 80,
+   "placeable": false,
+   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "placeholder": {
+    "shape": "coat",
+    "color": "#6d9dc5"
+   }
+  },
+  {
+   "id": "item.card_back.08_06",
+   "name": "별무늬 카드 뒷면 · 8번 문양",
+   "category": "card_back",
+   "price": 75,
+   "placeable": false,
+   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "card",
+    "color": "#6d9dc5"
+   }
+  },
+  {
+   "id": "item.chip_style.08_07",
+   "name": "조약돌 칩 장식 · 8번 문양",
+   "category": "chip_style",
+   "price": 75,
+   "placeable": false,
+   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "placeholder": {
+    "shape": "chip",
+    "color": "#6d9dc5"
+   }
+  },
+  {
+   "id": "item.memento.08_08",
+   "name": "옛날 축제 우표 · 8번 문양",
+   "category": "memento",
+   "price": 0,
+   "placeable": true,
+   "description": "반딧불 산책로 등불 산책의 기념 우표.",
+   "placeholder": {
+    "shape": "stamp",
+    "color": "#6d9dc5"
+   }
+  }
+ ]
 }

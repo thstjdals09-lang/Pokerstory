@@ -1,0 +1,1422 @@
+{
+ "_comment": "32 personal episodes; poker is never required. Friendship +8 and a memory on completion (engine).",
+ "episodes": [
+  {
+   "id": "npc_lumi.bond_01",
+   "name": "작은 불빛 나누기",
+   "giver": "npc_lumi",
+   "target": "home_blueprint",
+   "unlock": {
+    "met": "npc_lumi",
+    "flags_true": [
+     "lumi_lamp_reaction_seen"
+    ]
+   },
+   "offer_lines": [
+    "네 집 등불을 보고 나도 우리 집에 작은 불빛을 달고 싶어졌어.",
+    "네 집 어디가 제일 좋은지 보고 와서 알려 줄래?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "창가 자리가 제일 좋아",
+     "response": [
+      "창가라면 지나가는 사람도 볼 수 있겠다! 루미에게 알려 주자."
+     ],
+     "effects": []
+    },
+    {
+     "text": "탁자 위가 제일 좋아",
+     "response": [
+      "탁자 위라면 차 마실 때마다 보이겠다! 루미에게 알려 주자."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "npc_lumi.light"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_lumi.bond_02",
+   "name": "친목 모임의 의견",
+   "giver": "npc_lumi",
+   "target": "npc_kyle",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_lumi.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "카일한테 내 생각을 전해 줄래? '처음 온 사람도 편하게 앉을 수 있는 모임'이면 좋겠다고.",
+    "나는 직접 말하면 자꾸 목소리가 커지거든."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "루미 생각을 그대로 전하기",
+     "response": [
+      "카일: …그렇군. 처음 온 사람이 규칙을 모르면 불편하겠지. 생각해 보겠다고 전해 줘."
+     ],
+     "effects": []
+    },
+    {
+     "text": "둘이 직접 이야기해 보라고 권하기",
+     "response": [
+      "카일: 직접이라… 그래, 다음 모임 전에 루미와 이야기해 보지."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "npc_lumi.bond02_sent"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_moa.bond_01",
+   "name": "초보자 족보 안내판",
+   "giver": "npc_moa",
+   "target": "card_room_notes",
+   "unlock": {
+    "met": "npc_moa"
+   },
+   "offer_lines": [
+    "카드룸 게시판에 족보 안내가 두 장 붙어 있는데, 어느 쪽이 더 쉬운지 모르겠어요.",
+    "저녁에 한번 읽어 보고 골라 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "그림으로 된 안내판",
+     "response": [
+      "그림 안내판을 골랐어요. 모아가 기뻐할 거예요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "짧은 문장 안내판",
+     "response": [
+      "짧은 문장 안내판을 골랐어요. 모아가 기뻐할 거예요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "unlock_ability",
+     "ability": "ability.discard_hint"
+    },
+    {
+     "type": "flag",
+     "flag": "npc_moa.guide_chosen"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_moa.bond_02",
+   "name": "모임 안내문 되찾기",
+   "giver": "npc_moa",
+   "target": "npc_nora",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_moa.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "노아의 우편물 속에 예전 모임 안내문이 섞여 있대요. 받아 와 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "안내문을 받아 오기",
+     "response": [
+      "노아: 여기 있어요. 모아가 쓴 글씨가 참 반듯하죠."
+     ],
+     "effects": []
+    },
+    {
+     "text": "같이 읽어 보자고 하기",
+     "response": [
+      "노아: 좋아요. 모아에게 우편함 앞에서 같이 읽자고 전해 줘요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "moa_nora",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_sera.bond_01",
+   "name": "등불이 놓인 집",
+   "giver": "npc_sera",
+   "target": "npc_lumi",
+   "unlock": {
+    "met": "npc_sera",
+    "owns_or_placed_item": "furniture.lamp_small"
+   },
+   "offer_lines": [
+    "그 등불, 집에 잘 어울렸는지 궁금해요.",
+    "루미가 지나가다 봤다던데, 어떻던지 물어봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "루미에게 물어보기",
+     "response": [
+      "루미: 창문으로 새어 나오는 불빛이 꼭 작은 별 같았어!"
+     ],
+     "effects": []
+    },
+    {
+     "text": "세라도 보러 오라고 전하기",
+     "response": [
+      "루미: 좋지! 세라도 다음에 같이 지나가자고 전해 줘."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "npc_sera.lamp_seen"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_sera.bond_02",
+   "name": "낡은 등불 부품",
+   "giver": "npc_sera",
+   "target": "npc_bibi",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_sera.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "광장의 낡은 등불을 고치려는데 부품이 모자라요.",
+    "비비 공방에 남은 부품이 있는지 물어봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "부품을 빌려 달라고 하기",
+     "response": [
+      "비비: 마침 하나 남아 있어요. 세라에게 가져가요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "같이 고치자고 제안하기",
+     "response": [
+      "비비: 좋아요. 다음에 세라랑 공방에서 같이 고쳐요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "sera_bibi",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_kyle.bond_01",
+   "name": "모호한 규칙판",
+   "giver": "npc_kyle",
+   "target": "rules_board",
+   "unlock": {
+    "met": "npc_kyle"
+   },
+   "offer_lines": [
+    "쉼터 규칙판에 애매하게 쓰인 곳이 두 군데 있다.",
+    "읽어 보고 어느 쪽이 더 헷갈리는지 알려 줘."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "'교체는 한 번' 문장",
+     "response": [
+      "'교체는 한 번'이 무엇을 한 번인지 헷갈린다고 적어 두었어요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "'같은 족보면' 문장",
+     "response": [
+      "'같은 족보면'이 어떻게 비교하는지 헷갈린다고 적어 두었어요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "unlock_ability",
+     "ability": "ability.table_read"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_kyle.bond_02",
+   "name": "쉬운 용어 하나",
+   "giver": "npc_kyle",
+   "target": "npc_lumi",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_kyle.bond_01"
+     },
+     {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "루미와 규칙 용어를 하나만 쉽게 바꾸기로 했다. 네가 루미에게 가서 골라 와 줘."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "'교체' 대신 '바꾸기'",
+     "response": [
+      "루미: '바꾸기'! 그게 훨씬 쉽다. 카일도 좋아할 거야."
+     ],
+     "effects": []
+    },
+    {
+     "text": "'킥커' 대신 '남은 높은 카드'",
+     "response": [
+      "루미: 길지만 확실하네! 카일한테 그걸로 하자고 해."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "npc_kyle.easy_term"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_nora.bond_01",
+   "name": "젖은 봉투",
+   "giver": "npc_nora",
+   "target": "postbox",
+   "unlock": {
+    "met": "npc_nora"
+   },
+   "offer_lines": [
+    "우편함 안에 젖은 봉투가 두 통 있어요.",
+    "어느 쪽이 먼저 온 건지 살펴봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "도장이 흐린 봉투",
+     "response": [
+      "흐린 도장 봉투가 먼저 온 것 같아요. 노아에게 알려 주자."
+     ],
+     "effects": []
+    },
+    {
+     "text": "모서리가 접힌 봉투",
+     "response": [
+      "접힌 봉투가 먼저 온 것 같아요. 노아에게 알려 주자."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "unlock_ability",
+     "ability": "ability.pattern_book"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_nora.bond_02",
+   "name": "옛 초대장의 빈칸",
+   "giver": "npc_nora",
+   "target": "npc_moa",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_nora.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "옛 초대장 뒷면에 빈칸이 있어요. 모아에게 읽어 주면 뭔지 알 거예요."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "빈칸을 읽어 주기",
+     "response": [
+      "모아: '누구든 앉을 자리'…! 그 옛날에도 그렇게 썼구나."
+     ],
+     "effects": []
+    },
+    {
+     "text": "노아가 직접 오라고 전하기",
+     "response": [
+      "모아: 노아가 온다면 저녁에 카드룸에서 기다릴게요!"
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_rira.bond_01",
+   "name": "손님의 자리",
+   "giver": "npc_rira",
+   "target": "tea_seats",
+   "unlock": {
+    "met": "npc_rira"
+   },
+   "offer_lines": [
+    "찻집 손님 자리 두 곳 중 어디가 더 인기인지 궁금해요.",
+    "한번 살펴보고 알려 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "창가 자리",
+     "response": [
+      "창가 자리엔 늘 햇살이 들어요. 리라에게 알려 주자."
+     ],
+     "effects": []
+    },
+    {
+     "text": "벽난로 옆 자리",
+     "response": [
+      "벽난로 옆은 저녁에 인기예요. 리라에게 알려 주자."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_rira.bond_02",
+   "name": "찻잔 덮개",
+   "giver": "npc_rira",
+   "target": "npc_taeo",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_rira.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "테오에게 오래된 찻잔 덮개를 부탁해 줄래요?",
+    "제가 직접 말하면 또 옷 얘기로 새거든요."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "덮개를 부탁하기",
+     "response": [
+      "테오: 찻잔 덮개라… 남는 천으로 금방 만들지."
+     ],
+     "effects": []
+    },
+    {
+     "text": "리라의 취향을 전하기",
+     "response": [
+      "테오: 리라가 좋아하는 색이면 알지. 오래 봤으니까."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "rira_taeo",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_taeo.bond_01",
+   "name": "쿠션 헝겊 견본",
+   "giver": "npc_taeo",
+   "target": "tailor_samples",
+   "unlock": {
+    "met": "npc_taeo"
+   },
+   "offer_lines": [
+    "쿠션 헝겊 견본이 두 개 있어. 네가 보기엔 어느 쪽이 나아?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "줄무늬 헝겊",
+     "response": [
+      "줄무늬 헝겊을 골랐어요. 테오가 고개를 끄덕일 거예요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "꽃무늬 헝겊",
+     "response": [
+      "꽃무늬 헝겊을 골랐어요. 테오가 고개를 끄덕일 거예요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "unlock_ability",
+     "ability": "ability.steady_hand"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_taeo.bond_02",
+   "name": "천막 무늬",
+   "giver": "npc_taeo",
+   "target": "npc_rira",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_taeo.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "리라네 모임에 쓸 천막 무늬를 정했어. 리라에게 전해 줄래?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "네 문양 무늬 전하기",
+     "response": [
+      "리라: 네 문양이면 누구든 자기 문양을 찾겠네요!"
+     ],
+     "effects": []
+    },
+    {
+     "text": "잔잔한 줄무늬 전하기",
+     "response": [
+      "리라: 줄무늬는 차 모임이랑 잘 어울려요. 고마워요, 테오!"
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "npc_taeo.tent_pattern"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_bibi.bond_01",
+   "name": "수선할 의자",
+   "giver": "npc_bibi",
+   "target": "workshop_chairs",
+   "unlock": {
+    "met": "npc_bibi"
+   },
+   "offer_lines": [
+    "전시 선반에 낡은 의자와 새 의자가 있어요.",
+    "어느 쪽을 먼저 고칠지 골라 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "낡은 의자",
+     "response": [
+      "낡은 의자를 골랐어요. 오래된 기억부터 고치는 거예요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "새 의자",
+     "response": [
+      "새 의자를 골랐어요. 새 손님이 먼저 앉을 수 있게요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_bibi.bond_02",
+   "name": "벤치 자리 비교",
+   "giver": "npc_bibi",
+   "target": "npc_yul",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_bibi.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "율과 공공 벤치를 어디에 놓을지 비교해 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "그늘진 자리",
+     "response": [
+      "율: 그늘이면 여름에도 앉겠군. 좋아."
+     ],
+     "effects": []
+    },
+    {
+     "text": "길가 자리",
+     "response": [
+      "율: 길가면 지나가다 쉬기 좋지. 좋아."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "bibi_yul",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_ella.bond_01",
+   "name": "문양 안내판",
+   "giver": "npc_ella",
+   "target": "reading_nook",
+   "unlock": {
+    "met": "npc_ella"
+   },
+   "offer_lines": [
+    "쉼터 책장에 문양 안내 책 두 권이 있어요.",
+    "어느 쪽 설명이 더 다정한지 읽어 봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "그림책 쪽",
+     "response": [
+      "그림책 쪽을 골랐어요. 엘라가 좋아할 거예요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "오래된 일기 쪽",
+     "response": [
+      "오래된 일기 쪽을 골랐어요. 엘라가 좋아할 거예요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "unlock_ability",
+     "ability": "ability.suit_echo"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_ella.bond_02",
+   "name": "새 지도 표식",
+   "giver": "npc_ella",
+   "target": "npc_haru",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_ella.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "하루에게 새 지도 표식을 전해 줄래요? 둔치 가는 길에 쓸 거예요."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "표식을 전하기",
+     "response": [
+      "하루: 이 표식이면 저녁에도 길을 잃지 않겠어요!"
+     ],
+     "effects": []
+    },
+    {
+     "text": "같이 붙이자고 하기",
+     "response": [
+      "하루: 좋아요, 엘라랑 같이 붙이러 갈게요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "ella_haru",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_haru.bond_01",
+   "name": "어두운 구간",
+   "giver": "npc_haru",
+   "target": "waterside_deck",
+   "unlock": {
+    "met": "npc_haru"
+   },
+   "offer_lines": [
+    "둔치 데크 쪽에 어두운 구간이 있는 것 같아요.",
+    "어디가 제일 어두운지 봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "데크 입구",
+     "response": [
+      "데크 입구가 제일 어두워요. 하루에게 알려 주자."
+     ],
+     "effects": []
+    },
+    {
+     "text": "물가 난간",
+     "response": [
+      "물가 난간이 제일 어두워요. 하루에게 알려 주자."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_haru.bond_02",
+   "name": "빛의 세기",
+   "giver": "npc_haru",
+   "target": "npc_ona",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_haru.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "오나와 등불 밝기를 하나 정해야 해요. 오나에게 물어봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "은은하게",
+     "response": [
+      "오나: 은은하게! 별도 보이고 길도 보이게."
+     ],
+     "effects": []
+    },
+    {
+     "text": "조금 더 밝게",
+     "response": [
+      "오나: 조금 더 밝게… 하루가 안심한다면 그렇게 하자."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "haru_ona",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_juno.bond_01",
+   "name": "난해한 안내문",
+   "giver": "npc_juno",
+   "target": "festival_booth",
+   "unlock": {
+    "met": "npc_juno"
+   },
+   "offer_lines": [
+    "행사 부스에 붙인 안내문이 너무 어렵대!",
+    "두 문장 중 어느 쪽을 고칠지 골라 줄래?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "'참가 요건' 문장",
+     "response": [
+      "'참가 요건'을 '누구나 와도 돼요'로 고치자고 적었어요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "'진행 순서' 문장",
+     "response": [
+      "'진행 순서'를 짧게 나누자고 적었어요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_juno.bond_02",
+   "name": "행사 진행 순서",
+   "giver": "npc_juno",
+   "target": "npc_miri",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_juno.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "미리와 행사 진행 순서를 맞춰야 해! 미리에게 가서 골라 와 줘."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "인사 → 모임 → 정리",
+     "response": [
+      "미리: 인사부터 하면 처음 온 사람도 편하겠네요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "모임 → 인사 → 정리",
+     "response": [
+      "미리: 모임부터라면 분위기가 빨리 풀리겠네요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "juno_miri",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_miri.bond_01",
+   "name": "알아보기 쉬운 예산표",
+   "giver": "npc_miri",
+   "target": "project_board",
+   "unlock": {
+    "met": "npc_miri"
+   },
+   "offer_lines": [
+    "공공사업 게시판의 예산표가 너무 숫자뿐이에요.",
+    "집과 공공 항목을 어떻게 나눌지 봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "색으로 나누기",
+     "response": [
+      "항목을 색으로 나누자고 적었어요. 미리에게 알려 주자."
+     ],
+     "effects": []
+    },
+    {
+     "text": "그림으로 나누기",
+     "response": [
+      "항목에 작은 그림을 붙이자고 적었어요. 미리에게 알려 주자."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_miri.bond_02",
+   "name": "비용과 환영 문구",
+   "giver": "npc_miri",
+   "target": "npc_juno",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_miri.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "주노와 축제 비용 설명, 환영 문구를 합쳐야 해요. 주노에게 가 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "환영 문구를 먼저",
+     "response": [
+      "주노: 환영이 먼저지! 비용은 작게, 환영은 크게!"
+     ],
+     "effects": []
+    },
+    {
+     "text": "비용 설명을 먼저",
+     "response": [
+      "주노: 비용부터면 다들 안심하겠다. 그렇게 할게!"
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_ona.bond_01",
+   "name": "너무 밝은 불빛",
+   "giver": "npc_ona",
+   "target": "lantern_path_marker",
+   "unlock": {
+    "met": "npc_ona"
+   },
+   "offer_lines": [
+    "산책로에 너무 밝은 등불이 두 개 있어.",
+    "어느 쪽을 줄일지 봐 줄래?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "첫 번째 등불",
+     "response": [
+      "첫 번째 등불을 조금 줄이자고 적었어요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "두 번째 등불",
+     "response": [
+      "두 번째 등불을 조금 줄이자고 적었어요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_ona.bond_02",
+   "name": "안전과 풍경",
+   "giver": "npc_ona",
+   "target": "npc_haru",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_ona.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "하루와 안전과 풍경 사이를 정해야 해. 하루에게 물어봐 줄래?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "안전 먼저",
+     "response": [
+      "하루: 안전 먼저라면 저녁 모임에 더 많이 올 거예요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "풍경도 살리기",
+     "response": [
+      "하루: 별도 보이게 두자는 거죠? 그것도 좋아요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_ren.bond_01",
+   "name": "중복 카드의 출처",
+   "giver": "npc_ren",
+   "target": "ren_card_box",
+   "unlock": {
+    "met": "npc_ren"
+   },
+   "offer_lines": [
+    "내 카드 상자에 똑같은 카드가 두 장 있어.",
+    "어디서 왔는지 적힌 쪽지를 같이 볼래?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "축제 교환회 쪽지",
+     "response": [
+      "'옛 축제 교환회에서'라고 적혀 있어요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "친구 선물 쪽지",
+     "response": [
+      "'친구 선물'이라고 적혀 있어요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "unlock_ability",
+     "ability": "ability.lucky_mark"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_ren.bond_02",
+   "name": "공정한 교환회",
+   "giver": "npc_ren",
+   "target": "npc_kyle",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_ren.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "교환회를 공정하게 하려면 규칙이 필요해. 카일에게 확인받아 줄래?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "'같은 가치끼리'",
+     "response": [
+      "카일: 가치를 누가 정하지? …그래도 시작으론 좋다."
+     ],
+     "effects": []
+    },
+    {
+     "text": "'서로 원할 때만'",
+     "response": [
+      "카일: 서로 원할 때만. 그게 제일 공정하다."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "ren_kyle",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_yul.bond_01",
+   "name": "부서진 벤치",
+   "giver": "npc_yul",
+   "target": "broken_bench",
+   "unlock": {
+    "met": "npc_yul"
+   },
+   "offer_lines": [
+    "골목 끝 벤치가 부서졌다. 어디가 문제인지 봐 줄래."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "다리가 흔들려요",
+     "response": [
+      "벤치 다리가 흔들린다고 적었어요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "판자가 갈라졌어요",
+     "response": [
+      "벤치 판자가 갈라졌다고 적었어요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [],
+   "reward": 0
+  },
+  {
+   "id": "npc_yul.bond_02",
+   "name": "고쳐 쓸 부품",
+   "giver": "npc_yul",
+   "target": "npc_bibi",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_yul.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "비비와 벤치 고칠 부품을 골라 줘."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "공방의 오래된 부품",
+     "response": [
+      "비비: 오래된 부품이 오래 버텨요. 이걸로 해요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "새로 깎은 부품",
+     "response": [
+      "비비: 새 부품도 좋아요. 율이 잘 맞출 거예요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "town.bench_fixed"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_sia.bond_01",
+   "name": "첫 손님의 질문",
+   "giver": "npc_sia",
+   "target": "npc_moa",
+   "unlock": {
+    "met": "npc_sia"
+   },
+   "offer_lines": [
+    "첫 손님이 '포커를 몰라도 모임에 가도 되나요?'래요.",
+    "모아에게 물어봐 줄래요?"
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "그대로 물어보기",
+     "response": [
+      "모아: 물론이에요! 구경만 해도 돼요. 시아에게 그렇게 전해 줘요."
+     ],
+     "effects": []
+    },
+    {
+     "text": "그림 안내를 부탁하기",
+     "response": [
+      "모아: 그림 안내판이 있어요! 손님에게 보여 주면 돼요."
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "unlock_ability",
+     "ability": "ability.friendly_pause"
+    }
+   ],
+   "reward": 0
+  },
+  {
+   "id": "npc_sia.bond_02",
+   "name": "초보 모임 안내",
+   "giver": "npc_sia",
+   "target": "npc_lumi",
+   "unlock": {
+    "all": [
+     {
+      "quest_completed": "npc_sia.bond_01"
+     },
+     {
+      "any": [
+       {
+        "flags_true": [
+         "story.act1_started"
+        ]
+       },
+       {
+        "projects_complete_min": 1
+       }
+      ]
+     }
+    ]
+   },
+   "offer_lines": [
+    "루미에게 초보자 모임 안내를 부탁해 줄래요? 루미라면 잘해 줄 거예요."
+   ],
+   "accept_text": "같이 해 볼게요",
+   "options": [
+    {
+     "text": "안내를 부탁하기",
+     "response": [
+      "루미: 좋아! 처음 온 사람 자리엔 내가 먼저 앉아 있을게."
+     ],
+     "effects": []
+    },
+    {
+     "text": "시아도 같이 하자고 하기",
+     "response": [
+      "루미: 시아랑 같이? 그럼 두 배로 따뜻하겠다!"
+     ],
+     "effects": []
+    }
+   ],
+   "thanks_lines": [],
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "sia_lumi",
+     "phase": "bonded"
+    }
+   ],
+   "reward": 0
+  }
+ ]
+}

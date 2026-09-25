@@ -1,16 +1,132 @@
 {
-  "jobs": [
-    {
-      "id": "job.plaza_cleanup",
-      "name": "광장 정리 아르바이트",
-      "location": "village_square",
-      "reward": 10,
-      "count": 3,
-      "description": "광장에 흩어진 카드와 칩 {count_job.plaza_cleanup}개를 주워 정리해 주세요. 끝까지 정리하면 보수로 칩 {reward_job.plaza_cleanup}개를 드려요.",
-      "spots": [
-        [690, 470], [910, 470], [680, 640], [950, 560],
-        [760, 700], [860, 720], [640, 560], [820, 450]
-      ]
-    }
-  ]
+ "jobs": [
+  {
+   "id": "job.plaza_cleanup",
+   "name": "광장 정리 아르바이트",
+   "location": "village_square",
+   "reward": 10,
+   "count": 3,
+   "description": "광장에 흩어진 카드와 칩 {count_job.plaza_cleanup}개를 주워 정리해 주세요. 끝까지 정리하면 보수로 칩 {reward_job.plaza_cleanup}개를 드려요.",
+   "spots": [
+    [
+     690,
+     470
+    ],
+    [
+     910,
+     470
+    ],
+    [
+     680,
+     640
+    ],
+    [
+     950,
+     560
+    ],
+    [
+     760,
+     700
+    ],
+    [
+     860,
+     720
+    ],
+    [
+     640,
+     560
+    ],
+    [
+     820,
+     450
+    ]
+   ],
+   "type": "collect",
+   "cancel_on_leave": true,
+   "start_hint": "광장 게시판",
+   "start_toast": "광장에 흩어진 카드와 칩을 주워 주세요!",
+   "pickup_kinds": [
+    "card",
+    "chip"
+   ]
+  },
+  {
+   "id": "job.post_delivery",
+   "name": "우편 배달",
+   "type": "deliver",
+   "location": "residential",
+   "reward": 12,
+   "count": 1,
+   "cancel_on_leave": false,
+   "start_hint": "주거 골목 우편함",
+   "start_toast": "편지를 받았어요. HUD에서 받는 사람의 위치를 확인하세요.",
+   "description": "노아 대신 편지 한 통을 받는 사람에게 전해 주세요. 보수는 칩 {reward_job.post_delivery}개예요.",
+   "recipients": [
+    "npc_lumi",
+    "npc_sera",
+    "npc_rira",
+    "npc_yul",
+    "npc_miri",
+    "npc_ella",
+    "npc_haru",
+    "npc_juno"
+   ]
+  },
+  {
+   "id": "job.shop_shelving",
+   "name": "잡화점 선반 정리",
+   "type": "shelve",
+   "location": "small_shop",
+   "reward": 10,
+   "count": 3,
+   "cancel_on_leave": true,
+   "start_hint": "세라의 잡화점 선반",
+   "start_toast": "선반 쪽지를 보고 물건을 정확히 놓아 주세요.",
+   "description": "선반 세 칸에 쪽지대로 물건을 놓아 주세요. 모두 맞게 놓으면 칩 {reward_job.shop_shelving}개예요.",
+   "goods": [
+    "작은 등불",
+    "카드 덱",
+    "칩 상자",
+    "찻잔",
+    "리본"
+   ]
+  },
+  {
+   "id": "job.lantern_check",
+   "name": "숲길 불빛 점검",
+   "type": "collect",
+   "location": "grove",
+   "reward": 12,
+   "count": 3,
+   "cancel_on_leave": true,
+   "start_hint": "숲길 반딧불 산책로 안내판",
+   "pickup_kinds": [
+    "lantern"
+   ],
+   "start_toast": "점검할 등불 세 곳이 반짝이고 있어요.",
+   "description": "산책로의 등불 세 곳을 점검해 주세요. 보수는 칩 {reward_job.lantern_check}개예요.",
+   "spots": [
+    [
+     980,
+     180
+    ],
+    [
+     1060,
+     330
+    ],
+    [
+     980,
+     480
+    ],
+    [
+     1080,
+     640
+    ],
+    [
+     900,
+     760
+    ]
+   ]
+  }
+ ]
 }

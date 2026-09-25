@@ -1,0 +1,15 @@
+{
+  "_comment": "Registered resident pairs only (03_residents/02_RELATIONSHIP_MODEL). Phases: neutral, bonded, strained, reconciled; changed only by events.",
+  "edges": [
+    { "id": "lumi_kyle", "members": ["npc_lumi", "npc_kyle"], "about": "서로 다른 행사 철학 (2막에서 조율)" },
+    { "id": "moa_nora", "members": ["npc_moa", "npc_nora"], "about": "우편함 글씨를 함께 읽는 친구" },
+    { "id": "sera_bibi", "members": ["npc_sera", "npc_bibi"], "about": "공방 재료를 빌려주는 동료" },
+    { "id": "rira_taeo", "members": ["npc_rira", "npc_taeo"], "about": "오래된 친구, 전시복 의견이 다름" },
+    { "id": "ella_haru", "members": ["npc_ella", "npc_haru"], "about": "지도 표식을 함께 조사" },
+    { "id": "haru_ona", "members": ["npc_haru", "npc_ona"], "about": "밤길 밝기를 함께 결정" },
+    { "id": "juno_miri", "members": ["npc_juno", "npc_miri"], "about": "행사 진행 순서와 비용을 조율" },
+    { "id": "bibi_yul", "members": ["npc_bibi", "npc_yul"], "about": "구식·신식 도구 비교" },
+    { "id": "ren_kyle", "members": ["npc_ren", "npc_kyle"], "about": "렌이 카일에게 규칙을 배움" },
+    { "id": "sia_lumi", "members": ["npc_sia", "npc_lumi"], "about": "새 이웃 소개 방식을 배움" }
+  ]
+}

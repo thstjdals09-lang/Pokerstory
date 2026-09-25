@@ -63,6 +63,62 @@ func _draw() -> void:
 			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
 			draw_colored_polygon(PackedVector2Array([Vector2(-19, -8), Vector2(19, -8), Vector2(4, -42)]), body.darkened(0.3))
 			draw_circle(Vector2(4, -42), 3, Color("#ffd27a"))
+		"elf":
+			draw_colored_polygon(PackedVector2Array([Vector2(-16, -4), Vector2(-26, -12), Vector2(-12, -10)]), body)
+			draw_colored_polygon(PackedVector2Array([Vector2(16, -4), Vector2(26, -12), Vector2(12, -10)]), body)
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 2, dark)
+			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
+			draw_rect(Rect2(-14, -16, 28, 6), accent)
+		"ghost":
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 2, Color(dark, 0.5))
+			draw_circle(Vector2.ZERO, BODY_RADIUS, Color(body, 0.85))
+			draw_rect(Rect2(-10, -2, 20, 14), accent)
+			draw_string(preload("res://assets/fonts/ui_font.tres"), Vector2(-7, 11), "♣", HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color.WHITE)
+		"cat":
+			draw_colored_polygon(PackedVector2Array([Vector2(-14, -8), Vector2(-12, -24), Vector2(-3, -13)]), body)
+			draw_colored_polygon(PackedVector2Array([Vector2(14, -8), Vector2(12, -24), Vector2(3, -13)]), body)
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 2, dark)
+			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
+			draw_line(Vector2(-14, 4), Vector2(-24, 2), dark, 1.5)
+			draw_line(Vector2(14, 4), Vector2(24, 2), dark, 1.5)
+		"rabbit":
+			draw_rect(Rect2(-10, -34, 7, 22), body)
+			draw_rect(Rect2(3, -34, 7, 22), body)
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 2, dark)
+			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
+			draw_rect(Rect2(-8, -32, 3, 16), accent)
+		"bird":
+			draw_colored_polygon(PackedVector2Array([Vector2(-6, -14), Vector2(0, -30), Vector2(6, -14)]), accent)
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 2, dark)
+			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
+			draw_colored_polygon(PackedVector2Array([Vector2(12, 0), Vector2(22, 4), Vector2(12, 8)]), accent)
+		"mushroom":
+			draw_circle(Vector2(0, 4), 12, accent)
+			draw_colored_polygon(PackedVector2Array([Vector2(-22, -2), Vector2(22, -2), Vector2(14, -18), Vector2(-14, -18)]), body)
+			draw_circle(Vector2(-6, -10), 3, Color.WHITE)
+			draw_circle(Vector2(7, -12), 2.5, Color.WHITE)
+		"bear":
+			draw_circle(Vector2(-12, -13), 6, body)
+			draw_circle(Vector2(12, -13), 6, body)
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 3, dark)
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 1, body)
+			draw_circle(Vector2(0, 6), 7, accent)
+		"stone":
+			draw_rect(Rect2(-16, -16, 32, 34), dark)
+			draw_rect(Rect2(-14, -14, 28, 30), body)
+			draw_rect(Rect2(-10, 6, 20, 5), accent)
+		"ribbon":
+			draw_circle(Vector2(16, 10), 6, accent)
+			draw_line(Vector2(10, 8), Vector2(24, 18), body, 4.0)
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 2, dark)
+			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
+			draw_colored_polygon(PackedVector2Array([Vector2(-10, -16), Vector2(0, -12), Vector2(-10, -8)]), accent)
+			draw_colored_polygon(PackedVector2Array([Vector2(10, -16), Vector2(0, -12), Vector2(10, -8)]), accent)
+		"human":
+			draw_circle(Vector2.ZERO, BODY_RADIUS + 2, dark)
+			draw_circle(Vector2.ZERO, BODY_RADIUS, accent)
+			draw_rect(Rect2(-16, -16, 32, 9), body)
+			draw_rect(Rect2(-12, 8, 24, 8), body)
 		_:
 			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
 	draw_circle(Vector2(-5, -2), 2.2, dark)

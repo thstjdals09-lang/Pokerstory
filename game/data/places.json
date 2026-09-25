@@ -1,0 +1,23 @@
+{
+  "_comment": "Functional place register (02_village/02_BUILDING_AND_ROOM_REGISTER). district is the pack's district; scene is where it is played (C1: home, shop and card room doors stay on the square).",
+  "districts": ["square", "residential", "market", "grove", "waterfront"],
+  "places": {
+    "village_square":  { "name": "네잎 광장",          "district": "square",      "scene": "village_square", "entrance": "spawn",                   "time": "any" },
+    "player_home":     { "name": "플레이어의 집",      "district": "residential", "scene": "player_home",    "entrance": "home_building",           "time": "any" },
+    "card_room":       { "name": "저녁 카드룸",        "district": "square",      "scene": "card_room",      "entrance": "card_room_building",      "time": "evening" },
+    "small_shop":      { "name": "세라의 잡화점",      "district": "market",      "scene": "small_shop",     "entrance": "shop_building",           "time": "any" },
+    "notice_board":    { "name": "마을 게시판",        "district": "square",      "scene": "village_square", "entrance": "job_board",               "time": "any" },
+    "post_office":     { "name": "노아의 우편함",      "district": "residential", "scene": "residential",    "entrance": "postbox",                 "time": "any" },
+    "tailor":          { "name": "테오의 수선 가게",   "district": "market",      "scene": "tailor",         "entrance": "tailor_building",         "time": "any", "unlock": { "quests_completed_min": 1 } },
+    "tea_house":       { "name": "리라의 찻집",        "district": "market",      "scene": "tea_house",      "entrance": "tea_house_building",      "time": "any" },
+    "workshop":        { "name": "비비의 공방",        "district": "market",      "scene": "workshop",       "entrance": "workshop_building",       "time": "any", "unlock": { "project_complete": "board_restoration" } },
+    "reading_nook":    { "name": "숲길 독서 쉼터",     "district": "grove",       "scene": "grove",          "entrance": "reading_nook",            "time": "any" },
+    "lantern_path":    { "name": "반딧불 산책로",      "district": "grove",       "scene": "grove",          "entrance": "lantern_path_marker",     "time": "any" },
+    "waterside_deck":  { "name": "둔치 데크",          "district": "waterfront",  "scene": "waterfront",     "entrance": "waterside_deck",          "time": "any" },
+    "swap_stall":      { "name": "작은 교환대",        "district": "market",      "scene": "market",         "entrance": "swap_stall",              "time": "any", "unlock": { "projects_complete_min": 2 } },
+    "festival_square": { "name": "축제 부스 구역",     "district": "square",      "scene": "village_square", "entrance": "festival_booth",          "time": "any", "unlock": { "flags_true": ["story.act3_started"] } },
+    "guest_cottage":   { "name": "방문객 객실",        "district": "residential", "scene": "guest_cottage",  "entrance": "guest_cottage_building",  "time": "any", "unlock": { "project_complete": "guest_cottage" } },
+    "game_garden":     { "name": "카드 정원",          "district": "waterfront",  "scene": "waterfront",     "entrance": "garden_table",            "time": "any", "unlock": { "flags_true": ["story.act2_complete"] } },
+    "community_hall":  { "name": "마을 회관",          "district": "square",      "scene": "community_hall", "entrance": "community_hall_building", "time": "any" }
+  }
+}

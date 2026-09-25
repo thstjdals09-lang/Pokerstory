@@ -1,11 +1,13 @@
 class_name QuestBook
 extends RefCounted
-## One-time resident requests (data/quests.json). State lives in GameState.quests.
-## A quest pays its reward only on the transition active -> completed, so it pays once.
+## One-time tasks: resident requests (data/quests.json, kind "quest") and personal resident
+## episodes (data/episodes.json, kind "episode"). State lives in GameState.quests.
+## Rewards and effects are applied only on the transition active -> completed, so each task pays once.
 
 const NOT_STARTED := "not_started"
 const ACTIVE := "active"
 const COMPLETED := "completed"
+const EPISODE_FRIENDSHIP := 8
 
 
 static func state_of(state: GameState, quest_id: String) -> String:
@@ -19,12 +21,27 @@ static func accept(state: GameState, quest_id: String) -> bool:
 	return true
 
 
-## Returns {"ok": true, "reward": n} or {"ok": false} when the quest is not active.
-static func complete(state: GameState, quest: Dictionary) -> Dictionary:
+## Completes an active task. `option` picks one of the task's handoff options (episodes).
+## Returns {"ok": true, "reward": n, "messages": [...], "option": {...}} or {"ok": false}.
+static func complete(state: GameState, quest: Dictionary, option: int = -1) -> Dictionary:
 	var quest_id: String = quest["id"]
 	if state_of(state, quest_id) != ACTIVE:
 		return {"ok": false}
 	state.quests[quest_id] = COMPLETED
 	var reward := int(quest.get("reward", 0))
 	state.add_chips(reward, "quest:" + quest_id)
-	return {"ok": true, "reward": reward}
+	var effects: Array = []
+	effects.append_array(quest.get("effects", []))
+	if quest.get("kind", "quest") == "episode":
+		effects.append({"type": "friendship", "npc": quest["giver"], "amount": EPISODE_FRIENDSHIP})
+		effects.append({"type": "memory", "npc": quest["giver"], "id": quest_id})
+	else:
+		# Resident requests count toward the festival (act 3) once each.
+		effects.append({"type": "contribution", "id": "quest:" + quest_id})
+	var chosen: Dictionary = {}
+	var options: Array = quest.get("options", [])
+	if option >= 0 and option < options.size():
+		chosen = options[option]
+		effects.append_array(chosen.get("effects", []))
+	var applied := Effects.apply(state, effects)
+	return {"ok": true, "reward": reward, "messages": applied.get("messages", []), "option": chosen}

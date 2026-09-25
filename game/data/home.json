@@ -1,0 +1,57 @@
+{
+ "stages": [
+  {
+   "id": "starter",
+   "stage": 0,
+   "name": "작은 방",
+   "cost": 0,
+   "slots": 3
+  },
+  {
+   "id": "home_cozy",
+   "stage": 1,
+   "name": "아늑한 방",
+   "cost": 90,
+   "slots": 8,
+   "desc": "거실에 장식 자리가 5곳 늘어요 (총 8).",
+   "unlock": {
+    "any": [
+     {
+      "episodes_completed_min": 1
+     },
+     {
+      "projects_complete_min": 1
+     }
+    ]
+   },
+   "unlock_hint": "주민의 이야기 1개를 마치거나 공공사업 1개를 완료하기"
+  },
+  {
+   "id": "home_roomy",
+   "stage": 2,
+   "name": "넓은 집",
+   "cost": 180,
+   "slots": 16,
+   "desc": "작은 방이 생겨요 (자리 8곳 추가, 총 16).",
+   "unlock": {
+    "home_stage_min": 1
+   },
+   "unlock_hint": "아늑한 방 단계"
+  },
+  {
+   "id": "home_gathering",
+   "stage": 3,
+   "name": "모임 공간",
+   "cost": 320,
+   "slots": 24,
+   "desc": "모임방이 생기고 친한 주민과 홈게임을 열 수 있어요 (자리 8곳 추가, 총 24).",
+   "unlock": {
+    "home_stage_min": 2,
+    "flags_true": [
+     "story.act2_complete"
+    ]
+   },
+   "unlock_hint": "넓은 집 단계 + 2막 완료"
+  }
+ ]
+}

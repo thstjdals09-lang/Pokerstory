@@ -81,6 +81,34 @@ static func _migrate(data: Dictionary, from_version: int) -> Dictionary:
 			d["save_version"] = 3
 			d["poker_in_progress"] = {}
 			return d
+		3:
+			# v3 -> v4 (content v0.3): residents, projects, housing stage, story. Everything saved
+			# before is kept; residents the player already met keep that fact.
+			var d := data.duplicate(true)
+			d["save_version"] = 4
+			var flags: Dictionary = d.get("flags", {})
+			var rels := {}
+			for pair in [["npc_lumi", "intro_met_lumi"], ["npc_moa", "moa_met"], ["npc_sera", "sera_met"]]:
+				if bool(flags.get(pair[1], false)):
+					rels[pair[0]] = {"met": true, "friendship": 5, "rivalry": 0, "poker_hands": 0, "memories": [],
+						"romance": {"consent": false, "stage": "closed", "seen_dates": []}}
+			d["relations"] = rels
+			# A player who already saw Lumi's lamp reaction finished the prologue (story.prologue_complete
+			# is set by that same scene now), so the main story can start without replaying it.
+			if bool(flags.get("lumi_lamp_reaction_seen", false)):
+				flags["story.prologue_complete"] = true
+				d["flags"] = flags
+			d["npc_edges"] = {}
+			d["projects"] = {}
+			d["home_stage"] = 0
+			d["events_done"] = {}
+			d["contributions"] = []
+			d["equipped"] = {}
+			d["abilities_unlocked"] = ["ability.star_sense"]
+			d["poker_history"] = {}
+			d["tournament"] = {"stage": 0, "rewarded": false}
+			d["tracked_quest"] = ""
+			return d
 	return {}
 
 

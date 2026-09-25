@@ -169,10 +169,19 @@ func active_quest_lines() -> Array:
 	var lines: Array = []
 	if state == null:
 		return lines
-	for id in data.quests:
-		if QuestBook.state_of(state, id) == QuestBook.ACTIVE:
-			var q: Dictionary = data.quests[id]
-			lines.append("의뢰 중 · %s (%s 소지)" % [q["name"], q.get("item_name", "")])
+	var active: Array = []
+	for id in data.quest_order:
+		if data.is_quest(id) and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+			active.append(id)
+	if active.is_empty():
+		return lines
+	# One tracked request with where its recipient is right now (06_integration/07); the rest is in the journal.
+	var shown: String = state.tracked_quest if active.has(state.tracked_quest) else active[0]
+	var q: Dictionary = data.quests[shown]
+	var carry := " (%s 소지)" % q["item_name"] if q.has("item_name") else ""
+	lines.append("의뢰 중 · %s%s → %s" % [q["name"], carry, npc_where_text(str(q["target"]))])
+	if active.size() > 1:
+		lines.append("진행 중인 의뢰 %d개 · 메뉴 > 일지에서 확인" % active.size())
 	return lines
 
 
@@ -180,7 +189,10 @@ func current_goal() -> String:
 	if state == null:
 		return ""
 	if job != null:
-		return "아르바이트 · 광장의 카드와 칩 줍기 (%d / %d)" % [job.collected.size(), job.total()]
+		var jdef: Dictionary = data.jobs[job.job_id]
+		if job.job_type == "deliver":
+			return "아르바이트 · %s에게 편지 전하기 (%s)" % [data.npc_name(job.recipient), npc_where_text(job.recipient)]
+		return "아르바이트 · %s (%d / %d)" % [jdef.get("name", ""), job.done_count(), job.total()]
 	for g in data.goals:
 		if Conditions.check(g.get("conditions", {}), state, state.current_scene):
 			return DialogueResolver.format_line(g["text"], text_vars())
@@ -273,22 +285,46 @@ func set_time(time: String) -> void:
 
 # --- quests ------------------------------------------------------------------
 
+func quest_available(quest_id: String) -> bool:
+	var q: Dictionary = data.quests.get(quest_id, {})
+	return not q.is_empty() and QuestBook.state_of(state, quest_id) == QuestBook.NOT_STARTED \
+		and Conditions.check(q.get("unlock", {}), state)
+
+
 func accept_quest(quest_id: String) -> bool:
-	if not data.quests.has(quest_id) or not QuestBook.accept(state, quest_id):
+	if not data.quests.has(quest_id) or not Conditions.check(data.quests[quest_id].get("unlock", {}), state):
 		return false
+	if not QuestBook.accept(state, quest_id):
+		return false
+	if data.is_quest(quest_id) and (state.tracked_quest == "" or QuestBook.state_of(state, state.tracked_quest) != QuestBook.ACTIVE):
+		state.tracked_quest = quest_id
 	save_game()
 	state_changed.emit()
 	return true
 
 
-func complete_quest(quest_id: String) -> Dictionary:
+## Completes an active task (arg "id" or "id|option").
+func complete_quest(arg: String) -> Dictionary:
+	var quest_id := arg.get_slice("|", 0)
+	var option := int(arg.get_slice("|", 1)) if arg.contains("|") else -1
 	if not data.quests.has(quest_id):
 		return {"ok": false}
-	var result := QuestBook.complete(state, data.quests[quest_id])
+	var result := QuestBook.complete(state, data.quests[quest_id], option)
 	if result["ok"]:
+		if state.tracked_quest == quest_id:
+			state.tracked_quest = _first_active_quest()
 		save_game()
 		state_changed.emit()
+		for m in result.get("messages", []):
+			toast_requested.emit(m)
 	return result
+
+
+func _first_active_quest() -> String:
+	for id in data.quest_order:
+		if data.is_quest(id) and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+			return id
+	return ""
 
 
 # --- odd jobs ----------------------------------------------------------------
@@ -296,10 +332,25 @@ func complete_quest(quest_id: String) -> Dictionary:
 func start_job(job_id: String) -> bool:
 	if job != null or not data.jobs.has(job_id):
 		return false
-	job = PlazaJob.create(data.jobs[job_id], _rng)
+	job = PlazaJob.create(data.jobs[job_id], _rng, state.jobs_completed + 1)
 	job_changed.emit()
 	state_changed.emit()
 	return true
+
+
+## deliver / shelve steps; same payout rules as collect_job_spot.
+func job_step(kind: String, value: String) -> Dictionary:
+	if job == null:
+		return {"ok": false}
+	var result: Dictionary = job.deliver(state, value) if kind == "deliver" else job.shelve(state, value)
+	if not result["ok"]:
+		return result
+	if result["done"]:
+		job = null
+		save_game()
+	job_changed.emit()
+	state_changed.emit()
+	return result
 
 
 ## Collects one spot. Pays the reward only when the last spot is collected.
@@ -332,6 +383,8 @@ func cancel_job() -> bool:
 func buy_item(item_id: String) -> Dictionary:
 	if not data.items.has(item_id):
 		return {"ok": false, "reason": "unknown_item"}
+	if not item_on_sale(item_id):
+		return {"ok": false, "reason": "not_on_sale"}
 	var price := data.item_price(item_id)
 	if state.chips_balance < price:
 		return {"ok": false, "reason": "not_enough_chips", "need": price - state.chips_balance}
@@ -372,3 +425,263 @@ func remove_placement(slot_id: String) -> bool:
 	save_game()
 	state_changed.emit()
 	return true
+
+
+# --- content v0.3: effects, residents, dialogue ----------------------------------
+
+## Runs data effects (at most once per non-empty key) and saves. Returns Effects.apply's result.
+func run_effects(effects: Array, key: String = "") -> Dictionary:
+	var r := Effects.apply(state, effects, key)
+	if r["ok"] and not r["skipped"]:
+		save_game()
+		state_changed.emit()
+		for m in r["messages"]:
+			toast_requested.emit(m)
+	return r
+
+
+func npc_place(npc_id: String) -> Dictionary:
+	return data.npc_place(npc_id, state.time_of_day, state)
+
+
+func location_name(loc_id: String) -> String:
+	return str(data.locations.get(loc_id, {}).get("name", loc_id))
+
+
+## "루미: 지금 마을 광장 (저녁엔 카드룸)" for HUD, journal and hints.
+func npc_where_text(target: String) -> String:
+	if not data.npcs.has(target):
+		return "대상 위치 확인"
+	var here := npc_place(target)
+	var other_time := "evening" if state.time_of_day == "day" else "day"
+	var other := data.npc_place(target, other_time, state)
+	var text := "%s: 지금 %s" % [data.npc_name(target), location_name(here["loc"])] if here.has("loc") \
+		else "%s: 지금은 만날 수 없어요" % data.npc_name(target)
+	if other.has("loc") and other.get("loc", "") != here.get("loc", ""):
+		text += " (%s엔 %s)" % ["저녁" if other_time == "evening" else "낮", location_name(other["loc"])]
+	return text
+
+
+func speaker_name(speaker: String) -> String:
+	if speaker.begins_with("obj:"):
+		var id := speaker.substr(4)
+		for loc_id in data.locations:
+			for it in data.locations[loc_id].get("interactables", []):
+				if it["id"] == id:
+					return str(it.get("title", ""))
+		return ""
+	return data.npc_name(speaker)
+
+
+func resolve_entry(speaker: String, location: String) -> Dictionary:
+	return DialogueResolver.resolve(data.dialogue, speaker, location, state)
+
+
+## Choices shown for `entry`: its own (condition-filtered) plus what the world adds:
+## handing over tasks to this resident, the current letter job, offers of this resident's tasks,
+## and a poker invitation where residents play. The hand-over comes first (D4, 03_residents/04).
+func entry_choices(entry: Dictionary, speaker: String, location: String) -> Array:
+	var base: Array = []
+	for c in entry.get("choices", []):
+		if Conditions.check(c.get("conditions", {}), state, location):
+			base.append(c)
+	var out: Array = []
+	var target := speaker.substr(4) if speaker.begins_with("obj:") else speaker
+	for id in data.quest_order:
+		var q: Dictionary = data.quests[id]
+		if str(q.get("target", "")) != target or QuestBook.state_of(state, id) != QuestBook.ACTIVE:
+			continue
+		if _has_choice(base, "complete_quest", id):
+			continue
+		var options: Array = q.get("options", [])
+		if options.is_empty():
+			out.append({"text": str(q.get("handoff", "건네기")), "action": "complete_quest", "arg": id})
+		else:
+			for i in options.size():
+				out.append({"text": str(options[i]["text"]), "action": "complete_quest", "arg": "%s|%d" % [id, i]})
+	if job != null and job.job_type == "deliver" and job.recipient == target:
+		out.append({"text": "편지 전해 주기 (아르바이트)", "action": "job_deliver"})
+	var offers: Array = []
+	if not speaker.begins_with("obj:"):
+		for id in data.quest_order:
+			var q: Dictionary = data.quests[id]
+			if str(q.get("giver", "")) == target and q.get("offer", "auto") == "auto" and quest_available(id) \
+					and not _has_choice(base, "quest_offer", id):
+				var prefix := "부탁 듣기: " if q.get("kind", "quest") == "quest" else "이야기 나누기: "
+				offers.append({"text": prefix + str(q["name"]), "action": "quest_offer", "arg": id})
+		if location == "card_room" and data.opponents.has(target) and target != str(poker_rules().get("opponent", "")) \
+				and not _has_choice(base, "start_poker", ""):
+			offers.append({"text": "한 판 할래요? (참가금 %d칩)" % poker_stake(), "action": "start_poker", "arg": "homegame|" + target})
+	out.append_array(base)
+	# Offers go before a trailing "close" so the goodbye stays last.
+	var insert_at := out.size()
+	if insert_at > 0 and out[insert_at - 1].get("action", "") == "close":
+		insert_at -= 1
+	for o in offers:
+		out.insert(insert_at, o)
+		insert_at += 1
+	return out
+
+
+func _has_choice(choices: Array, action: String, arg: String) -> bool:
+	for c in choices:
+		if c.get("action", "") == action and (arg == "" or str(c.get("arg", "")).get_slice("|", 0) == arg):
+			return true
+	return false
+
+
+## "!" over a resident: a marked entry, something to hand over, a task to offer, or the letter.
+func npc_has_news(npc_id: String, location: String) -> bool:
+	if state == null:
+		return false
+	if resolve_entry(npc_id, location).get("marker", false):
+		return true
+	for id in data.quest_order:
+		var q: Dictionary = data.quests[id]
+		if str(q.get("target", "")) == npc_id and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+			return true
+		if str(q.get("giver", "")) == npc_id and q.get("offer", "auto") == "auto" and quest_available(id):
+			return true
+	return job != null and job.job_type == "deliver" and job.recipient == npc_id
+
+
+# --- projects, home, shops --------------------------------------------------------
+
+func project_status(pid: String) -> String:
+	if state.project_done(pid):
+		return "complete"
+	return "available" if Conditions.check(data.projects[pid].get("unlock", {}), state) else "locked"
+
+
+func fund_project(pid: String) -> Dictionary:
+	if not data.projects.has(pid) or project_status(pid) != "available":
+		return {"ok": false, "reason": "unavailable"}
+	var p: Dictionary = data.projects[pid]
+	var effects: Array = [
+		{"type": "spend", "amount": int(p["cost"]), "reason": "project:" + pid},
+		{"type": "project", "project": pid},
+		{"type": "contribution", "id": "project:" + pid},
+	]
+	effects.append_array(p.get("effects", []))
+	return run_effects(effects, "project:" + pid)
+
+
+func home_stage_def(stage: int) -> Dictionary:
+	for st in data.home.get("stages", []):
+		if int(st["stage"]) == stage:
+			return st
+	return {}
+
+
+func upgrade_home() -> Dictionary:
+	var next := home_stage_def(state.home_stage + 1)
+	if next.is_empty():
+		return {"ok": false, "reason": "max"}
+	if not Conditions.check(next.get("unlock", {}), state):
+		return {"ok": false, "reason": "locked"}
+	var effects: Array = [
+		{"type": "spend", "amount": int(next["cost"]), "reason": "home:" + str(next["id"])},
+		{"type": "home_stage", "stage": int(next["stage"])},
+	]
+	effects.append_array(next.get("effects", []))
+	return run_effects(effects, "home:" + str(next["id"]))
+
+
+## Items a shop offers right now (unlock conditions met).
+func shop_items(shop_id: String) -> Array:
+	var out: Array = []
+	for entry in data.shops.get(shop_id, {}).get("items", []):
+		if entry is String:
+			out.append(entry)
+		elif Conditions.check(entry.get("unlock", {}), state):
+			out.append(entry["item"])
+	return out
+
+
+func item_on_sale(item_id: String) -> bool:
+	for shop_id in data.shops:
+		if shop_items(shop_id).has(item_id):
+			return true
+	return false
+
+
+## Fixed single-player exchange at the swap stall: give owned items, get another. Once per trade.
+func trade(trade_id: String) -> Dictionary:
+	for t in data.trades:
+		if t["id"] != trade_id:
+			continue
+		if state.events_done.has("trade:" + trade_id):
+			return {"ok": false, "reason": "done"}
+		var need := int(t.get("give_count", 1))
+		if state.owned_count(t["give"]) < need:
+			return {"ok": false, "reason": "missing"}
+		for i in need:
+			state._take_from_storage(t["give"])
+		state.grant_item(t["get"])
+		state.events_done["trade:" + trade_id] = true
+		save_game()
+		state_changed.emit()
+		return {"ok": true}
+	return {"ok": false, "reason": "unknown"}
+
+
+func equip(item_id: String) -> bool:
+	var item: Dictionary = data.items.get(item_id, {})
+	var cat := str(item.get("category", ""))
+	if not DataDB.EQUIP_CATEGORIES.has(cat) or state.owned_count(item_id) <= 0:
+		return false
+	state.equipped[cat] = item_id
+	save_game()
+	state_changed.emit()
+	return true
+
+
+func item_color(item_id: String, fallback: Color) -> Color:
+	var ph: Dictionary = data.items.get(item_id, {}).get("placeholder", {})
+	return Color(str(ph["color"])) if ph.has("color") else fallback
+
+
+## Village news for the notice board: the next story step and festival contributions.
+func story_news() -> String:
+	var lines: Array = []
+	var f := func(flag: String) -> bool: return state.get_flag(flag)
+	if not f.call("story.prologue_complete"):
+		lines.append("[첫 저녁] 새 이웃이 왔어요. 집에 작은 등불을 놓으면 루미가 반가워할 거예요.")
+	elif not f.call("story.act1_started"):
+		lines.append("[1막 · 사라진 초대장] 모아가 카드룸 초대장이 사라졌다고 걱정하고 있어요.")
+	elif not f.call("story.act1_complete"):
+		lines.append("[1막 · 사라진 초대장] 단서 — 주거 골목 우편함: %s · 숲길 안내판: %s" % [
+			"찾음" if f.call("story.clue_postbox") else "아직", "찾음" if f.call("story.clue_grove") else "아직"])
+	elif not f.call("story.act2_complete"):
+		lines.append("[2막 · 서로 다른 테이블] 루미 이야기: %s · 카일 이야기: %s · 모임 준비: %s" % [
+			"들음" if f.call("story.act2_heard_lumi") else "아직", "들음" if f.call("story.act2_heard_kyle") else "아직",
+			"끝남" if f.call("story.act2_prep_done") else "아직"])
+	elif not f.call("story.act3_complete"):
+		lines.append("[3막 · 네잎 저녁제] 준비 기여 %d / 3%s" % [state.contributions.size(),
+			" — 회관 주민 회의가 열려요" if state.contributions.size() >= 3 and not f.call("story.festival_ready") else ""])
+		for c in state.contributions:
+			lines.append("  ✔ " + contribution_name(str(c)))
+		if f.call("story.festival_ready"):
+			lines.append("축제 준비 완료! 저녁에 광장 축제 부스로 오세요.")
+	else:
+		lines.append("[후일담] 네잎 저녁제가 끝났어요. 광장 축제 부스에서 언제든 다시 즐길 수 있어요.")
+	lines.append("공공사업 %d / %d 완료 · 집: %s" % [state.projects.size(), data.project_order.size(),
+		home_stage_def(state.home_stage).get("name", "작은 방")])
+	return "
+".join(lines)
+
+
+## Readable name of a festival contribution key ("prep:juno", "quest:<id>", "project:<id>", "poker:first").
+func contribution_name(key: String) -> String:
+	var kind := key.get_slice(":", 0)
+	var id := key.substr(kind.length() + 1)
+	match kind:
+		"quest":
+			return "의뢰 · " + str(data.quests.get(id, {}).get("name", id))
+		"project":
+			return "공공사업 · " + str(data.projects.get(id, {}).get("name", id))
+		"poker":
+			return "축제 준비 기간의 첫 포커 모임"
+		"prep":
+			return {"juno": "주노와 장식 달기", "spectate": "모아와 관전 자리 정리"}.get(id, "축제 준비 돕기")
+	return key

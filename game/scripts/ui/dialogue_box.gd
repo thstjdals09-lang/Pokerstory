@@ -4,6 +4,8 @@ extends Control
 ## Esc closes.
 
 signal choice_made(action: String, arg: String)
+## Same moment as choice_made, with the whole choice (effects, next entry, ...).
+signal choice_picked(choice: Dictionary)
 signal closed
 
 var choice_buttons: Array = []
@@ -98,6 +100,7 @@ func pick_choice(i: int) -> void:
 	visible = false
 	UiKit.clear_children(_choice_box)
 	choice_buttons.clear()
+	choice_picked.emit(c)
 	choice_made.emit(str(c.get("action", "close")), str(c.get("arg", "")))
 
 

@@ -1,0 +1,157 @@
+{
+ "projects": [
+  {
+   "id": "board_restoration",
+   "name": "행사 게시판 수선",
+   "cost": 30,
+   "unlock": {
+    "flags_true": [
+     "story.act1_started"
+    ]
+   },
+   "locked_hint": "1막(사라진 초대장)이 시작되면 열려요",
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.01_03"
+    },
+    {
+     "type": "flag",
+     "flag": "town.board_restored"
+    }
+   ],
+   "done_text": "게시판을 수선했어요. 장터의 비비 공방 문이 열렸어요."
+  },
+  {
+   "id": "postbox_garden",
+   "name": "우편함 화단",
+   "cost": 45,
+   "unlock": {
+    "quest_completed": "npc_nora.bond_01"
+   },
+   "locked_hint": "노아의 첫 이야기를 들으면 열려요",
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.02_04"
+    }
+   ],
+   "done_text": "우편함 옆에 작은 화단이 생겼어요. 노아와 모아가 좋아할 거예요."
+  },
+  {
+   "id": "guest_cottage",
+   "name": "손님 객실 수선",
+   "cost": 80,
+   "unlock": {
+    "flags_true": [
+     "story.act2_started"
+    ]
+   },
+   "locked_hint": "2막(서로 다른 테이블)이 시작되면 열려요",
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.furniture.03_02"
+    }
+   ],
+   "done_text": "주거 골목의 방문객 객실이 문을 열었어요. 시아가 손님을 맞을 거예요."
+  },
+  {
+   "id": "lantern_path",
+   "name": "밤길 등불 정비",
+   "cost": 60,
+   "unlock": {
+    "any": [
+     {
+      "quest_completed": "npc_haru.bond_01"
+     },
+     {
+      "quest_completed": "npc_ona.bond_01"
+     }
+    ]
+   },
+   "locked_hint": "하루나 오나의 첫 이야기를 들으면 열려요",
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.03_04"
+    }
+   ],
+   "done_text": "숲길 산책로에 은은한 등불이 켜졌어요."
+  },
+  {
+   "id": "square_seating",
+   "name": "광장 벤치와 자리",
+   "cost": 70,
+   "unlock": {
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "locked_hint": "1막을 마치면 열려요",
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.memento.05_08"
+    }
+   ],
+   "done_text": "광장 분수 옆에 벤치가 놓였어요. 저녁엔 교류 모임 자리가 돼요."
+  },
+  {
+   "id": "market_awning",
+   "name": "장터 비 가림막",
+   "cost": 90,
+   "unlock": {
+    "project_complete": "board_restoration"
+   },
+   "locked_hint": "공방이 열리면(게시판 수선) 열려요",
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.furniture.04_01"
+    }
+   ],
+   "done_text": "장터에 줄무늬 가림막이 생겼어요. 비비 공방에 새 가구가 들어와요."
+  },
+  {
+   "id": "card_room_extension",
+   "name": "카드룸 테이블 추가",
+   "cost": 120,
+   "unlock": {
+    "flags_true": [
+     "story.act2_complete"
+    ]
+   },
+   "locked_hint": "2막을 마치면 열려요",
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "town.card_room_extended"
+    },
+    {
+     "type": "item",
+     "item": "item.decor.04_03"
+    }
+   ],
+   "done_text": "카드룸에 테이블이 늘었어요. 카일과 렌에게도 한 판 청할 수 있어요."
+  },
+  {
+   "id": "festival_decor",
+   "name": "네잎 저녁제 장식",
+   "cost": 160,
+   "unlock": {
+    "flags_true": [
+     "story.act3_started"
+    ]
+   },
+   "locked_hint": "3막(네잎 저녁제)이 시작되면 열려요",
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.06_03"
+    }
+   ],
+   "done_text": "광장에 축제 장식이 걸렸어요. (축제는 이 장식이 없어도 열 수 있어요.)"
+  }
+ ]
+}

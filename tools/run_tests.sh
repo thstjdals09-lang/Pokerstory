@@ -17,7 +17,7 @@ if [ "$MODE" = "unit" ] || [ "$MODE" = "all" ]; then
 fi
 
 if [ "$MODE" = "e2e" ] || [ "$MODE" = "all" ]; then
-  for scenario in path_a path_b path_c path_d1 path_d2 broke migrate reject; do
+  for scenario in path_a path_b path_c path_d1 path_d2 broke migrate reject cc04 story; do
     save="user://e2e_$(echo "$scenario" | sed 's/[0-9]$//').json"
     echo "== e2e: $scenario =="
     "$GODOT" --headless --path "$GAME" -- --e2e="$scenario" --save-path="$save" || status=1

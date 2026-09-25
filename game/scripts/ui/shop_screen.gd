@@ -57,7 +57,7 @@ func refresh() -> void:
 	_chips.text = "● 보유 칩 %d" % Game.state.chips_balance
 	UiKit.clear_children(_list)
 	buy_buttons.clear()
-	for item_id in shop.get("items", []):
+	for item_id in Game.shop_items(shop_id):
 		var item: Dictionary = Game.data.items[item_id]
 		var row := HBoxContainer.new()
 		row.add_theme_constant_override("separation", 14)

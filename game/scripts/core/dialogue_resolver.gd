@@ -1,17 +1,24 @@
 class_name DialogueResolver
 extends RefCounted
-## Picks which dialogue entry an NPC says. Entries are checked in data order;
-## the first one whose npc and conditions match wins. ref_only entries are skipped here
-## and are reached only through a "dialogue" choice.
+## Picks which dialogue entry a speaker (resident id, or "obj:<id>" for a world object) says.
+## Entries are already sorted by priority (DataDB); the first whose speaker and conditions match
+## wins. ref_only entries are reached only through a "dialogue" choice. "once" entries are skipped
+## after they were shown (GameState.events_done "dlg:<id>").
 
 
-static func resolve(entries: Array, npc_id: String, location: String, state: GameState) -> Dictionary:
+static func resolve(entries: Array, speaker: String, location: String, state: GameState) -> Dictionary:
 	for e in entries:
-		if e.get("npc", "") != npc_id or e.get("ref_only", false):
+		if e.get("npc", "") != speaker or e.get("ref_only", false):
+			continue
+		if e.get("once", false) and state.events_done.has(once_key(e)):
 			continue
 		if Conditions.check(e.get("conditions", {}), state, location):
 			return e
 	return {}
+
+
+static func once_key(entry: Dictionary) -> String:
+	return "dlg:" + str(entry.get("id", ""))
 
 
 static func find(entries: Array, entry_id: String) -> Dictionary:

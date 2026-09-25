@@ -21,7 +21,67 @@
       "effect": "reveal_opponent_pair_or_better",
       "description": "교체하기 전에 한 번, 루미의 지금 패가 원페어 이상인지만 알려 줘요. 카드 자체는 보이지 않아요.",
       "result_true": "별빛 감각: 루미의 지금 패는 원페어 이상이에요.",
-      "result_false": "별빛 감각: 루미의 지금 패는 원페어보다 약해요."
+      "result_false": "별빛 감각: 루미의 지금 패는 원페어보다 약해요.",
+      "aliases": [
+        "ability.starlight_sense"
+      ],
+      "source": "처음부터"
+    },
+    {
+      "id": "ability.suit_echo",
+      "name": "문양의 메아리",
+      "uses_per_match": 1,
+      "effect": "own_suit_count",
+      "source": "엘라의 첫 이야기",
+      "description": "내 패에서 가장 많은 문양과 그 장수를 알려 줘요. 내 카드만 봐요."
+    },
+    {
+      "id": "ability.discard_hint",
+      "name": "조심스러운 메모",
+      "uses_per_match": 1,
+      "effect": "discard_hint",
+      "source": "모아의 첫 이야기",
+      "description": "지금 고른 카드를 바꾸면 남는 카드로 어떤 족보가 유지되는지 알려 줘요. 결과를 보장하지는 않아요."
+    },
+    {
+      "id": "ability.steady_hand",
+      "name": "차분한 손",
+      "uses_per_match": 1,
+      "effect": "undo_selection",
+      "source": "테오의 첫 이야기",
+      "description": "교체 확정 전에 고른 카드를 한 번 되돌려요. 확정한 뒤에는 쓸 수 없어요."
+    },
+    {
+      "id": "ability.table_read",
+      "name": "테이블 읽기",
+      "uses_per_match": 1,
+      "effect": "opponent_last_discards",
+      "source": "카일의 첫 이야기",
+      "description": "이 상대가 지난 판에 몇 장을 바꿨는지 보여 줘요. 이미 공개된 기록만 봐요."
+    },
+    {
+      "id": "ability.lucky_mark",
+      "name": "작은 표시",
+      "uses_per_match": 1,
+      "effect": "lock_card",
+      "source": "렌의 첫 이야기",
+      "description": "고른 카드 한 장에 표시를 남겨 실수로 바꾸지 않게 해요. 카드 값은 바뀌지 않아요."
+    },
+    {
+      "id": "ability.pattern_book",
+      "name": "패턴 수첩",
+      "uses_per_match": 1,
+      "effect": "opponent_pattern",
+      "source": "노아의 첫 이야기",
+      "description": "이 상대가 공개된 판에서 자주 만든 족보 경향을 알려 줘요."
+    },
+    {
+      "id": "ability.friendly_pause",
+      "name": "숨 고르기",
+      "uses_per_match": 1,
+      "effect": "help_focus",
+      "source": "시아의 첫 이야기",
+      "description": "족보 도움말을 펼치고 지금 내 패를 쉽게 설명해 줘요. 타이머가 없는 게임이라 이득은 없어요."
     }
   ],
   "opponent_lines": {
@@ -30,14 +90,201 @@
     "lose": "괜찮아, 카드는 내일도 섞이니까! 한 판 더 할래?"
   },
   "hand_help": [
-    ["스트레이트 플러시", "같은 무늬로 이어진 5장  (예: 5♥ 6♥ 7♥ 8♥ 9♥)"],
-    ["포카드", "같은 숫자 4장"],
-    ["풀하우스", "같은 숫자 3장 + 같은 숫자 2장"],
-    ["플러시", "같은 무늬 5장"],
-    ["스트레이트", "이어진 숫자 5장  (A-2-3-4-5가 가장 낮음)"],
-    ["트리플", "같은 숫자 3장"],
-    ["투페어", "같은 숫자 2장이 두 쌍"],
-    ["원페어", "같은 숫자 2장"],
-    ["하이카드", "아무 짝도 없을 때, 가장 높은 카드로 비교"]
-  ]
+    [
+      "스트레이트 플러시",
+      "같은 무늬로 이어진 5장  (예: 5♥ 6♥ 7♥ 8♥ 9♥)"
+    ],
+    [
+      "포카드",
+      "같은 숫자 4장"
+    ],
+    [
+      "풀하우스",
+      "같은 숫자 3장 + 같은 숫자 2장"
+    ],
+    [
+      "플러시",
+      "같은 무늬 5장"
+    ],
+    [
+      "스트레이트",
+      "이어진 숫자 5장  (A-2-3-4-5가 가장 낮음)"
+    ],
+    [
+      "트리플",
+      "같은 숫자 3장"
+    ],
+    [
+      "투페어",
+      "같은 숫자 2장이 두 쌍"
+    ],
+    [
+      "원페어",
+      "같은 숫자 2장"
+    ],
+    [
+      "하이카드",
+      "아무 짝도 없을 때, 가장 높은 카드로 비교"
+    ]
+  ],
+  "opponents": [
+    {
+      "npc": "npc_lumi",
+      "persona": "keep_pairs",
+      "context": "홈게임·친목",
+      "lines": {
+        "win": "와, 내가 졌다! 다음 판은 안 봐줄 거야.",
+        "draw": "완전히 같은 패라니, 우리 마음이 통했나 봐!",
+        "lose": "괜찮아, 카드는 내일도 섞이니까! 한 판 더 할래?"
+      }
+    },
+    {
+      "npc": "npc_kyle",
+      "persona": "steady",
+      "context": "공개 도전",
+      "lines": {
+        "win": "…졌군. 공정한 승부였다.",
+        "draw": "같은 패라. 규칙대로 참가금은 돌려준다.",
+        "lose": "이번엔 내가 이겼다. 다음 판도 같은 규칙으로."
+      }
+    },
+    {
+      "npc": "npc_rira",
+      "persona": "steady",
+      "context": "찻집",
+      "lines": {
+        "win": "어머, 제가 졌네요! 차 한 잔 더 드릴게요.",
+        "draw": "비겼네요! 차는 두 잔이요.",
+        "lose": "제가 이겼어요. 그래도 차는 공짜예요!"
+      }
+    },
+    {
+      "npc": "npc_taeo",
+      "persona": "steady",
+      "context": "모임",
+      "lines": {
+        "win": "…졌네. 소매 걷고 한 판 더?",
+        "draw": "비겼군. 나쁘지 않아.",
+        "lose": "이겼다. 그래도 네 소매가 더 신경 쓰여."
+      }
+    },
+    {
+      "npc": "npc_ella",
+      "persona": "keep_pairs",
+      "context": "정원",
+      "lines": {
+        "win": "와, 그렇게 바꿨군요! 어떻게 생각했어요?",
+        "draw": "같은 족보라니, 신기해요.",
+        "lose": "이번엔 제가 이겼네요. 문양을 잘 보면 보여요."
+      }
+    },
+    {
+      "npc": "npc_haru",
+      "persona": "cautious",
+      "context": "산책 모임",
+      "lines": {
+        "win": "졌어요! 그래도 같이 앉아서 좋았어요.",
+        "draw": "비겼어요! 다행이다…",
+        "lose": "제가 이겼어요? 정말요?"
+      }
+    },
+    {
+      "npc": "npc_ren",
+      "persona": "curious",
+      "context": "공개 도전",
+      "lines": {
+        "win": "졌다! 이 판은 기록해 둬야지!",
+        "draw": "비겼어! 이것도 희귀한 판이야.",
+        "lose": "이겼다! 희귀 카드 없이도!"
+      }
+    },
+    {
+      "npc": "npc_juno",
+      "persona": "keep_pairs",
+      "context": "축제",
+      "lines": {
+        "win": "오오! 도전자의 승리입니다!",
+        "draw": "무승부! 박수 주세요!",
+        "lose": "사회자가 이겨 버렸다! 미안!"
+      }
+    },
+    {
+      "npc": "npc_yul",
+      "persona": "cautious",
+      "context": "회관",
+      "lines": {
+        "win": "졌다. 간식 먹자.",
+        "draw": "비겼다. 간식 먹자.",
+        "lose": "이겼다. 그래도 간식 먹자."
+      }
+    },
+    {
+      "npc": "npc_sia",
+      "persona": "friendly",
+      "context": "방문객 모임",
+      "lines": {
+        "win": "와아, 이겼네요! 또 와요!",
+        "draw": "비겼어요! 다음에 또 해요!",
+        "lose": "제가 이겼어요… 다음엔 당신 차례예요!"
+      }
+    }
+  ],
+  "modes": {
+    "practice": {
+      "name": "연습 한 판",
+      "stake": 0,
+      "desc": "칩 없이 족보와 교체를 연습해요. 보상도 손실도 없어요."
+    },
+    "homegame": {
+      "name": "홈게임",
+      "stake": 20,
+      "desc": "기본 1:1 원드로."
+    },
+    "social_mix": {
+      "name": "교류 모임",
+      "stake": 20,
+      "desc": "상대 한 명을 골라 1:1로 쳐요. 구경하는 주민이 반응해요.",
+      "opponents": [
+        "npc_rira",
+        "npc_taeo",
+        "npc_ella",
+        "npc_haru",
+        "npc_yul",
+        "npc_sia",
+        "npc_juno"
+      ],
+      "unlock": {
+        "flags_true": [
+          "story.act1_complete"
+        ]
+      }
+    },
+    "friendly_challenge": {
+      "name": "친선 도전",
+      "stake": 20,
+      "desc": "라이벌을 골라 능력 하나를 들고 겨뤄요.",
+      "opponents": [
+        "npc_lumi",
+        "npc_kyle",
+        "npc_ren",
+        "npc_juno"
+      ],
+      "unlock": {
+        "flags_true": [
+          "story.act2_complete"
+        ]
+      }
+    },
+    "tournament": {
+      "name": "네잎 저녁제 대회",
+      "stake": 20,
+      "desc": "세 명과 차례로 겨뤄요. 우승 보상은 장식뿐이고, 이야기 진행과는 무관해요.",
+      "stages": [
+        "npc_ren",
+        "npc_rira",
+        "npc_kyle"
+      ],
+      "reward_item": "item.card_back.08_06"
+    }
+  }
 }

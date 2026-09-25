@@ -90,6 +90,8 @@ func _build_obstacles() -> void:
 	for d in loc.get("decor", []):
 		if not d.get("solid", false):
 			continue
+		if d.has("conditions") and not Conditions.check(d["conditions"], Game.state, location_id):
+			continue
 		if d.has("rect"):
 			_add_rect_body(Geo.rect(d["rect"]))
 		elif d.has("pos"):
@@ -98,34 +100,36 @@ func _build_obstacles() -> void:
 
 func _build_interactables() -> void:
 	var uid := 0
-	for placement in loc.get("npcs", []):
-		if not DataDB.placement_active(placement, Game.state.time_of_day):
+	# Residents come from their schedules: each stands in exactly one place per time of day.
+	for npc_id in Game.data.npc_order:
+		var place: Dictionary = Game.data.npc_place(npc_id, Game.state.time_of_day, Game.state)
+		if place.get("loc", "") != location_id:
 			continue
-		var def: Dictionary = Game.data.npcs[placement["id"]]
+		var def: Dictionary = Game.data.npcs[npc_id]
 		var node := NpcScript.new()
-		node.position = Geo.vec(placement["pos"])
+		node.position = Geo.vec(place["pos"])
 		add_child(node)
 		node.setup(def)
-		npc_nodes[def["id"]] = node
+		npc_nodes[npc_id] = node
 		uid += 1
 		interactables.append({
-			"uid": uid, "kind": "npc", "id": def["id"], "pos": node.position,
-			"radius": float(placement.get("interact_radius", 64)),
+			"uid": uid, "kind": "npc", "id": npc_id, "pos": node.position,
+			"radius": float(place.get("radius", 64)),
 			"prompt": "%s에게 말 걸기" % def["name"],
 		})
-	for b in loc.get("buildings", []):
+	var doors: Array = []
+	doors.append_array(loc.get("buildings", []))
+	doors.append_array(loc.get("gates", []))
+	doors.append_array(loc.get("exits", []))
+	for b in doors:
 		uid += 1
 		interactables.append({
-			"uid": uid, "kind": "door", "id": b["id"], "pos": Geo.vec(b["door"]), "radius": 56.0,
+			"uid": uid, "kind": "door", "id": b.get("id", "exit"),
+			"pos": Geo.vec(b["door"] if b.has("door") else b["pos"]), "radius": 56.0,
 			"prompt": b.get("prompt", "들어가기"), "target": b["target"], "spawn": b["spawn"],
 			"requires_time": b.get("requires_time", ""), "closed_title": b.get("closed_title", ""),
 			"closed_text": b.get("closed_text", ""), "wait_choice": b.get("wait_choice", ""),
-		})
-	for e in loc.get("exits", []):
-		uid += 1
-		interactables.append({
-			"uid": uid, "kind": "door", "id": e.get("id", "exit"), "pos": Geo.vec(e["pos"]), "radius": 56.0,
-			"prompt": e.get("prompt", "나가기"), "target": e["target"], "spawn": e["spawn"],
+			"unlock": b.get("unlock", {}), "locked_text": b.get("locked_text", "아직 들어갈 수 없어요."),
 		})
 	for s in loc.get("signs", []):
 		uid += 1
@@ -135,10 +139,11 @@ func _build_interactables() -> void:
 		})
 	for it in loc.get("interactables", []):
 		uid += 1
-		interactables.append({
-			"uid": uid, "kind": it["kind"], "id": it["id"], "pos": Geo.vec(it["pos"]),
-			"radius": float(it.get("radius", 60)), "prompt": it.get("prompt", ""),
-		})
+		var entry: Dictionary = it.duplicate()
+		entry["uid"] = uid
+		entry["pos"] = Geo.vec(it["pos"])
+		entry["radius"] = float(it.get("radius", 60))
+		interactables.append(entry)
 
 
 func _add_rect_body(r: Rect2) -> void:
@@ -175,6 +180,8 @@ func _physics_process(_delta: float) -> void:
 	var best := {}
 	var best_d := INF
 	for it in interactables:
+		if it.has("conditions") and not Conditions.check(it["conditions"], Game.state, location_id):
+			continue
 		var d: float = player.position.distance_to(it["pos"])
 		if d <= it["radius"] and d < best_d:
 			best = it
@@ -235,7 +242,7 @@ func sync_job_pickups() -> void:
 			interactables.append({
 				"uid": 1000 + int(str(spot_id).get_slice("_", 1)), "kind": "job_pickup", "id": spot_id,
 				"pos": spot["pos"], "radius": 34.0,
-				"prompt": "흩어진 카드 줍기" if spot["kind"] == "card" else "흩어진 칩 줍기",
+				"prompt": {"card": "흩어진 카드 줍기", "chip": "흩어진 칩 줍기", "lantern": "등불 점검하기"}.get(str(spot["kind"]), "살펴보기"),
 			})
 	_pickup_view.spots = shown
 	_pickup_view.queue_redraw()
@@ -248,8 +255,7 @@ func refresh_markers() -> void:
 	if Game.state == null:
 		return
 	for npc_id in npc_nodes:
-		var entry := DialogueResolver.resolve(Game.data.dialogue, npc_id, location_id, Game.state)
-		npc_nodes[npc_id].show_marker = entry.get("marker", false)
+		npc_nodes[npc_id].show_marker = Game.npc_has_news(npc_id, location_id)
 
 
 # --- home editing ------------------------------------------------------------

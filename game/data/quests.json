@@ -1,14 +1,417 @@
 {
-  "quests": [
+ "quests": [
+  {
+   "id": "quest.sera_delivery",
+   "name": "세라의 꾸러미 배달",
+   "giver": "npc_sera",
+   "target": "npc_lumi",
+   "unlock": {},
+   "reward": 30,
+   "item_name": "마법 불씨 꾸러미",
+   "offer_lines": [
+    "루미에게 이 마법 불씨 꾸러미를 전해 줄 수 있을까요?"
+   ],
+   "handoff": "꾸러미 건네기",
+   "thanks_lines": [],
+   "effects": [
     {
-      "id": "quest.sera_delivery",
-      "name": "세라의 꾸러미 배달",
-      "giver": "npc_sera",
-      "target": "npc_lumi",
-      "item_name": "마법 불씨 꾸러미",
-      "reward": 30,
-      "objective": "루미에게 마법 불씨 꾸러미 전해 주기 (낮: 광장 · 저녁: 카드룸)",
-      "complete_dialogue": "lumi_quest_thanks"
+     "type": "flag",
+     "flag": "intro.sera_delivery"
     }
-  ]
+   ],
+   "offer": "manual",
+   "objective": "루미에게 마법 불씨 꾸러미 전해 주기 (낮: 광장 · 저녁: 카드룸)",
+   "complete_dialogue": "lumi_quest_thanks"
+  },
+  {
+   "id": "quest.nora_postcard",
+   "name": "비뚤어진 초대장",
+   "giver": "npc_nora",
+   "target": "npc_moa",
+   "unlock": {
+    "flags_true": [
+     "story.act1_started"
+    ]
+   },
+   "reward": 15,
+   "item_name": "번진 초대장 사본",
+   "offer_lines": [
+    "편지 뒷면의 글씨가 잘 안 보여요.",
+    "모아라면 카드룸 초대장 글씨를 알아볼 거예요. 전해 줄래요?"
+   ],
+   "handoff": "번진 초대장 보여 주기",
+   "thanks_lines": [
+    "모아: 낯선 사람도 환영한다고 써 있어요! 이거 단서가 되겠어요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "story.clue_postbox"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.rira_tea",
+   "name": "모임의 빈 찻잔",
+   "giver": "npc_rira",
+   "target": "npc_taeo",
+   "unlock": {},
+   "reward": 15,
+   "item_name": "찻잎 견본",
+   "offer_lines": [
+    "테오가 좋아하는 찻잎을 알아봐 줄래요?",
+    "친목 모임에 오는 손님들한테 맞는 차를 고르고 싶거든요."
+   ],
+   "handoff": "찻잎 견본 보여 주기",
+   "thanks_lines": [
+    "테오: 그 잎은 손님도 좋아할 거야. 리라한테 그렇게 전해 줘."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "npc_pair.rira_taeo.tea"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.taeo_cushion",
+   "name": "오래된 쿠션",
+   "giver": "npc_taeo",
+   "target": "npc_bibi",
+   "unlock": {},
+   "reward": 20,
+   "item_name": "쿠션 안감",
+   "offer_lines": [
+    "이 쿠션 안감, 다시 써도 되는지 비비한테 확인받아 줄래?"
+   ],
+   "handoff": "쿠션 안감 보여 주기",
+   "thanks_lines": [
+    "비비: 다시 쓰기 좋은 천이네요. 버리지 말고 고쳐 써요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "craft.cushion"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.bibi_parts",
+   "name": "남겨 둔 부품",
+   "giver": "npc_bibi",
+   "target": "npc_sera",
+   "unlock": {
+    "project_complete": "board_restoration"
+   },
+   "reward": 20,
+   "item_name": "부품 목록",
+   "offer_lines": [
+    "세라에게 오래된 등불 부품을 빌려 와 줄 수 있나요?",
+    "공방 전시 선반에 쓸 거예요."
+   ],
+   "handoff": "부품 목록 건네기",
+   "thanks_lines": [
+    "세라: 그걸 아직 기억하고 있구나. 창고에서 꺼내 둘게요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "craft.old_parts"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.ella_symbols",
+   "name": "네 문양의 기록",
+   "giver": "npc_ella",
+   "target": "npc_nora",
+   "unlock": {
+    "flags_true": [
+     "story.act1_started"
+    ]
+   },
+   "reward": 20,
+   "item_name": "문양 스케치",
+   "offer_lines": [
+    "노아가 기억하는 옛 문양 뜻을 듣고 싶어요.",
+    "이 스케치를 보여 주고 물어봐 줄래요?"
+   ],
+   "handoff": "문양 스케치 보여 주기",
+   "thanks_lines": [
+    "노아: 클로버는 우연히 온 사람도 앉을 자리였대요. 엘라에게 꼭 전해 줘요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "story.clue_grove"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.haru_path",
+   "name": "저녁길 표지",
+   "giver": "npc_haru",
+   "target": "npc_ona",
+   "unlock": {},
+   "reward": 15,
+   "item_name": "어두운 길 지도",
+   "offer_lines": [
+    "오나에게 둔치로 가는 어두운 길을 알려 줄래요?",
+    "저녁 모임에 가는 길이 너무 깜깜하거든요."
+   ],
+   "handoff": "지도 보여 주기",
+   "thanks_lines": [
+    "오나: 필요한 곳만 밝히면 되겠네. 너무 밝으면 별이 안 보이니까."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "town.path_inspected"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.ona_glow",
+   "name": "빛의 세기",
+   "giver": "npc_ona",
+   "target": "npc_haru",
+   "unlock": {},
+   "reward": 15,
+   "item_name": "빛 세기 견본 버섯",
+   "offer_lines": [
+    "하루에게 이 버섯 등불 밝기가 괜찮은지 물어봐 줄래?"
+   ],
+   "handoff": "버섯 등불 보여 주기",
+   "thanks_lines": [
+    "하루: 이 정도면 길을 찾겠어요. 눈도 안 부시고요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "town.path_brightness"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.kyle_rules",
+   "name": "쉽게 쓰는 규칙",
+   "giver": "npc_kyle",
+   "target": "npc_moa",
+   "unlock": {
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "reward": 20,
+   "item_name": "초보자용 규칙 문구",
+   "offer_lines": [
+    "초보자를 위한 문구를 모아에게 보여 줘.",
+    "내가 쓰면 너무 딱딱하다더군."
+   ],
+   "handoff": "규칙 문구 보여 주기",
+   "thanks_lines": [
+    "모아: 좋아요! 어려운 말부터 바꿔 봐요. 카일에게 고맙다고 전해 줘요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "story.rules_explained"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.juno_poster",
+   "name": "행사 안내문",
+   "giver": "npc_juno",
+   "target": "npc_miri",
+   "unlock": {
+    "flags_true": [
+     "story.act2_started"
+    ]
+   },
+   "reward": 20,
+   "item_name": "행사 포스터",
+   "offer_lines": [
+    "짜잔! 행사 포스터야. 미리한테 보여 주고 괜찮은지 물어봐 줄래?"
+   ],
+   "handoff": "포스터 보여 주기",
+   "thanks_lines": [
+    "미리: 누구나 참가 가능하다고 크게 써 주세요. 그 한 줄이 제일 중요해요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "story.poster_checked"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.miri_budget",
+   "name": "읽기 쉬운 예산표",
+   "giver": "npc_miri",
+   "target": "npc_rira",
+   "unlock": {
+    "flags_true": [
+     "story.act2_started"
+    ]
+   },
+   "reward": 20,
+   "item_name": "행사비 내역",
+   "offer_lines": [
+    "이 행사비 내역을 리라에게 설명해 줄 수 있을까요?",
+    "숫자만 보면 다들 어려워하거든요."
+   ],
+   "handoff": "내역 설명하기",
+   "thanks_lines": [
+    "리라: 그럼 찻잔은 우리가 준비할게요! 대회든 친목이든 차는 필요하니까요."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "story.budget_explained"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.ren_cardcase",
+   "name": "한 장의 출처",
+   "giver": "npc_ren",
+   "target": "npc_kyle",
+   "unlock": {},
+   "reward": 15,
+   "item_name": "카드 케이스",
+   "offer_lines": [
+    "이 카드 케이스, 어디서 온 건지 카일에게 물어봐 줄래?",
+    "카일은 오래된 건 다 알거든."
+   ],
+   "handoff": "카드 케이스 보여 주기",
+   "thanks_lines": [
+    "카일: 친구에게서 받은 거면 이름을 적어 둬. 출처가 있으면 더 소중해지지."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "collection.provenance"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.yul_bench",
+   "name": "다 함께 앉는 자리",
+   "giver": "npc_yul",
+   "target": "npc_bibi",
+   "unlock": {
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "reward": 20,
+   "item_name": "벤치 도면",
+   "offer_lines": [
+    "비비와 벤치 놓을 자리를 살펴봐 줄래?"
+   ],
+   "handoff": "벤치 도면 보여 주기",
+   "thanks_lines": [
+    "비비: 길을 막지 않는 곳에 놓아요. 누구든 지나갈 수 있게."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "town.bench_plan"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.sia_welcome",
+   "name": "새 손님의 첫 모임",
+   "giver": "npc_sia",
+   "target": "npc_lumi",
+   "unlock": {
+    "project_complete": "guest_cottage"
+   },
+   "reward": 20,
+   "item_name": "방문객 질문 쪽지",
+   "offer_lines": [
+    "손님이 포커를 몰라도 모임에 가도 되냐고 물어요.",
+    "루미에게 안내를 부탁해 줄래요?"
+   ],
+   "handoff": "질문 쪽지 전하기",
+   "thanks_lines": [
+    "루미: 처음 온 사람도 관전부터 하면 돼. 자리는 언제나 있어!"
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "town.guest_welcomed"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.festival_letters",
+   "name": "축제 초대 답장",
+   "giver": "npc_nora",
+   "target": "npc_juno",
+   "unlock": {
+    "flags_true": [
+     "story.act3_started"
+    ]
+   },
+   "reward": 25,
+   "item_name": "답장 꾸러미",
+   "offer_lines": [
+    "모두의 답장이 모였어요. 주노에게 전해 줄래요?"
+   ],
+   "handoff": "답장 꾸러미 건네기",
+   "thanks_lines": [
+    "주노: 초대장이 모두에게 닿았어! 이렇게 많은 답장이라니!"
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "story.contrib.festival_letters"
+    }
+   ],
+   "offer": "auto"
+  },
+  {
+   "id": "quest.festival_lights",
+   "name": "네잎 불빛 점검",
+   "giver": "npc_sera",
+   "target": "npc_ona",
+   "unlock": {
+    "flags_true": [
+     "story.act3_started"
+    ]
+   },
+   "reward": 25,
+   "item_name": "불씨 점검표",
+   "offer_lines": [
+    "축제 날 밤길 등불이 괜찮은지, 오나에게 확인해 달래요."
+   ],
+   "handoff": "점검표 건네기",
+   "thanks_lines": [
+    "오나: 축제 날도 길이 보일 거야. 은은하게, 그래도 충분히."
+   ],
+   "effects": [
+    {
+     "type": "flag",
+     "flag": "story.contrib.festival_lights"
+    }
+   ],
+   "offer": "auto"
+  }
+ ]
 }

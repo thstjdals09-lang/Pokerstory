@@ -1,9 +1,408 @@
 {
-  "shops": {
-    "sera_shop": {
-      "name": "세라의 잡화점",
-      "owner": "npc_sera",
-      "items": ["furniture.lamp_small"]
+ "_comment": "No poker-only required item (04_life/07). Trades are fixed single-player exchanges, once each. item.card_back.08_06 is the tournament reward only (not sold).",
+ "shops": {
+  "sera_shop": {
+   "name": "세라의 잡화점",
+   "owner": "npc_sera",
+   "items": [
+    "furniture.lamp_small",
+    {
+     "item": "item.furniture.01_01",
+     "unlock": {}
+    },
+    {
+     "item": "item.furniture.01_02",
+     "unlock": {}
+    },
+    {
+     "item": "item.decor.01_03",
+     "unlock": {}
+    },
+    {
+     "item": "item.decor.01_04",
+     "unlock": {}
+    },
+    {
+     "item": "item.furniture.02_01",
+     "unlock": {
+      "flags_true": [
+       "story.act1_started"
+      ]
+     }
+    },
+    {
+     "item": "item.furniture.02_02",
+     "unlock": {
+      "flags_true": [
+       "story.act1_started"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.02_03",
+     "unlock": {
+      "flags_true": [
+       "story.act1_started"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.02_04",
+     "unlock": {
+      "flags_true": [
+       "story.act1_started"
+      ]
+     }
+    },
+    {
+     "item": "item.furniture.03_01",
+     "unlock": {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.furniture.03_02",
+     "unlock": {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.03_03",
+     "unlock": {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.03_04",
+     "unlock": {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.furniture.04_01",
+     "unlock": {
+      "project_complete": "board_restoration"
+     }
+    },
+    {
+     "item": "item.furniture.04_02",
+     "unlock": {
+      "project_complete": "board_restoration"
+     }
+    },
+    {
+     "item": "item.decor.04_03",
+     "unlock": {
+      "project_complete": "board_restoration"
+     }
+    },
+    {
+     "item": "item.decor.04_04",
+     "unlock": {
+      "project_complete": "board_restoration"
+     }
     }
+   ]
+  },
+  "bibi_workshop": {
+   "name": "비비의 공방",
+   "owner": "npc_bibi",
+   "items": [
+    {
+     "item": "item.furniture.05_01",
+     "unlock": {}
+    },
+    {
+     "item": "item.furniture.05_02",
+     "unlock": {}
+    },
+    {
+     "item": "item.decor.05_03",
+     "unlock": {}
+    },
+    {
+     "item": "item.decor.05_04",
+     "unlock": {}
+    },
+    {
+     "item": "item.furniture.06_01",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.furniture.06_02",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.06_03",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.06_04",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.furniture.07_01",
+     "unlock": {
+      "project_complete": "market_awning"
+     }
+    },
+    {
+     "item": "item.furniture.07_02",
+     "unlock": {
+      "project_complete": "market_awning"
+     }
+    },
+    {
+     "item": "item.decor.07_03",
+     "unlock": {
+      "project_complete": "market_awning"
+     }
+    },
+    {
+     "item": "item.decor.07_04",
+     "unlock": {
+      "project_complete": "market_awning"
+     }
+    },
+    {
+     "item": "item.furniture.08_01",
+     "unlock": {
+      "flags_true": [
+       "story.act3_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.furniture.08_02",
+     "unlock": {
+      "flags_true": [
+       "story.act3_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.08_03",
+     "unlock": {
+      "flags_true": [
+       "story.act3_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.decor.08_04",
+     "unlock": {
+      "flags_true": [
+       "story.act3_complete"
+      ]
+     }
+    }
+   ]
+  },
+  "taeo_tailor": {
+   "name": "테오의 수선 가게",
+   "owner": "npc_taeo",
+   "items": [
+    {
+     "item": "item.clothing.01_05",
+     "unlock": {}
+    },
+    {
+     "item": "item.clothing.02_05",
+     "unlock": {}
+    },
+    {
+     "item": "item.clothing.03_05",
+     "unlock": {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.clothing.04_05",
+     "unlock": {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.clothing.05_05",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.clothing.06_05",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.clothing.07_05",
+     "unlock": {
+      "flags_true": [
+       "story.act3_started"
+      ]
+     }
+    },
+    {
+     "item": "item.clothing.08_05",
+     "unlock": {
+      "flags_true": [
+       "story.act3_started"
+      ]
+     }
+    }
+   ]
+  },
+  "swap_shop": {
+   "name": "작은 교환대",
+   "owner": "npc_ren",
+   "items": [
+    {
+     "item": "item.card_back.01_06",
+     "unlock": {}
+    },
+    {
+     "item": "item.chip_style.01_07",
+     "unlock": {}
+    },
+    {
+     "item": "item.card_back.02_06",
+     "unlock": {}
+    },
+    {
+     "item": "item.chip_style.02_07",
+     "unlock": {}
+    },
+    {
+     "item": "item.card_back.03_06",
+     "unlock": {}
+    },
+    {
+     "item": "item.chip_style.03_07",
+     "unlock": {}
+    },
+    {
+     "item": "item.card_back.04_06",
+     "unlock": {}
+    },
+    {
+     "item": "item.chip_style.04_07",
+     "unlock": {}
+    },
+    {
+     "item": "item.card_back.05_06",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.chip_style.05_07",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.card_back.06_06",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.chip_style.06_07",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.card_back.07_06",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.chip_style.07_07",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    },
+    {
+     "item": "item.chip_style.08_07",
+     "unlock": {
+      "flags_true": [
+       "story.act2_complete"
+      ]
+     }
+    }
+   ]
   }
+ },
+ "trades": [
+  {
+   "id": "trade_stools",
+   "give": "item.furniture.01_01",
+   "give_count": 2,
+   "get": "item.card_back.02_06"
+  },
+  {
+   "id": "trade_cushions",
+   "give": "item.furniture.01_02",
+   "give_count": 2,
+   "get": "item.chip_style.02_07"
+  },
+  {
+   "id": "trade_hangings",
+   "give": "item.decor.02_03",
+   "give_count": 2,
+   "get": "item.decor.05_04"
+  },
+  {
+   "id": "trade_vases",
+   "give": "item.decor.02_04",
+   "give_count": 2,
+   "get": "item.furniture.05_02"
+  }
+ ]
 }

@@ -2,7 +2,7 @@ class_name GameState
 extends RefCounted
 ## All persistent progress of one save slot. SaveSystem writes it as JSON via to_dict().
 
-const SAVE_VERSION := 3
+const SAVE_VERSION := 4
 
 var player_name := "여행자"
 ## Single in-game currency. Never negative; every change is recorded in chips_ledger.
@@ -31,6 +31,29 @@ var home_placements: Array = []
 var current_scene := "village_square"
 var player_position := Vector2.ZERO
 var has_player_position := false
+
+# --- content v0.3 (save v4) ---------------------------------------------------
+## npc_id -> {met, friendship 0..100, rivalry 0..100, poker_hands, memories[], romance{consent, stage, seen_dates[]}}
+var relations := {}
+## Registered resident pair_id -> "neutral" | "bonded" | "strained" | "reconciled".
+var npc_edges := {}
+## project_id -> "complete"
+var projects := {}
+## 0 starter, 1 cozy, 2 roomy, 3 gathering
+var home_stage := 0
+## Idempotency keys of one-time events and rewards (dialogue events, scenes, payouts).
+var events_done := {}
+## Unique activity ids counted toward the act 3 festival.
+var contributions: Array = []
+## category -> item id for clothing / card_back / chip_style
+var equipped := {}
+## Abilities the player can pick for a hand.
+var abilities_unlocked: Array = ["ability.star_sense"]
+## npc_id -> last public hands [{discards, category}] (only what was revealed at showdown).
+var poker_history := {}
+## Festival tournament: stage 0..3 (3 = won), rewarded flag.
+var tournament := {"stage": 0, "rewarded": false}
+var tracked_quest := ""
 
 
 # --- chips -------------------------------------------------------------------
@@ -71,6 +94,36 @@ func get_flag(flag_name: String) -> bool:
 
 func set_flag(flag_name: String, value: bool = true) -> void:
 	flags[flag_name] = value
+
+
+# --- residents, projects, events ---------------------------------------------
+
+func relation(npc_id: String) -> Dictionary:
+	if not relations.has(npc_id):
+		relations[npc_id] = {
+			"met": false, "friendship": 0, "rivalry": 0, "poker_hands": 0, "memories": [],
+			"romance": {"consent": false, "stage": "closed", "seen_dates": []},
+		}
+	return relations[npc_id]
+
+
+func has_met(npc_id: String) -> bool:
+	return relations.has(npc_id) and bool(relations[npc_id]["met"])
+
+
+func residents_met() -> int:
+	var n := 0
+	for id in relations:
+		n += 1 if relations[id]["met"] else 0
+	return n
+
+
+func edge_phase(pair_id: String) -> String:
+	return str(npc_edges.get(pair_id, "neutral"))
+
+
+func project_done(project_id: String) -> bool:
+	return projects.get(project_id, "") == "complete"
 
 
 # --- items and home ----------------------------------------------------------
@@ -155,6 +208,17 @@ func to_dict() -> Dictionary:
 		"home_placements": home_placements.duplicate(true),
 		"current_scene": current_scene,
 		"player_position": [player_position.x, player_position.y] if has_player_position else null,
+		"relations": relations.duplicate(true),
+		"npc_edges": npc_edges.duplicate(),
+		"projects": projects.duplicate(),
+		"home_stage": home_stage,
+		"events_done": events_done.duplicate(),
+		"contributions": contributions.duplicate(),
+		"equipped": equipped.duplicate(),
+		"abilities_unlocked": abilities_unlocked.duplicate(),
+		"poker_history": poker_history.duplicate(true),
+		"tournament": tournament.duplicate(),
+		"tracked_quest": tracked_quest,
 	}
 
 
@@ -202,4 +266,47 @@ static func from_dict(d: Dictionary) -> GameState:
 	if pos is Array and pos.size() == 2:
 		s.player_position = Vector2(float(pos[0]), float(pos[1]))
 		s.has_player_position = true
+	var rels: Dictionary = d.get("relations", {})
+	for npc in rels:
+		var r: Dictionary = s.relation(str(npc))
+		var src: Dictionary = rels[npc]
+		r["met"] = bool(src.get("met", false))
+		r["friendship"] = clampi(int(src.get("friendship", 0)), 0, 100)
+		r["rivalry"] = clampi(int(src.get("rivalry", 0)), 0, 100)
+		r["poker_hands"] = int(src.get("poker_hands", 0))
+		for m in src.get("memories", []):
+			r["memories"].append(str(m))
+		var rom: Dictionary = src.get("romance", {})
+		r["romance"]["consent"] = bool(rom.get("consent", false))
+		r["romance"]["stage"] = str(rom.get("stage", "closed"))
+		for sd in rom.get("seen_dates", []):
+			r["romance"]["seen_dates"].append(str(sd))
+	var edges: Dictionary = d.get("npc_edges", {})
+	for k in edges:
+		s.npc_edges[str(k)] = str(edges[k])
+	var projs: Dictionary = d.get("projects", {})
+	for k in projs:
+		s.projects[str(k)] = str(projs[k])
+	s.home_stage = clampi(int(d.get("home_stage", 0)), 0, 3)
+	var ev: Dictionary = d.get("events_done", {})
+	for k in ev:
+		s.events_done[str(k)] = true
+	for c in d.get("contributions", []):
+		s.contributions.append(str(c))
+	var eq: Dictionary = d.get("equipped", {})
+	for k in eq:
+		s.equipped[str(k)] = str(eq[k])
+	if d.has("abilities_unlocked"):
+		s.abilities_unlocked = []
+		for a in d["abilities_unlocked"]:
+			s.abilities_unlocked.append(str(a))
+	var hist: Dictionary = d.get("poker_history", {})
+	for npc in hist:
+		var rows: Array = []
+		for h in hist[npc]:
+			rows.append({"discards": int(h.get("discards", 0)), "category": int(h.get("category", 0))})
+		s.poker_history[str(npc)] = rows
+	var t: Dictionary = d.get("tournament", {})
+	s.tournament = {"stage": clampi(int(t.get("stage", 0)), 0, 3), "rewarded": bool(t.get("rewarded", false))}
+	s.tracked_quest = str(d.get("tracked_quest", ""))
 	return s
