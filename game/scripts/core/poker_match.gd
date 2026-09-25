@@ -22,6 +22,15 @@ var settled := false
 var _ability_uses := {}
 ## ability_id -> last result, so an interrupted hand shows what the player already learned.
 var ability_results := {}
+## Content v0.3: which table this is (practice, homegame, social_mix, friendly_challenge,
+## tournament), who sits opposite, the one ability taken to the table, the stake paid for this
+## hand (0 in practice) and a card the player marked so it cannot be replaced by mistake.
+var mode := "homegame"
+var opponent_id := ""
+var persona := "steady"
+var ability_id := ""
+var stake := 0
+var locked_index := -1
 
 
 ## Deals a new hand from `p_deck`. Pass null to build an empty match (used by from_dict).
@@ -45,21 +54,89 @@ func can_use_ability(ability: Dictionary) -> bool:
 	return int(_ability_uses.get(ability["id"], 0)) < int(ability.get("uses_per_match", 1))
 
 
-## Applies an ability. Returns {"ok": bool, ...effect-specific fields}.
-func use_ability(ability: Dictionary) -> Dictionary:
+## Applies an ability. `context` carries only public information: the table history of this
+## opponent (discard counts and hands shown at earlier showdowns) and, for lucky_mark, the card
+## index the player chose. Returns {"ok": bool, ...effect-specific fields}.
+func use_ability(ability: Dictionary, context: Dictionary = {}) -> Dictionary:
 	if not can_use_ability(ability):
 		return {"ok": false, "reason": "unavailable"}
-	var result := {"ok": true}
+	var result := {"ok": true, "effect": str(ability.get("effect", ""))}
 	match str(ability.get("effect", "")):
 		"reveal_opponent_pair_or_better":
 			# Reveals one yes/no fact about the opponent's current hand, never the cards.
 			var category: int = HandEvaluator.evaluate(opponent_hand)["category"]
 			result["pair_or_better"] = category >= HandEvaluator.Category.ONE_PAIR
+		"own_suit_count":
+			var counts := {}
+			for c in player_hand:
+				counts[c.suit] = int(counts.get(c.suit, 0)) + 1
+			var best := -1
+			for suit in counts:
+				if best < 0 or counts[suit] > counts[best] or (counts[suit] == counts[best] and suit < best):
+					best = suit
+			result["suit"] = player_hand[0].suit_symbol() if best < 0 else _suit_symbol(best)
+			result["count"] = int(counts.get(best, 0))
+		"discard_hint":
+			# From the player's own cards only: which cards make the current hand.
+			var keep := _made_cards(player_hand)
+			result["keep"] = keep
+			result["hand"] = str(HandEvaluator.evaluate(player_hand)["name"])
+		"undo_selection":
+			result["undo"] = true
+		"opponent_last_discards":
+			var hist: Array = context.get("history", [])
+			result["known"] = not hist.is_empty()
+			result["discards"] = int(hist[hist.size() - 1].get("discards", 0)) if not hist.is_empty() else -1
+		"lock_card":
+			var i := int(context.get("index", -1))
+			if i < 0 or i >= player_hand.size():
+				return {"ok": false, "reason": "no_card"}
+			locked_index = i
+			result["index"] = i
+		"opponent_pattern":
+			var hist: Array = context.get("history", [])
+			result["known"] = not hist.is_empty()
+			if not hist.is_empty():
+				var total := 0
+				var cats := {}
+				for h in hist:
+					total += int(h.get("discards", 0))
+					cats[str(h.get("hand", ""))] = int(cats.get(str(h.get("hand", "")), 0)) + 1
+				var common := ""
+				for k in cats:
+					if common == "" or cats[k] > cats[common]:
+						common = k
+				result["avg_discards"] = snappedf(float(total) / hist.size(), 0.1)
+				result["common_hand"] = common
+				result["hands_seen"] = hist.size()
+		"help_focus":
+			result["hand"] = str(HandEvaluator.evaluate(player_hand)["name"])
+			result["keep"] = _made_cards(player_hand)
 		_:
 			return {"ok": false, "reason": "unknown_effect"}
 	_ability_uses[ability["id"]] = int(_ability_uses.get(ability["id"], 0)) + 1
 	ability_results[ability["id"]] = result.duplicate()
 	return result
+
+
+## Indices of the cards that form the current made hand (pairs, trips, quads, or all five for
+## straights and better). Empty for a high-card hand.
+static func _made_cards(hand: Array) -> Array:
+	var category: int = HandEvaluator.evaluate(hand)["category"]
+	if category >= HandEvaluator.Category.STRAIGHT:
+		return range(hand.size())
+	var counts := {}
+	for c in hand:
+		counts[c.rank] = int(counts.get(c.rank, 0)) + 1
+	var out: Array = []
+	for i in hand.size():
+		if counts[hand[i].rank] > 1:
+			out.append(i)
+	return out
+
+
+static func _suit_symbol(suit: int) -> String:
+	return ["♠", "♥", "♦", "♣"][suit] if suit >= 0 and suit < 4 else "?"
 
 
 # --- persistence (Design Review 03, D2) ----------------------------------------
@@ -77,6 +154,12 @@ func to_dict() -> Dictionary:
 		"deck_seed": deck.seed_used,
 		"ability_uses": _ability_uses.duplicate(),
 		"ability_results": ability_results.duplicate(true),
+		"mode": mode,
+		"opponent_id": opponent_id,
+		"persona": persona,
+		"ability_id": ability_id,
+		"stake": stake,
+		"locked_index": locked_index,
 	}
 
 
@@ -109,6 +192,13 @@ static func from_dict(d: Dictionary) -> PokerMatch:
 	var results: Dictionary = d.get("ability_results", {})
 	for k in results:
 		m.ability_results[str(k)] = results[k]
+	# Hands saved before content v0.3 are the card-room home game against the first opponent.
+	m.mode = str(d.get("mode", "homegame"))
+	m.opponent_id = str(d.get("opponent_id", ""))
+	m.persona = str(d.get("persona", "steady"))
+	m.ability_id = str(d.get("ability_id", ""))
+	m.stake = int(d.get("stake", -1))
+	m.locked_index = int(d.get("locked_index", -1))
 	return m
 
 
@@ -126,7 +216,7 @@ func player_draw(indices: Array) -> bool:
 		return false
 	var seen := {}
 	for i in indices:
-		if typeof(i) != TYPE_INT or i < 0 or i >= player_hand.size() or seen.has(i):
+		if typeof(i) != TYPE_INT or i < 0 or i >= player_hand.size() or seen.has(i) or i == locked_index:
 			return false
 		seen[i] = true
 	player_discards = indices.duplicate()
@@ -134,7 +224,7 @@ func player_draw(indices: Array) -> bool:
 	for i in player_discards:
 		player_hand[i] = deck.draw_one()
 	# The opponent only sees a copy of its own hand.
-	opponent_discards = PokerAI.choose_discards(opponent_hand.duplicate(), max_discards)
+	opponent_discards = PokerAI.choose_discards(opponent_hand.duplicate(), max_discards, persona)
 	for i in opponent_discards:
 		opponent_hand[i] = deck.draw_one()
 	player_eval = HandEvaluator.evaluate(player_hand)

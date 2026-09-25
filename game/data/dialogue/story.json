@@ -48,7 +48,8 @@
      "story.act1_started"
     ],
     "flags_false": [
-     "story.clue_postbox"
+     "story.clue_postbox",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -71,7 +72,8 @@
      "story.act1_started"
     ],
     "flags_false": [
-     "story.clue_postbox"
+     "story.clue_postbox",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -88,7 +90,8 @@
      "story.act1_started"
     ],
     "flags_false": [
-     "story.clue_postbox"
+     "story.clue_postbox",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -116,7 +119,8 @@
      "story.act1_started"
     ],
     "flags_false": [
-     "story.clue_grove"
+     "story.clue_grove",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -140,7 +144,8 @@
      "story.grove_sign_east"
     ],
     "flags_false": [
-     "story.clue_grove"
+     "story.clue_grove",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -176,7 +181,8 @@
      "story.act1_started"
     ],
     "flags_false": [
-     "story.clue_grove"
+     "story.clue_grove",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -201,7 +207,8 @@
      "story.grove_sign_west"
     ],
     "flags_false": [
-     "story.clue_grove"
+     "story.clue_grove",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -237,7 +244,8 @@
      "story.act1_started"
     ],
     "flags_false": [
-     "story.clue_grove"
+     "story.clue_grove",
+     "story.act1_complete"
     ]
    },
    "lines": [
@@ -356,7 +364,8 @@
      "story.act2_started"
     ],
     "flags_false": [
-     "story.act2_heard_lumi"
+     "story.act2_heard_lumi",
+     "story.act2_complete"
     ]
    },
    "lines": [
@@ -386,7 +395,8 @@
      "story.act2_started"
     ],
     "flags_false": [
-     "story.act2_heard_kyle"
+     "story.act2_heard_kyle",
+     "story.act2_complete"
     ]
    },
    "lines": [
@@ -417,7 +427,8 @@
     "flags_false": [
      "story.act2_prep_tea",
      "story.act2_prep_rules",
-     "story.act2_prep_done"
+     "story.act2_prep_done",
+     "story.act2_complete"
     ]
    },
    "lines": [
@@ -456,7 +467,8 @@
     "flags_false": [
      "story.act2_prep_tea",
      "story.act2_prep_rules",
-     "story.act2_prep_done"
+     "story.act2_prep_done",
+     "story.act2_complete"
     ]
    },
    "lines": [

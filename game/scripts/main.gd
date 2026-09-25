@@ -251,7 +251,7 @@ func _on_world_interacted(target: Dictionary) -> void:
 		"sign":
 			_show_system_dialogue(target["title"], [target["text"]], [])
 		"poker_table":
-			open_poker_setup(str(target.get("mode", "homegame")))
+			open_poker_setup(str(target.get("mode", "homegame")), "", bool(target.get("pick_opponent", false)))
 		"home_edit":
 			open_home_edit()
 		"rest":
@@ -510,6 +510,7 @@ func _open_job_board() -> void:
 		{"text": "다른 아르바이트 보기", "action": "board", "arg": "jobs"},
 		{"text": "주민들의 부탁 보기", "action": "board", "arg": "requests"},
 		{"text": "마을 소식 보기", "action": "board", "arg": "news"},
+		{"text": "포커 연습 한 판 (칩 없이)", "action": "start_poker", "arg": "practice|"},
 		{"text": "다음에 하기", "action": "close"},
 	])
 
@@ -629,13 +630,70 @@ func _open_swap_stall() -> void:
 	_show_system_dialogue("작은 교환대", ["중복된 물건을 정해진 물건과 바꿀 수 있어요. 칩이나 현금으로 바꿔 주지는 않아요."], choices)
 
 
-## Poker entry points (modes, opponents, ability loadout) — completed in Stage 5.
-func open_poker_setup(mode: String, opponent: String = "") -> void:
-	open_poker()
+## Poker entry points (05_poker/01): pick the table's mode, an opponent where the mode lets you
+## choose, then one ability if more than one is unlocked. Every mode uses the same rule engine.
+func open_poker_setup(mode: String, opponent: String = "", pick_opponent: bool = false) -> void:
+	var def: Dictionary = Game.poker_mode(mode)
+	if def.is_empty():
+		mode = "homegame"
+		def = Game.poker_mode(mode)
+	if not Conditions.check(def.get("unlock", {}), Game.state, world.location_id):
+		_show_system_dialogue(str(def.get("name", "포커")), [str(def.get("locked_text", "아직 열리지 않았어요."))], [])
+		return
+	if not Game.can_join_poker(mode):
+		hud.show_toast("참가금 칩 %d개가 필요해요. 광장 아르바이트로 모을 수 있어요." % Game.poker_stake(mode))
+		_back_to_world()
+		return
+	if mode == "tournament":
+		opponent = Game.tournament_opponent()
+	if opponent == "" and (pick_opponent or def.has("opponents")):
+		var choices: Array = []
+		for npc in Game.poker_opponents(mode):
+			var persona := str(Game.data.opponents[npc].get("context", ""))
+			choices.append({"text": "%s와 한 판 (%s)" % [Game.data.npc_name(npc), persona], "action": "poker_loadout", "arg": "%s|%s|" % [mode, npc]})
+		if choices.is_empty():
+			_show_system_dialogue(str(def["name"]), ["아직 함께 칠 주민이 없어요. 마을 사람들과 먼저 인사해 보세요."], [])
+			return
+		choices.append({"text": "그만두기", "action": "close"})
+		_show_system_dialogue(str(def["name"]), [str(def.get("desc", ""))], choices)
+		return
+	_start_poker_with("%s|%s|" % [mode, opponent])
 
 
-func _start_poker_with(_arg: String) -> void:
-	open_poker()
+## arg "mode|opponent|ability": asks for the ability when several are unlocked, then deals.
+func _start_poker_with(arg: String) -> void:
+	var parts := arg.split("|")
+	var mode := parts[0]
+	var opponent := parts[1] if parts.size() > 1 else ""
+	var ability := parts[2] if parts.size() > 2 else ""
+	if ability == "" and Game.state.abilities_unlocked.size() > 1:
+		var choices: Array = []
+		for aid in Game.state.abilities_unlocked:
+			var a: Dictionary = Game.data.abilities.get(aid, {})
+			if not a.is_empty():
+				choices.append({"text": "%s — %s" % [a["name"], a.get("description", "")], "action": "poker_loadout", "arg": "%s|%s|%s" % [mode, opponent, aid]})
+		choices.append({"text": "그만두기", "action": "close"})
+		_show_system_dialogue("가져갈 능력 고르기", ["한 판에 능력 하나를 가져갈 수 있어요. 능력은 승패를 정하지 않아요."], choices)
+		return
+	var m: PokerMatch = Game.create_poker_match(mode, opponent, ability)
+	if m == null:
+		hud.show_toast("지금은 자리에 앉을 수 없어요.")
+		_back_to_world()
+		return
+	set_mode("poker")
+	hud.visible = false
+	poker.start(m, _spectators(m))
+
+
+## Residents standing at this place who watch a social-mix hand (up to two).
+func _spectators(m: PokerMatch) -> Array:
+	if m.mode != "social_mix" or world == null:
+		return []
+	var out: Array = []
+	for npc in world.npc_nodes:
+		if npc != m.opponent_id and out.size() < 2:
+			out.append(npc)
+	return out
 
 
 func _open_festival() -> void:
@@ -649,15 +707,9 @@ func _open_festival() -> void:
 
 # --- activities ----------------------------------------------------------------
 
+## The card-room home game against the regular (first-play path: Moa's and Lumi's invitation).
 func open_poker() -> void:
-	if not Game.can_join_poker():
-		hud.show_toast("참가금 칩 %d개가 필요해요. 광장 아르바이트로 모을 수 있어요." % Game.poker_stake())
-		_back_to_world()
-		return
-	var m: PokerMatch = Game.create_poker_match()
-	set_mode("poker")
-	hud.visible = false
-	poker.start(m)
+	open_poker_setup("homegame")
 
 
 func _on_poker_exit() -> void:

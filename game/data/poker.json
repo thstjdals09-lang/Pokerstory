@@ -257,7 +257,8 @@
         "flags_true": [
           "story.act1_complete"
         ]
-      }
+      },
+      "locked_text": "교류 모임은 1막(사라진 초대장)을 마치면 열려요."
     },
     "friendly_challenge": {
       "name": "친선 도전",
@@ -273,7 +274,8 @@
         "flags_true": [
           "story.act2_complete"
         ]
-      }
+      },
+      "locked_text": "친선 도전은 2막(서로 다른 테이블)을 마치면 열려요."
     },
     "tournament": {
       "name": "네잎 저녁제 대회",
@@ -284,7 +286,32 @@
         "npc_rira",
         "npc_kyle"
       ],
-      "reward_item": "item.card_back.08_06"
+      "reward_item": "item.card_back.08_06",
+      "stage_flags": [
+        "festival.qualifier_seen",
+        "festival.middle_seen",
+        "festival.final_seen"
+      ],
+      "stage_names": [
+        "예선",
+        "중간",
+        "마무리"
+      ]
     }
+  },
+  "spectator_lines": {
+    "win": [
+      "멋진 교체였어요!",
+      "오늘 운이 좋네요!",
+      "다음엔 저랑도 한 판 해요."
+    ],
+    "draw": [
+      "완전히 같은 패라니, 신기해요!",
+      "무승부도 좋은 승부예요."
+    ],
+    "lose": [
+      "아쉽다! 그래도 재밌었어요.",
+      "다음 판이 있잖아요."
+    ]
   }
 }

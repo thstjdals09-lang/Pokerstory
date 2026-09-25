@@ -15,6 +15,9 @@ extends "res://tests/e2e/first_play_e2e.gd"
 ##   cc07   8 town projects funded at the hall board with their world changes, house stages 1-3,
 ##          one item placed in each room, occupied slots refused, placements kept after continue
 ##   life   the 4 odd jobs (including a cancelled run) and all 16 requests through play
+##   cc08   poker: free practice, social mix with 7 residents, friendly challenge with 3, card-room
+##          and house home games, all 8 abilities, ability + quit -> same hand, fold, tournament
+##          with a lost round, a resumed round and a one-time reward
 
 
 func run(scenario: String) -> void:
@@ -37,6 +40,8 @@ func run(scenario: String) -> void:
 			await _cc07()
 		"life":
 			await _life()
+		"cc08":
+			await _cc08()
 		_:
 			_check(false, "unknown scenario " + scenario)
 	_finish()
@@ -658,6 +663,246 @@ func _life() -> void:
 			done += 1
 	_check_eq(done, 16, "16 requests finished in play")
 	_check_ledger()
+
+
+# --- cc08: poker opponents, abilities, modes and the tournament ----------------------------------
+
+## After a table or invitation opened the setup: picks the opponent (when asked) and the ability.
+func _pick_loadout(mode: String, opponent: String, ability: String, deck: String = "win") -> void:
+	Game.debug_deck_queue = [DECKS[deck]]
+	await _read_to_choices()
+	var first := "%s|%s|" % [mode, opponent]
+	for c in main.dialogue._choices:
+		if str(c.get("arg", "")) == first:
+			await _choose_arg("poker_loadout", first)
+			break
+	await _choose_arg("poker_loadout", "%s|%s|%s" % [mode, opponent, ability])
+	_check_eq(main.ui_mode, "poker", "%s hand against %s started" % [mode, opponent])
+
+
+## Plays the dealt hand by standing and checks the per-hand bookkeeping.
+func _stand_and_check(opponent: String, expect: String) -> void:
+	var r0: Dictionary = Game.state.relation(opponent).duplicate(true)
+	var hist0: int = Game.state.poker_history.get(opponent, []).size()
+	var chips0: int = Game.state.chips_balance
+	var f0: int = r0["friendship"]
+	_check(main.poker._header.text.contains(Game.data.npc_name(opponent)) or main.poker.hand_stake() == 0, "header names " + opponent)
+	main.poker.stand_button.pressed.emit()
+	await _frames(2)
+	_check_eq(PokerEconomy.outcome_key(main.poker.match_ref.outcome), expect, "outcome vs " + opponent)
+	var line: String = Game.opponent_line(opponent, expect)
+	_check(main.poker._result_line.text.contains(line), opponent + " speaks their own line")
+	if main.poker.hand_stake() > 0:
+		_check_eq(Game.state.chips_balance - chips0, {"win": 40, "draw": 20, "lose": 0}[expect], "payout vs " + opponent)
+		_check_eq(int(Game.state.relation(opponent)["poker_hands"]), int(r0["poker_hands"]) + 1, "hand counted with " + opponent)
+		_check_eq(int(Game.state.relation(opponent)["rivalry"]), mini(100, int(r0["rivalry"]) + 5), "rivalry +5 with " + opponent)
+		_check_eq(int(Game.state.relation(opponent)["friendship"]), f0, "friendship untouched by poker")
+		_check_eq(Game.state.poker_history.get(opponent, []).size(), mini(10, hist0 + 1), "public history recorded")
+	_check(Game.state.poker_in_progress.is_empty(), "nothing pending after the showdown")
+
+
+func _leave_table() -> void:
+	main.poker.result_leave_button.pressed.emit()
+	await _frames(3)
+	_check_eq(main.ui_mode, "world", "back from the table")
+
+
+func _cc08() -> void:
+	await _new_game("카드")
+	_setup_open_town()
+	for npc in Game.data.npc_order:
+		Game.state.relation(npc)["met"] = true
+	for f in ["intro_met_lumi", "moa_met", "sera_met", "lumi_lamp_reaction_seen", "story.act2_started", "story.act2_complete",
+			"story.act3_started", "story.festival_ready", "story.act3_complete", "story.postgame"]:
+		Game.state.set_flag(f)
+	for a in Game.data.abilities:
+		if not Game.state.abilities_unlocked.has(a):
+			Game.state.abilities_unlocked.append(a)
+	_grant_test_chips(1000)
+	# Practice: free, from the notice board, nothing changes but the lesson.
+	var chips0: int = Game.state.chips_balance
+	var ledger0: int = Game.state.chips_ledger.size()
+	await _go_to("job_board", "job_board")
+	await _press("interact")
+	await _choose_arg("start_poker", "practice|")
+	await _pick_loadout("practice", "", "ability.suit_echo")
+	_check(main.poker._header.text.contains("연습"), "practice header")
+	main.poker.ability_button.pressed.emit()
+	await _frames(1)
+	_check(main.poker._ability_label.text.contains("문양"), "suit echo shown")
+	await _stand_and_check("npc_moa", "win")
+	_check(main.poker._result_detail.text.contains("연습"), "practice result says no chips")
+	_check_eq(Game.state.chips_balance, chips0, "practice keeps chips")
+	_check_eq(Game.state.chips_ledger.size(), ledger0, "practice writes no ledger line")
+	_check_eq(Game.state.poker_hands_completed, 0, "practice is not a counted hand")
+	await _leave_table()
+	# Social mix at the square (evenings): seven residents, one ability each.
+	await _rest_until("evening")
+	var social := {"npc_rira": "ability.star_sense", "npc_taeo": "ability.discard_hint", "npc_ella": "ability.steady_hand",
+		"npc_haru": "ability.table_read", "npc_yul": "ability.lucky_mark", "npc_sia": "ability.friendly_pause", "npc_juno": "ability.pattern_book"}
+	for npc in social:
+		await _use("square_mix_table", "village_square")
+		await _pick_loadout("social_mix", npc, social[npc])
+		await _try_ability(social[npc])
+		await _stand_and_check(npc, "win")
+		_check(main.poker._result_line.text.split("\n").size() >= 2, "spectators react at the social mix")
+		await _shot("cc08_social_" + npc)
+		await _leave_table()
+	# Friendly challenge at the card garden.
+	for npc in ["npc_lumi", "npc_kyle", "npc_ren"]:
+		await _use("garden_table", "waterfront")
+		await _pick_loadout("friendly_challenge", npc, "ability.star_sense", "lose")
+		await _stand_and_check(npc, "lose")
+		await _leave_table()
+	# Table read now has public history with Rira.
+	await _use("square_mix_table", "village_square")
+	await _pick_loadout("social_mix", "npc_rira", "ability.table_read")
+	main.poker.ability_button.pressed.emit()
+	await _frames(1)
+	_check(main.poker._ability_label.text.contains("지난 판"), "table read uses the public record")
+	await _stand_and_check("npc_rira", "win")
+	await _leave_table()
+	# Card-room home game by invitation, twice more against Kyle -> his poker rivalry scene.
+	await _rest_until("evening")
+	for i in 2:
+		await _talk_npc("npc_kyle")
+		await _read_to_choices()
+		await _choose_arg("start_poker", "homegame|npc_kyle")
+		await _pick_loadout("homegame", "npc_kyle", "ability.star_sense")
+		await _stand_and_check("npc_kyle", "win")
+		await _leave_table()
+	_check_eq(int(Game.state.relation("npc_kyle")["poker_hands"]), 3, "three hands with Kyle")
+	await _talk_until("npc_kyle", "kyle_rivalry")
+	await _close_any()
+	# Home game in the house's gathering room.
+	Game.state.home_stage = 3
+	await _rest_until("day")
+	await _use("home_table", "player_home_hall")
+	await _pick_loadout("homegame", "npc_lumi", "ability.star_sense")
+	# Ability used, then the game is closed from the menu: same hand, same result, no second use.
+	main.poker.ability_button.pressed.emit()
+	await _frames(1)
+	var seen_text: String = main.poker._ability_label.text
+	var hand: Array = _codes(main.poker.match_ref.player_hand)
+	var stakes := _ledger_count("poker_stake")
+	main.return_to_title()
+	await _frames(3)
+	main.title.continue_button.pressed.emit()
+	for i in 240:
+		if main.ui_mode == "poker":
+			break
+		await _frames(1)
+	_check_eq(main.ui_mode, "poker", "hand resumes after quitting")
+	_check_eq(_codes(main.poker.match_ref.player_hand), hand, "same cards")
+	_check_eq(main.poker._ability_label.text, seen_text, "same ability result")
+	_check(main.poker.ability_button.disabled, "ability stays used")
+	_check_eq(main.poker.match_ref.mode, "homegame", "same table")
+	_check_eq(_ledger_count("poker_stake"), stakes, "no second stake")
+	await _stand_and_check("npc_lumi", "win")
+	await _leave_table()
+	# Folding in the game is the only way to lose a stake without a showdown.
+	await _use("home_table", "player_home_hall")
+	await _pick_loadout("homegame", "npc_lumi", "ability.star_sense")
+	var before_fold: int = Game.state.chips_balance
+	main.poker.leave_button.pressed.emit()
+	await _frames(1)
+	main.poker.confirm_leave_button.pressed.emit()
+	await _frames(3)
+	_check_eq(Game.state.chips_balance, before_fold, "fold returns nothing")
+	_check_eq(int(Game.state.poker_record.get("fold", 0)), 1, "fold recorded")
+	_check(Game.state.poker_in_progress.is_empty(), "folded hand is gone")
+	# Tournament at the festival booth: three rounds, retry after a loss, resume mid-round,
+	# reward once.
+	await _rest_until("evening")
+	await _use("festival_booth", "village_square")
+	await _choose_arg("start_poker", "tournament|")
+	await _pick_loadout("tournament", "npc_ren", "ability.star_sense")
+	await _stand_and_check("npc_ren", "win")
+	_check_eq(int(Game.state.tournament["stage"]), 1, "round 2 next")
+	_check(Game.state.get_flag("festival.qualifier_seen"), "qualifier remembered")
+	Game.debug_deck_queue = [DECKS["lose"]]
+	main.poker.again_button.pressed.emit()
+	await _frames(2)
+	_check_eq(main.poker.match_ref.opponent_id, "npc_rira", "round 2 against Rira")
+	await _stand_and_check("npc_rira", "lose")
+	_check_eq(int(Game.state.tournament["stage"]), 1, "a loss keeps the round")
+	Game.debug_deck_queue = [DECKS["win"]]
+	main.poker.again_button.pressed.emit()
+	await _frames(2)
+	main.return_to_title()
+	await _frames(3)
+	main.title.continue_button.pressed.emit()
+	for i in 240:
+		if main.ui_mode == "poker":
+			break
+		await _frames(1)
+	_check_eq(main.poker.match_ref.mode, "tournament", "tournament hand resumes")
+	_check_eq(main.poker.match_ref.opponent_id, "npc_rira", "same round after restarting")
+	await _stand_and_check("npc_rira", "win")
+	Game.debug_deck_queue = [DECKS["win"]]
+	main.poker.again_button.pressed.emit()
+	await _frames(2)
+	await _stand_and_check("npc_kyle", "win")
+	_check(Game.state.get_flag("festival.tournament_won"), "tournament won")
+	_check_eq(Game.state.owned_count("item.card_back.08_06"), 1, "winner's card back")
+	_check(main.poker._result_detail.text.contains("우승"), "winner message")
+	await _shot("cc08_tournament")
+	await _leave_table()
+	# Playing it again gives no second reward.
+	for npc in ["npc_ren", "npc_rira", "npc_kyle"]:
+		await _use("festival_booth", "village_square")
+		await _choose_arg("start_poker", "tournament|")
+		await _pick_loadout("tournament", npc, "ability.star_sense")
+		await _stand_and_check(npc, "win")
+		await _leave_table()
+	_check_eq(Game.state.owned_count("item.card_back.08_06"), 1, "reward only once")
+	# Equip the won card back: the table shows it.
+	await _open_menu_collection("card_back")
+	main.menu.equip_buttons["item.card_back.08_06"].pressed.emit()
+	await _frames(2)
+	_check_eq(Game.state.equipped.get("card_back", ""), "item.card_back.08_06", "card back equipped")
+	main.menu.resume_button.pressed.emit()
+	await _frames(2)
+	_check_ledger()
+
+
+## Uses the loaded ability in the way it is meant (some need a selection first).
+func _try_ability(ability: String) -> void:
+	match ability:
+		"ability.steady_hand":
+			main.poker.player_views[3].pressed.emit(3)
+			main.poker.player_views[4].pressed.emit(4)
+			await _frames(1)
+			main.poker.ability_button.pressed.emit()
+			await _frames(1)
+			_check(main.poker._selected.is_empty(), "steady hand undid the selection")
+		"ability.lucky_mark":
+			main.poker.ability_button.pressed.emit()
+			await _frames(1)
+			main.poker.player_views[0].pressed.emit(0)
+			await _frames(1)
+			_check_eq(main.poker.match_ref.locked_index, 0, "card 1 marked")
+			main.poker.player_views[0].pressed.emit(0)
+			await _frames(1)
+			_check(not main.poker._selected.has(0), "marked card cannot be selected")
+		"ability.friendly_pause":
+			main.poker.ability_button.pressed.emit()
+			await _frames(1)
+			_check(main.poker._help_panel.visible, "help opened")
+		_:
+			main.poker.ability_button.pressed.emit()
+			await _frames(1)
+	_check(main.poker._ability_label.text != "", ability + " says something")
+	_check(main.poker.ability_button.disabled, ability + " used once")
+
+
+func _open_menu_collection(cat: String) -> void:
+	main.open_menu()
+	await _frames(2)
+	main.menu.collection_button.pressed.emit()
+	await _frames(1)
+	main.menu.show_collection(cat)
+	await _frames(1)
 
 
 # --- helpers ------------------------------------------------------------------------------

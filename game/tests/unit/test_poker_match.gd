@@ -70,7 +70,9 @@ func test_star_sense_reveals_only_pair_or_better_once() -> void:
 	var r := pair.use_ability(STAR_SENSE)
 	check(r["ok"], "first use ok")
 	check_eq(r["pair_or_better"], true, "opponent has a pair")
-	check_eq(r.keys().size(), 2, "result carries no card data")
+	var keys: Array = r.keys()
+	keys.sort()
+	check_eq(keys, ["effect", "ok", "pair_or_better"], "result carries no card data")
 	check(not pair.use_ability(STAR_SENSE)["ok"], "second use rejected")
 
 	var nothing := PokerMatch.new(_stack("2C 5D 8H JS 3D", "AH KC 6S 9C TD"))

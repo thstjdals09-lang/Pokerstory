@@ -21,8 +21,9 @@ static func stake(economy: Dictionary) -> int:
 	return int(economy.get("stake", 0))
 
 
-static func can_join(state: GameState, economy: Dictionary) -> bool:
-	return state.pending_poker_stake == 0 and state.chips_balance >= stake(economy)
+static func can_join(state: GameState, economy: Dictionary, amount: int = -1) -> bool:
+	var need := stake(economy) if amount < 0 else amount
+	return state.pending_poker_stake == 0 and state.chips_balance >= need
 
 
 ## Takes the stake for a new hand. Returns false and changes nothing if the player cannot join.

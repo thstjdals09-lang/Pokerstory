@@ -1251,7 +1251,8 @@
       410
      ],
      "radius": 70,
-     "prompt": "홈게임 열기 (친한 주민과 한 판)"
+     "prompt": "홈게임 열기 (친한 주민과 한 판)",
+     "pick_opponent": true
     },
     {
      "id": "hall_decorate",

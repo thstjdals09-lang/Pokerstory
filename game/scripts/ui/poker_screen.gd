@@ -1,7 +1,8 @@
 extends Control
-## The evening poker table (spec v0.2 P3-P5): 5 cards each, optional Star Sense,
-## replace up to 3 cards once, showdown, then the payout. Everything can be finished
-## by pressing "그대로 승부" alone.
+## The poker table (spec v0.2 P3-P5, content v0.3 05_poker): 5 cards each, one ability taken to
+## the table, replace up to 3 cards once, showdown, then the payout. The mode (practice, home game,
+## social mix, friendly challenge, tournament) changes the stake line, the opponent and the words
+## around the table, never the rules. Everything can be finished by pressing "그대로 승부" alone.
 
 signal exit_requested
 
@@ -25,6 +26,9 @@ var _ability := {}
 var _selected: Array = []
 var _ability_text := ""
 var _notice := ""
+## lucky_mark: the next card click marks that card instead of selecting it.
+var _marking := false
+var _spectators: Array = []
 var _opp_hand_label: Label
 var _player_hand_label: Label
 var _message_label: Label
@@ -58,8 +62,7 @@ func _ready() -> void:
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(header)
 
-	var opp_name := Game.data.npc_name(str(Game.poker_rules().get("opponent", "")))
-	_opp_hand_label = UiKit.label(opp_name, 18, Color("#f3dfc1"))
+	_opp_hand_label = UiKit.label("", 18, Color("#f3dfc1"))
 	_opp_hand_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(_opp_hand_label)
 	col.add_child(_card_row(opponent_views, false))
@@ -194,12 +197,14 @@ func _build_confirm_panel() -> void:
 
 # --- flow ----------------------------------------------------------------------
 
-func start(m: PokerMatch) -> void:
+func start(m: PokerMatch, spectators: Array = []) -> void:
 	match_ref = m
 	last_result = {}
-	_ability = Game.player_ability()
+	_ability = Game.match_ability(m)
 	_selected.clear()
 	_notice = ""
+	_marking = false
+	_spectators = spectators
 	# A resumed hand shows what the ability already revealed.
 	var known: Dictionary = m.ability_results.get(_ability.get("id", ""), {})
 	_ability_text = _ability_result_text(known) if not known.is_empty() else ""
@@ -212,9 +217,17 @@ func start(m: PokerMatch) -> void:
 
 func refresh() -> void:
 	var showdown := match_ref.phase == PokerMatch.Phase.SHOWDOWN
-	var opp_name := Game.data.npc_name(str(Game.poker_rules().get("opponent", "")))
-	var stake := Game.poker_stake()
-	_header.text = "저녁 포커 모임 · 5장 원드로 · 판돈 %d칩 (나 %d + %s %d)    보유 칩 %d" % [stake * 2, stake, opp_name, stake, Game.state.chips_balance]
+	var opp_name := opponent_name()
+	var stake := hand_stake()
+	var mode_name := str(Game.poker_mode(match_ref.mode).get("name", "포커 모임"))
+	if match_ref.mode == "tournament":
+		var names: Array = Game.poker_mode("tournament").get("stage_names", [])
+		var st := int(Game.state.tournament.get("stage", 0))
+		mode_name += " · %s" % (names[st] if st < names.size() else "")
+	if stake == 0:
+		_header.text = "%s · 5장 원드로 · 칩 없이 연습    보유 칩 %d" % [mode_name, Game.state.chips_balance]
+	else:
+		_header.text = "%s · 5장 원드로 · 판돈 %d칩 (나 %d + %s %d)    보유 칩 %d" % [mode_name, stake * 2, stake, opp_name, stake, Game.state.chips_balance]
 	for i in 5:
 		# Opponent cards are handed to the UI only at showdown.
 		if showdown:
@@ -222,6 +235,7 @@ func refresh() -> void:
 		else:
 			opponent_views[i].show_back()
 		player_views[i].show_card(match_ref.player_hand[i])
+		player_views[i].marked = i == match_ref.locked_index
 		player_views[i].set_selected(_selected.has(i))
 		player_views[i].interactive = not showdown
 	var max_d := match_ref.max_discards
@@ -237,7 +251,7 @@ func refresh() -> void:
 	_message_label.visible = not showdown
 	_ability_label.visible = not showdown and _ability_text != ""
 	var uses_left := match_ref.can_use_ability(_ability)
-	ability_button.text = "%s (%s)" % [_ability.get("name", "능력"), "1회" if uses_left else "사용함"]
+	ability_button.text = "%s (%s)" % [_ability.get("name", "능력"), ("카드를 고르세요" if _marking else "1회") if uses_left else "사용함"]
 	ability_button.tooltip_text = str(_ability.get("description", ""))
 	ability_button.disabled = not uses_left
 	draw_button.text = "교체하기 (%d장)" % _selected.size()
@@ -246,16 +260,38 @@ func refresh() -> void:
 	leave_button.disabled = false
 	_result_panel.visible = showdown
 	if showdown:
-		var can_again := Game.can_join_poker()
+		var can_again := Game.can_join_poker(match_ref.mode)
 		again_button.disabled = not can_again
-		again_button.text = "한 판 더 (참가금 %d)" % stake if can_again else "칩 부족 (%d 필요)" % stake
+		if stake == 0:
+			again_button.text = "한 판 더 (연습)"
+		else:
+			again_button.text = "한 판 더 (참가금 %d)" % stake if can_again else "칩 부족 (%d 필요)" % stake
+
+
+func opponent_name() -> String:
+	return Game.data.npc_name(Game.match_opponent(match_ref))
+
+
+## The stake of this hand (hands saved before content v0.3 carry the economy stake).
+func hand_stake() -> int:
+	return match_ref.stake if match_ref.stake >= 0 else Game.poker_stake()
 
 
 func toggle_card(i: int) -> void:
 	if match_ref == null or match_ref.phase != PokerMatch.Phase.DRAW:
 		return
 	_notice = ""
-	if _selected.has(i):
+	if _marking:
+		_marking = false
+		var r: Dictionary = Game.use_poker_ability(match_ref, _ability, {"index": i})
+		if r["ok"]:
+			_selected.erase(i)
+			_ability_text = _ability_result_text(r)
+		refresh()
+		return
+	if i == match_ref.locked_index:
+		_notice = "표시한 카드는 바꾸지 않도록 잠겨 있어요."
+	elif _selected.has(i):
 		_selected.erase(i)
 	elif _selected.size() < match_ref.max_discards:
 		_selected.append(i)
@@ -265,14 +301,56 @@ func toggle_card(i: int) -> void:
 
 
 func use_ability() -> void:
+	if not match_ref.can_use_ability(_ability):
+		return
+	match str(_ability.get("effect", "")):
+		"lock_card":
+			_marking = true
+			_notice = "표시할 카드를 한 장 고르세요. 그 카드는 실수로 바꾸지 않게 잠겨요."
+			refresh()
+			return
+		"undo_selection":
+			if _selected.is_empty():
+				_notice = "되돌릴 선택이 없어요. 바꿀 카드를 고른 뒤에 쓸 수 있어요."
+				refresh()
+				return
 	var r: Dictionary = Game.use_poker_ability(match_ref, _ability)
 	if r["ok"]:
 		_ability_text = _ability_result_text(r)
+		if r.get("undo", false):
+			_selected.clear()
+		if str(r.get("effect", "")) == "help_focus":
+			_help_panel.visible = true
 	refresh()
 
 
 func _ability_result_text(r: Dictionary) -> String:
-	return str(_ability["result_true"] if r.get("pair_or_better", false) else _ability["result_false"])
+	var name := str(_ability.get("name", "능력"))
+	match str(r.get("effect", _ability.get("effect", ""))):
+		"reveal_opponent_pair_or_better":
+			return str(_ability["result_true"] if r.get("pair_or_better", false) else _ability["result_false"])
+		"own_suit_count":
+			return "%s: 내 패에서 %s 문양이 %d장으로 가장 많아요." % [name, r.get("suit", "?"), int(r.get("count", 0))]
+		"discard_hint":
+			var keep: Array = r.get("keep", [])
+			if keep.is_empty():
+				return "%s: 지금은 %s. 높은 카드를 남기고 낮은 카드를 바꾸는 방법이 있어요. (결과를 보장하지 않아요)" % [name, r.get("hand", "")]
+			return "%s: 지금 %s — %s번째 카드가 족보를 만들고 있어요. 나머지를 바꾸면 족보는 유지돼요. (결과를 보장하지 않아요)" % [name, r.get("hand", ""), ", ".join(keep.map(func(i): return str(int(i) + 1)))]
+		"undo_selection":
+			return "%s: 고른 카드를 모두 되돌렸어요." % name
+		"opponent_last_discards":
+			if not r.get("known", false):
+				return "%s: 이 상대와 친 기록이 아직 없어요." % name
+			return "%s: 지난 판에 %s은(는) %d장을 바꿨어요." % [name, opponent_name(), int(r.get("discards", 0))]
+		"lock_card":
+			return "%s: %d번째 카드에 표시를 남겼어요. 이 카드는 바뀌지 않아요." % [name, int(r.get("index", 0)) + 1]
+		"opponent_pattern":
+			if not r.get("known", false):
+				return "%s: 이 상대의 공개된 판 기록이 아직 없어요." % name
+			return "%s: 공개된 %d판 기록 — 평균 %.1f장 교체, 자주 보인 족보는 %s." % [name, int(r.get("hands_seen", 0)), float(r.get("avg_discards", 0.0)), r.get("common_hand", "")]
+		"help_focus":
+			return "%s: 지금 내 패는 %s이에요. 도움말을 펼쳐 두었어요. 서두를 필요 없어요." % [name, r.get("hand", "")]
+	return ""
 
 
 ## A one-off message in the message line (cleared by the next card selection).
@@ -299,29 +377,47 @@ func _finish() -> void:
 	_selected.clear()
 	last_result = Game.settle_match(match_ref)
 	var key: String = last_result.get("outcome", PokerEconomy.outcome_key(match_ref.outcome))
-	_result_title.text = {"win": "승리!", "draw": "무승부", "lose": "아쉽게 졌어요"}[key]
+	_result_title.text = {"win": "승리!", "draw": "무승부", "lose": "아쉽게 졌어요"}[key] + (" (연습)" if last_result.get("practice", false) else "")
 	var paid_in := int(last_result.get("stake", 0))
 	var payout := int(last_result.get("payout", 0))
 	var lines: Array = []
+	if last_result.get("practice", false):
+		key = "practice_" + key
 	match key:
+		"practice_win", "practice_draw", "practice_lose":
+			lines.append("연습 판이라 칩은 그대로예요.")
 		"win":
 			lines.append("판돈 %d칩 획득  (순이익 +%d)" % [payout, payout - paid_in])
 		"draw":
 			lines.append("참가금 %d칩 돌려받음  (손익 0)" % payout)
 		_:
 			lines.append("참가금 %d칩을 잃었어요  (순손실 -%d)" % [paid_in, paid_in - payout])
+	if last_result.has("tournament_stage"):
+		if last_result.get("tournament_won", false):
+			lines.append("네잎 저녁제 대회 우승!" + (" 기념 카드 뒷면을 받았어요." if last_result.has("reward_item") else " (우승 기념품은 이미 받았어요)"))
+		else:
+			var names: Array = Game.poker_mode("tournament").get("stage_names", [])
+			var st := int(last_result["tournament_stage"])
+			lines.append("대회 다음 단계: %s (%s)" % [names[st] if st < names.size() else "", Game.data.npc_name(Game.tournament_opponent())])
 	lines.append("보유 칩  %d" % Game.state.chips_balance)
 	_result_detail.text = "\n".join(lines)
-	var opp_name := Game.data.npc_name(str(Game.poker_rules().get("opponent", "")))
-	_result_line.text = "%s: \"%s\"" % [opp_name, Game.data.poker.get("opponent_lines", {}).get(key, "")]
+	var outcome := PokerEconomy.outcome_key(match_ref.outcome)
+	var said: Array = ["%s: \"%s\"" % [opponent_name(), Game.opponent_line(Game.match_opponent(match_ref), outcome)]]
+	var cheers: Array = Game.data.poker.get("spectator_lines", {}).get(outcome, [])
+	for i in _spectators.size():
+		if not cheers.is_empty():
+			said.append("%s: \"%s\"" % [Game.data.npc_name(_spectators[i]), cheers[i % cheers.size()]])
+	_result_line.text = "\n".join(said)
 	refresh()
 	again_button.grab_focus.call_deferred()
 
 
 func _on_again() -> void:
-	var m := Game.create_poker_match()
+	var mode := match_ref.mode
+	var opponent := "" if mode == "tournament" else match_ref.opponent_id
+	var m := Game.create_poker_match(mode, opponent, match_ref.ability_id)
 	if m != null:
-		start(m)
+		start(m, _spectators)
 
 
 func _hide_confirm() -> void:
@@ -336,7 +432,10 @@ func _confirm_leave() -> void:
 
 func request_leave() -> void:
 	if match_ref != null and match_ref.phase == PokerMatch.Phase.DRAW:
-		_confirm_label.text = "지금 일어나면 이번 판은 포기로 처리되어 참가금 %d칩을 돌려받지 못해요. 일어날까요?" % Game.poker_stake()
+		if hand_stake() == 0:
+			_confirm_label.text = "연습 판을 여기서 끝낼까요? 칩은 그대로예요."
+		else:
+			_confirm_label.text = "지금 일어나면 이번 판은 포기로 처리되어 참가금 %d칩을 돌려받지 못해요. 일어날까요?" % hand_stake()
 		_confirm_panel.get_parent().visible = true
 		confirm_leave_button.grab_focus.call_deferred()
 	else:

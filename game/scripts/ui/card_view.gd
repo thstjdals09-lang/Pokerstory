@@ -33,6 +33,10 @@ func _ready() -> void:
 	mouse_exited.connect(_set_hover.bind(false))
 
 
+## lucky_mark: a small star on a card the player locked.
+var marked := false
+
+
 func show_card(c: Card) -> void:
 	card = c
 	queue_redraw()
@@ -81,6 +85,9 @@ func _draw() -> void:
 	var corner := "%s\n%s" % [card.rank_label(), card.suit_symbol()]
 	draw_multiline_string(UI_FONT, r.position + Vector2(9, 26), corner, HORIZONTAL_ALIGNMENT_LEFT, 40, 22, 2, col)
 	draw_string(UI_FONT, Vector2(r.position.x, r.position.y + 100), card.suit_symbol(), HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 54, col)
+	if marked:
+		draw_circle(Vector2(r.end.x - 14, r.position.y + 14), 9, UiKit.GOLD)
+		draw_string(UI_FONT, Vector2(r.end.x - 23, r.position.y + 20), "★", HORIZONTAL_ALIGNMENT_CENTER, 18, 14, INK)
 	if selected:
 		var tag := Rect2(r.position.x + 14, r.end.y - 30, r.size.x - 28, 22)
 		draw_rect(tag, UiKit.GOLD)

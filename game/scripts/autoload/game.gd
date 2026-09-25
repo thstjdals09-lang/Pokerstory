@@ -214,19 +214,66 @@ func player_ability() -> Dictionary:
 	return data.abilities.get(data.poker.get("player_ability", ""), {})
 
 
-func poker_stake() -> int:
-	return PokerEconomy.stake(poker_economy())
+## Poker tables (content v0.3, 05_poker/01): one rule engine, several tables.
+func poker_mode(mode: String) -> Dictionary:
+	return data.poker.get("modes", {}).get(mode, {})
 
 
-func can_join_poker() -> bool:
-	return state != null and PokerEconomy.can_join(state, poker_economy())
+func poker_stake(mode: String = "homegame") -> int:
+	return 0 if mode == "practice" else PokerEconomy.stake(poker_economy())
+
+
+func can_join_poker(mode: String = "homegame") -> bool:
+	return state != null and state.poker_in_progress.is_empty() \
+		and PokerEconomy.can_join(state, poker_economy(), poker_stake(mode))
+
+
+## The card-room regular (the first-play opponent) and the practice partner.
+func default_opponent(mode: String = "homegame") -> String:
+	return "npc_moa" if mode == "practice" else str(poker_rules().get("opponent", "npc_lumi"))
+
+
+func match_opponent(m: PokerMatch) -> String:
+	return m.opponent_id if m.opponent_id != "" else default_opponent(m.mode)
+
+
+## Residents who will sit down for `mode` right now: the mode's list (or every opponent for a home
+## game), only residents already met.
+func poker_opponents(mode: String) -> Array:
+	var pool: Array = poker_mode(mode).get("opponents", data.opponents.keys())
+	return pool.filter(func(npc): return data.opponents.has(npc) and state.has_met(npc))
+
+
+func tournament_opponent() -> String:
+	var stages: Array = poker_mode("tournament").get("stages", [])
+	return str(stages[clampi(int(state.tournament.get("stage", 0)), 0, stages.size() - 1)]) if not stages.is_empty() else ""
+
+
+## The ability a hand uses: the one picked for it, else the first ability (Star Sense).
+func match_ability(m: PokerMatch) -> Dictionary:
+	var id := data.ability_aliases.get(m.ability_id, m.ability_id) as String
+	return data.abilities.get(id, player_ability())
 
 
 ## Starts a hand and takes the stake (saved at once). Returns null if the player cannot join.
-func create_poker_match() -> PokerMatch:
-	if not PokerEconomy.place_stake(state, poker_economy()):
+## Practice hands take no stake and pay nothing, but are saved and resumed the same way.
+func create_poker_match(mode: String = "homegame", opponent: String = "", ability_id: String = "") -> PokerMatch:
+	if not can_join_poker(mode):
+		return null
+	if mode == "tournament":
+		opponent = tournament_opponent()
+	if opponent == "":
+		opponent = default_opponent(mode)
+	var stake := poker_stake(mode)
+	if stake > 0 and not PokerEconomy.place_stake(state, poker_economy()):
 		return null
 	var m := _deal_match()
+	m.mode = mode
+	m.opponent_id = opponent
+	m.persona = str(data.opponents.get(opponent, {}).get("persona", "steady"))
+	var aid := str(data.ability_aliases.get(ability_id, ability_id))
+	m.ability_id = aid if state.abilities_unlocked.has(aid) else str(poker_rules().get("player_ability", data.poker.get("player_ability", "")))
+	m.stake = stake
 	# The stake and the dealt cards are saved together, so a restart resumes this exact hand.
 	state.poker_in_progress = m.to_dict()
 	save_game()
@@ -246,32 +293,91 @@ func _deal_match() -> PokerMatch:
 
 
 ## Uses an ability on the current hand and saves the hand, so the use survives a restart.
-func use_poker_ability(m: PokerMatch, ability: Dictionary) -> Dictionary:
-	var result := m.use_ability(ability)
+## Only public table history about this opponent is passed in.
+func use_poker_ability(m: PokerMatch, ability: Dictionary, context: Dictionary = {}) -> Dictionary:
+	var ctx := context.duplicate()
+	ctx["history"] = state.poker_history.get(match_opponent(m), [])
+	var result := m.use_ability(ability, ctx)
 	if result["ok"]:
 		state.poker_in_progress = m.to_dict()
 		save_game()
 	return result
 
 
-## Pays out a finished hand once, then saves.
+## Pays out a finished hand once, then saves. Practice hands settle without chips.
 func settle_match(m: PokerMatch) -> Dictionary:
+	var key := PokerEconomy.outcome_key(m.outcome)
+	if m.mode == "practice":
+		if m.settled or m.phase != PokerMatch.Phase.SHOWDOWN:
+			return {"ok": false}
+		m.settled = true
+		state.poker_in_progress = {}
+		save_game()
+		state_changed.emit()
+		return {"ok": true, "outcome": key, "stake": 0, "payout": 0, "net": 0, "practice": true, "balance": state.chips_balance}
 	var result := PokerEconomy.settle(state, m, poker_economy())
 	if result["ok"]:
+		_after_hand(m, result)
 		state.poker_in_progress = {}
 		save_game()
 		state_changed.emit()
 	return result
+
+
+## What a finished (paid) hand leaves behind: public table history, the hand count with this
+## resident, rivalry (never friendship), a festival contribution in act 3, tournament progress.
+func _after_hand(m: PokerMatch, result: Dictionary) -> void:
+	var opp := match_opponent(m)
+	result["opponent"] = opp
+	var hist: Array = state.poker_history.get(opp, [])
+	hist.append({"discards": m.opponent_discards.size(), "hand": str(m.opponent_eval.get("name", "")), "outcome": result["outcome"]})
+	state.poker_history[opp] = hist.slice(maxi(0, hist.size() - 10))
+	var rel := state.relation(opp)
+	rel["poker_hands"] = int(rel["poker_hands"]) + 1
+	Effects.apply(state, [
+		{"type": "rivalry", "npc": opp, "amount": RIVALRY_PER_HAND},
+		{"type": "contribution", "id": "poker:first"},
+	])
+	if m.mode == "tournament":
+		var stage := int(state.tournament.get("stage", 0))
+		var seen: Array = poker_mode("tournament").get("stage_flags", [])
+		if stage < seen.size():
+			state.set_flag(str(seen[stage]))
+		if result["outcome"] == "win":
+			stage += 1
+			if stage >= poker_mode("tournament").get("stages", []).size():
+				stage = 0
+				result["tournament_won"] = true
+				if not bool(state.tournament.get("rewarded", false)):
+					state.tournament["rewarded"] = true
+					state.grant_item(str(poker_mode("tournament")["reward_item"]))
+					state.set_flag("festival.tournament_won")
+					result["reward_item"] = str(poker_mode("tournament")["reward_item"])
+		state.tournament["stage"] = stage
+		result["tournament_stage"] = stage
 
 
 ## Leaving the table before the showdown: the hand is folded and the stake is not returned.
+## A practice hand simply ends.
 func fold_match(m: PokerMatch) -> Dictionary:
-	var result := PokerEconomy.fold(state, m)
+	var result: Dictionary
+	if m.mode == "practice":
+		if m.settled or m.phase != PokerMatch.Phase.DRAW:
+			return {"ok": false}
+		m.settled = true
+		result = {"ok": true, "stake": 0}
+	else:
+		result = PokerEconomy.fold(state, m)
 	if result["ok"]:
 		state.poker_in_progress = {}
 		save_game()
 		state_changed.emit()
 	return result
+
+
+func opponent_line(npc: String, key: String) -> String:
+	var lines: Dictionary = data.opponents.get(npc, {}).get("lines", data.poker.get("opponent_lines", {}))
+	return str(lines.get(key, ""))
 
 
 # --- time of day -------------------------------------------------------------
@@ -396,6 +502,7 @@ func buy_item(item_id: String) -> Dictionary:
 	return {"ok": true}
 
 
+const RIVALRY_PER_HAND := 5
 const HOME_LOCATIONS := ["player_home", "player_home_annex", "player_home_hall"]
 
 
