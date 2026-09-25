@@ -12,6 +12,9 @@ var show_marker := false:
 		queue_redraw()
 var _t := 0.0
 var _activity: Label = null
+## Visual slice: sprite key from look.art (data/art.json); empty -> greybox shapes.
+var art_key := ""
+var _name_label: Label = null
 
 
 func setup(def: Dictionary) -> void:
@@ -28,7 +31,24 @@ func setup(def: Dictionary) -> void:
 	label.position = Vector2(-90, -58)
 	label.size = Vector2(180, 20)
 	add_child(label)
+	_name_label = label
+	art_key = str(look.get("art", ""))
+	if not ArtLib.has(art_key):
+		art_key = ""
+	else:
+		label.text = str(def["name"])
+		label.position = Vector2(-90, _sprite_top() - 24)
 	queue_redraw()
+
+
+## In art locations name tags appear only near the player (no permanent labels everywhere).
+func set_name_visible(v: bool) -> void:
+	if _name_label != null:
+		_name_label.visible = v
+
+
+func _sprite_top() -> float:
+	return 16.0 - ArtLib.anchor(art_key).y
 
 
 ## What the resident is doing right now ("책 읽는 중"), shown under the name. Empty hides it.
@@ -42,12 +62,15 @@ func set_activity(text: String) -> void:
 
 
 func _process(delta: float) -> void:
-	if show_marker:
+	if show_marker or (art_key != "" and ArtLib.def(art_key).get("hover", false)):
 		_t += delta
 		queue_redraw()
 
 
 func _draw() -> void:
+	if art_key != "":
+		_draw_art()
+		return
 	var body := Color(str(look.get("color", "#cccccc")))
 	var accent := Color(str(look.get("accent", "#ffffff")))
 	var dark := Color(0.18, 0.12, 0.1)
@@ -140,3 +163,19 @@ func _draw() -> void:
 		draw_circle(Vector2(0, y), 11, dark, false, 2.0)
 		draw_rect(Rect2(-1.8, y - 7, 3.6, 8), dark)
 		draw_circle(Vector2(0, y + 5), 2, dark)
+
+
+func _draw_art() -> void:
+	var hover: bool = bool(ArtLib.def(art_key).get("hover", false))
+	var lift := (-10.0 + sin(_t * 3.0) * 3.0) if hover else 0.0
+	draw_set_transform(Vector2(0, 16), 0.0, Vector2(1.0, 0.35))
+	draw_circle(Vector2.ZERO, 17.0 if not hover else 12.0, Color(0, 0, 0, 0.22))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	ArtLib.draw(self, art_key, Vector2(0, 16 + lift))
+	if show_marker:
+		var dark := Color(0.18, 0.12, 0.1)
+		var y := _sprite_top() - 40.0 + sin(_t * 5.0) * 3.0
+		draw_circle(Vector2(0, y), 10, Color("#ffd23f"))
+		draw_circle(Vector2(0, y), 10, dark, false, 2.0)
+		draw_rect(Rect2(-1.6, y - 6, 3.2, 7), dark)
+		draw_circle(Vector2(0, y + 4.5), 1.8, dark)

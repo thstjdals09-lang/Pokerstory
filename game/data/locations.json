@@ -66,7 +66,8 @@
       560
      ],
      "r": 54,
-     "solid": true
+     "solid": true,
+     "art": "prop.fountain"
     },
     {
      "type": "board",
@@ -74,7 +75,8 @@
       620,
       470
      ],
-     "label": "아르바이트"
+     "label": "아르바이트",
+     "art": "prop.job_board"
     },
     {
      "type": "flowers",
@@ -83,7 +85,8 @@
       700,
       120,
       40
-     ]
+     ],
+     "art": "prop.flower_bed"
     },
     {
      "type": "flowers",
@@ -92,7 +95,8 @@
       700,
       120,
       40
-     ]
+     ],
+     "art": "prop.flower_bed"
     },
     {
      "type": "tree",
@@ -101,7 +105,8 @@
       80
      ],
      "r": 30,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -110,7 +115,8 @@
       90
      ],
      "r": 28,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree_blossom"
     },
     {
      "type": "tree",
@@ -119,7 +125,8 @@
       80
      ],
      "r": 28,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -128,7 +135,8 @@
       90
      ],
      "r": 32,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -137,7 +145,8 @@
       420
      ],
      "r": 30,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree_blossom"
     },
     {
      "type": "tree",
@@ -146,7 +155,8 @@
       420
      ],
      "r": 30,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -155,7 +165,8 @@
       800
      ],
      "r": 32,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -164,7 +175,8 @@
       900
      ],
      "r": 30,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree_blossom"
     },
     {
      "type": "tree",
@@ -173,7 +185,8 @@
       800
      ],
      "r": 28,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -182,7 +195,8 @@
       900
      ],
      "r": 32,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -191,7 +205,8 @@
       760
      ],
      "r": 30,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree_blossom"
     },
     {
      "type": "tree",
@@ -200,7 +215,8 @@
       1010
      ],
      "r": 26,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "tree",
@@ -209,7 +225,8 @@
       990
      ],
      "r": 28,
-     "solid": true
+     "solid": true,
+     "art": "prop.tree"
     },
     {
      "type": "booth",
@@ -217,7 +234,8 @@
       1150,
       760
      ],
-     "label": "축제 부스"
+     "label": "축제 부스",
+     "art": "prop.booth"
     },
     {
      "type": "rect",
@@ -231,7 +249,12 @@
      "label": "벤치",
      "conditions": {
       "project_complete": "square_seating"
-     }
+     },
+     "art": "prop.bench",
+     "art_pos": [
+      915,
+      786
+     ]
     },
     {
      "type": "rect",
@@ -245,7 +268,12 @@
      "label": "벤치",
      "conditions": {
       "project_complete": "square_seating"
-     }
+     },
+     "art": "prop.bench",
+     "art_pos": [
+      615,
+      786
+     ]
     },
     {
      "type": "garland",
@@ -367,6 +395,95 @@
        "story.act3_complete"
       ]
      }
+    },
+    {
+     "type": "art",
+     "art": "prop.lamp_post",
+     "pos": [
+      700,
+      420
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.lamp_post",
+     "pos": [
+      900,
+      420
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.lamp_post",
+     "pos": [
+      700,
+      700
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.lamp_post",
+     "pos": [
+      990,
+      640
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.lamp_post",
+     "pos": [
+      1200,
+      400
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.lamp_post",
+     "pos": [
+      420,
+      380
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.bench",
+     "pos": [
+      860,
+      716
+     ],
+     "note": "Lumi's spot by the fountain"
+    },
+    {
+     "type": "art",
+     "art": "prop.pot_plant",
+     "pos": [
+      240,
+      372
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.crates",
+     "pos": [
+      520,
+      360
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.pot_plant",
+     "pos": [
+      760,
+      334
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.pot_plant",
+     "pos": [
+      1330,
+      392
+     ]
     }
    ],
    "buildings": [
@@ -387,7 +504,8 @@
      ],
      "target": "small_shop",
      "spawn": "from_village",
-     "prompt": "잡화점 들어가기"
+     "prompt": "잡화점 들어가기",
+     "art": "bld.shop_sera"
     },
     {
      "id": "home_building",
@@ -406,7 +524,8 @@
      ],
      "target": "player_home",
      "spawn": "from_village",
-     "prompt": "집에 들어가기"
+     "prompt": "집에 들어가기",
+     "art": "bld.home_player"
     },
     {
      "id": "card_room_building",
@@ -430,7 +549,8 @@
      "requires_time": "evening",
      "closed_title": "카드룸",
      "closed_text": "문에 '저녁 모임' 팻말이 걸려 있어요. 포커 모임은 저녁에 열려요.",
-     "wait_choice": "저녁까지 기다렸다가 들어가기 (시간이 저녁으로 바뀌어요)"
+     "wait_choice": "저녁까지 기다렸다가 들어가기 (시간이 저녁으로 바뀌어요)",
+     "art": "bld.card_room"
     },
     {
      "id": "community_hall_building",
@@ -449,7 +569,8 @@
      ],
      "target": "community_hall",
      "spawn": "from_outside",
-     "prompt": "마을 회관 들어가기"
+     "prompt": "마을 회관 들어가기",
+     "art": "bld.hall"
     }
    ],
    "signs": [
@@ -460,7 +581,8 @@
       1000
      ],
      "title": "안내 표지판",
-     "text": "↑ 광장 · 내 집 (♥)   ↖ 세라의 잡화점 (♦)   ↗ 카드룸 (♣, 저녁)\n← 주거 골목   → 장터   ↑(오른쪽 위) 달그림자 숲길   ↓ 물안개 둔치"
+     "text": "↑ 광장 · 내 집 (♥)   ↖ 세라의 잡화점 (♦)   ↗ 카드룸 (♣, 저녁)\n← 주거 골목   → 장터   ↑(오른쪽 위) 달그림자 숲길   ↓ 물안개 둔치",
+     "art": "prop.signpost"
     }
    ],
    "interactables": [
@@ -514,7 +636,8 @@
      "radius": 56,
      "prompt": "카드룸 게시판 보기",
      "title": "카드룸 게시판",
-     "shape": "sign"
+     "shape": "sign",
+     "art": "prop.aframe"
     },
     {
      "id": "square_mix_table_day",
@@ -584,7 +707,8 @@
      "spawn": "from_square",
      "prompt": "주거 골목으로 가기",
      "label": "← 주거 골목",
-     "gate": true
+     "gate": true,
+     "art": "bld.gate"
     },
     {
      "id": "gate_market",
@@ -596,7 +720,8 @@
      "spawn": "from_square",
      "prompt": "장터로 가기",
      "label": "장터 →",
-     "gate": true
+     "gate": true,
+     "art": "bld.gate"
     },
     {
      "id": "gate_grove",
@@ -608,7 +733,8 @@
      "spawn": "from_square",
      "prompt": "달그림자 숲길로 가기",
      "label": "↑ 숲길",
-     "gate": true
+     "gate": true,
+     "art": "bld.gate"
     },
     {
      "id": "gate_waterfront",
@@ -620,9 +746,16 @@
      "spawn": "from_square",
      "prompt": "물안개 둔치로 가기",
      "label": "↓ 둔치",
-     "gate": true
+     "gate": true,
+     "art": "bld.gate"
     }
-   ]
+   ],
+   "art": {
+    "ground": "tile.grass",
+    "path": "tile.cobble",
+    "plaza": "tile.plaza",
+    "evening_tint": "#5f5f8f"
+   }
   },
   "player_home": {
    "name": "내 집",
@@ -642,7 +775,8 @@
       4,
       160,
       22
-     ]
+     ],
+     "hide_with_art": true
     },
     {
      "type": "rug",
@@ -652,7 +786,8 @@
       200,
       130
      ],
-     "color": "#c97b63"
+     "color": "#c97b63",
+     "art": "int.rug_home"
     },
     {
      "type": "rect",
@@ -664,7 +799,8 @@
      ],
      "color": "#9fb8d9",
      "label": "침대",
-     "solid": true
+     "solid": true,
+     "art": "int.bed"
     },
     {
      "type": "rect",
@@ -676,7 +812,8 @@
      ],
      "color": "#a9784f",
      "label": "탁자",
-     "solid": true
+     "solid": true,
+     "art": "int.table_home"
     },
     {
      "type": "rect",
@@ -688,7 +825,8 @@
      ],
      "color": "#7d5a3c",
      "label": "보관함",
-     "solid": true
+     "solid": true,
+     "art": "int.chest"
     },
     {
      "type": "rect",
@@ -703,6 +841,18 @@
      "conditions": {
       "home_stage_min": 2
      }
+    },
+    {
+     "type": "art",
+     "art": "int.boxes",
+     "pos": [
+      760,
+      196
+     ],
+     "conditions": {
+      "home_stage_max": 0
+     },
+     "note": "moving boxes: the house is new"
     }
    ],
    "slots": [
@@ -841,7 +991,8 @@
      "radius": 44,
      "prompt": "집 확장 설계도 보기",
      "title": "집 확장 설계도",
-     "shape": "scroll"
+     "shape": "scroll",
+     "art": "int.blueprint"
     }
    ],
    "exits": [
@@ -883,6 +1034,13 @@
      840,
      330
     ]
+   },
+   "art": {
+    "floor": "tile.floor_home",
+    "wall": "int.wall_home",
+    "wall_height": 120,
+    "day_tint": "#d4ccc8",
+    "evening_tint": "#6a6488"
    }
   },
   "card_room": {
@@ -905,7 +1063,8 @@
       360,
       320
      ],
-     "color": "#5e3a33"
+     "color": "#5e3a33",
+     "art": "int.rug_cardroom"
     },
     {
      "type": "glow",
@@ -913,7 +1072,8 @@
       110,
       110
      ],
-     "r": 90
+     "r": 90,
+     "hide_with_art": true
     },
     {
      "type": "glow",
@@ -921,7 +1081,8 @@
       850,
       110
      ],
-     "r": 90
+     "r": 90,
+     "hide_with_art": true
     },
     {
      "type": "glow",
@@ -929,7 +1090,8 @@
       480,
       280
      ],
-     "r": 210
+     "r": 210,
+     "hide_with_art": true
     },
     {
      "type": "felt_table",
@@ -938,7 +1100,8 @@
       280
      ],
      "r": 110,
-     "solid": true
+     "solid": true,
+     "art": "int.poker_table"
     },
     {
      "type": "rect",
@@ -950,7 +1113,8 @@
      ],
      "color": "#5a3d2e",
      "label": "칩 선반",
-     "solid": true
+     "solid": true,
+     "art": "int.chip_shelf"
     },
     {
      "type": "felt_table",
@@ -963,7 +1127,74 @@
      "conditions": {
       "project_complete": "card_room_extension"
      },
-     "label": "연습 테이블"
+     "label": "연습 테이블",
+     "art": "int.poker_table",
+     "art_scale": 0.55
+    },
+    {
+     "type": "art",
+     "art": "int.chair",
+     "pos": [
+      480,
+      150
+     ]
+    },
+    {
+     "type": "art",
+     "art": "int.chair",
+     "pos": [
+      332,
+      300
+     ]
+    },
+    {
+     "type": "art",
+     "art": "int.chair",
+     "pos": [
+      628,
+      300
+     ]
+    },
+    {
+     "type": "art",
+     "art": "int.tea_counter",
+     "pos": [
+      830,
+      330
+     ]
+    },
+    {
+     "type": "art",
+     "art": "int.coat_rack",
+     "pos": [
+      560,
+      600
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.pot_plant",
+     "pos": [
+      70,
+      190
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.pot_plant",
+     "pos": [
+      900,
+      600
+     ]
+    },
+    {
+     "type": "art",
+     "art": "prop.bench",
+     "pos": [
+      230,
+      560
+     ],
+     "note": "spectator bench"
     }
    ],
    "interactables": [
@@ -987,7 +1218,8 @@
      "radius": 56,
      "prompt": "게시판 쪽지 보기",
      "title": "카드룸 게시판",
-     "shape": "sign"
+     "shape": "sign",
+     "art": "prop.aframe"
     },
     {
      "id": "practice_table",
@@ -1028,6 +1260,39 @@
     "from_outside": [
      480,
      560
+    ]
+   },
+   "art": {
+    "floor": "tile.floor_cardroom",
+    "wall": "int.wall_cardroom",
+    "wall_height": 120,
+    "evening_tint": "#8a7470",
+    "day_tint": "#8a7470",
+    "lights": [
+     [
+      480,
+      250,
+      330,
+      1.4
+     ],
+     [
+      120,
+      110,
+      150,
+      0.9
+     ],
+     [
+      840,
+      110,
+      150,
+      0.9
+     ],
+     [
+      220,
+      470,
+      120,
+      0.7
+     ]
     ]
    }
   },

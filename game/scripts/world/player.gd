@@ -8,6 +8,9 @@ const BODY_COLOR := Color("#3a7bd5")
 var input_enabled := true
 var facing := Vector2.DOWN
 var _name_label: Label
+var _art := ""
+var _walk := 0.0
+var _moving := false
 
 
 func _ready() -> void:
@@ -21,6 +24,11 @@ func _ready() -> void:
 	_name_label.position = Vector2(-70, -46)
 	_name_label.size = Vector2(140, 20)
 	add_child(_name_label)
+	if ArtLib.has("char.player"):
+		_art = "char.player"
+		_name_label.position = Vector2(-70, 16 - ArtLib.anchor(_art).y - 22)
+		# The drawn character is recognisable on its own; no tag over the player's head.
+		_name_label.visible = false
 
 
 func set_display_name(text: String) -> void:
@@ -32,13 +40,25 @@ func _physics_process(_delta: float) -> void:
 	if input_enabled:
 		dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	velocity = dir * SPEED
-	if dir != Vector2.ZERO:
+	_moving = dir != Vector2.ZERO
+	if _moving:
 		facing = dir.normalized()
+		_walk += _delta * 12.0
+		queue_redraw()
+	elif _walk != 0.0:
+		_walk = 0.0
 		queue_redraw()
 	move_and_slide()
 
 
 func _draw() -> void:
+	if _art != "":
+		draw_set_transform(Vector2(0, 16), 0.0, Vector2(1.0, 0.35))
+		draw_circle(Vector2.ZERO, 17.0, Color(0, 0, 0, 0.22))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		var bob := -absf(sin(_walk)) * 3.0 if _moving else 0.0
+		ArtLib.draw(self, _art, Vector2(0, 16 + bob), 1.0, Color.WHITE, facing.x < -0.2)
+		return
 	draw_circle(Vector2(0, 11), RADIUS * 0.9, Color(0, 0, 0, 0.2))
 	draw_circle(Vector2.ZERO, RADIUS + 3, Color.WHITE)
 	draw_circle(Vector2.ZERO, RADIUS, BODY_COLOR)

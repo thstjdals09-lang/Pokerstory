@@ -1,0 +1,643 @@
+{
+ "_comment": "Visual slice 01 art registry. key -> file, display size (px), anchor (px from top-left; the point placed at the data position), optional lights [[dx, dy, radius, energy]] relative to the anchor, 'sort': true to depth-sort with characters, 'tile' for repeating ground. Swap files or paths here; gameplay data only names keys. 'portrait' is [x, y, w, h] in source-file px (files are authored at 2x display size).",
+ "scale": {
+  "world_px_per_tile": 32,
+  "character_height": 72,
+  "door_width": 48,
+  "note": "characters ~2.25 tiles tall, doors 1.5 tiles wide, camera shows ~40x22 tiles at 1280x720"
+ },
+ "sprites": {
+  "tile.grass": {
+   "path": "res://assets/art/world/grass.svg",
+   "size": [
+    128,
+    128
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "tile": true
+  },
+  "tile.cobble": {
+   "path": "res://assets/art/world/cobble.svg",
+   "size": [
+    128,
+    128
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "tile": true
+  },
+  "tile.plaza": {
+   "path": "res://assets/art/world/plaza.svg",
+   "size": [
+    128,
+    128
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "tile": true
+  },
+  "tile.floor_cardroom": {
+   "path": "res://assets/art/world/floor_cardroom.svg",
+   "size": [
+    128,
+    128
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "tile": true
+  },
+  "tile.floor_home": {
+   "path": "res://assets/art/world/floor_home.svg",
+   "size": [
+    128,
+    128
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "tile": true
+  },
+  "char.player": {
+   "path": "res://assets/art/characters/player.svg",
+   "size": [
+    56,
+    72
+   ],
+   "anchor": [
+    28,
+    70
+   ],
+   "portrait": [
+    16,
+    0,
+    80,
+    80
+   ]
+  },
+  "char.lumi": {
+   "path": "res://assets/art/characters/lumi.svg",
+   "size": [
+    56,
+    72
+   ],
+   "anchor": [
+    28,
+    70
+   ],
+   "portrait": [
+    16,
+    0,
+    80,
+    80
+   ]
+  },
+  "char.moa": {
+   "path": "res://assets/art/characters/moa.svg",
+   "size": [
+    44,
+    56
+   ],
+   "anchor": [
+    22,
+    60
+   ],
+   "hover": true,
+   "portrait": [
+    14,
+    0,
+    60,
+    64
+   ]
+  },
+  "char.sera": {
+   "path": "res://assets/art/characters/sera.svg",
+   "size": [
+    56,
+    88
+   ],
+   "anchor": [
+    28,
+    86
+   ],
+   "portrait": [
+    16,
+    20,
+    80,
+    90
+   ]
+  },
+  "bld.home_player": {
+   "path": "res://assets/art/buildings/home_player.svg",
+   "size": [
+    340,
+    300
+   ],
+   "anchor": [
+    170,
+    298
+   ],
+   "lights": [
+    [
+     -92,
+     -126,
+     90,
+     0.77
+    ],
+    [
+     92,
+     -126,
+     90,
+     0.77
+    ],
+    [
+     0,
+     -203,
+     70,
+     0.59
+    ]
+   ]
+  },
+  "bld.shop_sera": {
+   "path": "res://assets/art/buildings/shop_sera.svg",
+   "size": [
+    340,
+    280
+   ],
+   "anchor": [
+    170,
+    278
+   ],
+   "lights": [
+    [
+     -80,
+     -63,
+     110,
+     0.94
+    ],
+    [
+     87,
+     -66,
+     90,
+     0.68
+    ]
+   ]
+  },
+  "bld.card_room": {
+   "path": "res://assets/art/buildings/card_room.svg",
+   "size": [
+    340,
+    300
+   ],
+   "anchor": [
+    170,
+    298
+   ],
+   "lights": [
+    [
+     -100,
+     -113,
+     120,
+     1.2
+    ],
+    [
+     100,
+     -113,
+     120,
+     1.2
+    ],
+    [
+     -57,
+     -69,
+     90,
+     1.1
+    ],
+    [
+     57,
+     -69,
+     90,
+     1.1
+    ],
+    [
+     0,
+     -10,
+     140,
+     0.8
+    ]
+   ]
+  },
+  "bld.hall": {
+   "path": "res://assets/art/buildings/hall.svg",
+   "size": [
+    320,
+    280
+   ],
+   "anchor": [
+    160,
+    278
+   ],
+   "lights": [
+    [
+     -98,
+     -100,
+     70,
+     0.51
+    ],
+    [
+     102,
+     -100,
+     70,
+     0.51
+    ]
+   ]
+  },
+  "bld.gate": {
+   "path": "res://assets/art/buildings/gate.svg",
+   "size": [
+    110,
+    100
+   ],
+   "anchor": [
+    55,
+    98
+   ],
+   "lights": [
+    [
+     -5,
+     -46,
+     70,
+     0.68
+    ]
+   ]
+  },
+  "prop.tree": {
+   "path": "res://assets/art/props/tree.svg",
+   "size": [
+    100,
+    120
+   ],
+   "anchor": [
+    50,
+    114
+   ],
+   "sort": true
+  },
+  "prop.tree_blossom": {
+   "path": "res://assets/art/props/tree_blossom.svg",
+   "size": [
+    100,
+    120
+   ],
+   "anchor": [
+    50,
+    114
+   ],
+   "sort": true
+  },
+  "prop.fountain": {
+   "path": "res://assets/art/props/fountain.svg",
+   "size": [
+    180,
+    150
+   ],
+   "anchor": [
+    90,
+    100
+   ]
+  },
+  "prop.lamp_post": {
+   "path": "res://assets/art/props/lamp_post.svg",
+   "size": [
+    30,
+    100
+   ],
+   "anchor": [
+    15,
+    97
+   ],
+   "sort": true,
+   "lights": [
+    [
+     0,
+     -73,
+     120,
+     0.7
+    ]
+   ]
+  },
+  "prop.bench": {
+   "path": "res://assets/art/props/bench.svg",
+   "size": [
+    80,
+    44
+   ],
+   "anchor": [
+    40,
+    40
+   ],
+   "sort": true
+  },
+  "prop.flower_bed": {
+   "path": "res://assets/art/props/flower_bed.svg",
+   "size": [
+    130,
+    50
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "prop.job_board": {
+   "path": "res://assets/art/props/job_board.svg",
+   "size": [
+    90,
+    90
+   ],
+   "anchor": [
+    45,
+    86
+   ],
+   "sort": true
+  },
+  "prop.signpost": {
+   "path": "res://assets/art/props/signpost.svg",
+   "size": [
+    60,
+    70
+   ],
+   "anchor": [
+    30,
+    68
+   ],
+   "sort": true
+  },
+  "prop.aframe": {
+   "path": "res://assets/art/props/aframe.svg",
+   "size": [
+    50,
+    60
+   ],
+   "anchor": [
+    25,
+    58
+   ],
+   "sort": true
+  },
+  "prop.booth": {
+   "path": "res://assets/art/props/booth.svg",
+   "size": [
+    120,
+    80
+   ],
+   "anchor": [
+    60,
+    60
+   ],
+   "sort": true
+  },
+  "prop.crates": {
+   "path": "res://assets/art/props/crates.svg",
+   "size": [
+    50,
+    60
+   ],
+   "anchor": [
+    25,
+    58
+   ],
+   "sort": true
+  },
+  "prop.pot_plant": {
+   "path": "res://assets/art/props/pot_plant.svg",
+   "size": [
+    50,
+    60
+   ],
+   "anchor": [
+    25,
+    56
+   ],
+   "sort": true
+  },
+  "int.wall_cardroom": {
+   "path": "res://assets/art/interiors/wall_cardroom.svg",
+   "size": [
+    960,
+    120
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.wall_home": {
+   "path": "res://assets/art/interiors/wall_home.svg",
+   "size": [
+    960,
+    120
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.poker_table": {
+   "path": "res://assets/art/interiors/poker_table.svg",
+   "size": [
+    260,
+    200
+   ],
+   "anchor": [
+    130,
+    98
+   ]
+  },
+  "int.chair": {
+   "path": "res://assets/art/interiors/chair.svg",
+   "size": [
+    40,
+    46
+   ],
+   "anchor": [
+    20,
+    42
+   ],
+   "sort": true
+  },
+  "int.chip_shelf": {
+   "path": "res://assets/art/interiors/chip_shelf.svg",
+   "size": [
+    120,
+    80
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.rug_cardroom": {
+   "path": "res://assets/art/interiors/rug_cardroom.svg",
+   "size": [
+    360,
+    320
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.tea_counter": {
+   "path": "res://assets/art/interiors/tea_counter.svg",
+   "size": [
+    130,
+    80
+   ],
+   "anchor": [
+    65,
+    76
+   ],
+   "sort": true
+  },
+  "int.coat_rack": {
+   "path": "res://assets/art/interiors/coat_rack.svg",
+   "size": [
+    40,
+    100
+   ],
+   "anchor": [
+    20,
+    97
+   ],
+   "sort": true
+  },
+  "int.bed": {
+   "path": "res://assets/art/interiors/bed.svg",
+   "size": [
+    170,
+    130
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.table_home": {
+   "path": "res://assets/art/interiors/table_home.svg",
+   "size": [
+    170,
+    90
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.chest": {
+   "path": "res://assets/art/interiors/chest.svg",
+   "size": [
+    90,
+    60
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.rug_home": {
+   "path": "res://assets/art/interiors/rug_home.svg",
+   "size": [
+    200,
+    130
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "int.boxes": {
+   "path": "res://assets/art/interiors/boxes.svg",
+   "size": [
+    70,
+    60
+   ],
+   "anchor": [
+    35,
+    58
+   ],
+   "sort": true
+  },
+  "int.blueprint": {
+   "path": "res://assets/art/interiors/blueprint.svg",
+   "size": [
+    50,
+    40
+   ],
+   "anchor": [
+    25,
+    24
+   ]
+  },
+  "item.furniture.lamp_small": {
+   "path": "res://assets/art/items/lamp_small.svg",
+   "size": [
+    40,
+    60
+   ],
+   "anchor": [
+    20,
+    44
+   ],
+   "lights": [
+    [
+     0,
+     -20,
+     300,
+     1.25
+    ]
+   ]
+  },
+  "ui.chip": {
+   "path": "res://assets/art/ui/chip.svg",
+   "size": [
+    24,
+    24
+   ],
+   "anchor": [
+    12,
+    12
+   ]
+  },
+  "ui.sun": {
+   "path": "res://assets/art/ui/sun.svg",
+   "size": [
+    24,
+    24
+   ],
+   "anchor": [
+    12,
+    12
+   ]
+  },
+  "ui.moon": {
+   "path": "res://assets/art/ui/moon.svg",
+   "size": [
+    24,
+    24
+   ],
+   "anchor": [
+    12,
+    12
+   ]
+  }
+ }
+}
