@@ -841,8 +841,8 @@
     {
      "type": "felt_table",
      "pos": [
-      800,
-      300
+      760,
+      160
      ],
      "r": 62,
      "solid": true,
@@ -880,8 +880,8 @@
      "kind": "poker_table",
      "mode": "practice",
      "pos": [
-      800,
-      392
+      760,
+      240
      ],
      "radius": 56,
      "prompt": "연습 테이블에서 칩 없이 한 판",
@@ -1041,7 +1041,18 @@
      ]
     }
    ],
-   "interactables": [],
+   "interactables": [
+    {
+     "id": "annex_decorate",
+     "kind": "home_edit",
+     "pos": [
+      480,
+      300
+     ],
+     "radius": 60,
+     "prompt": "방 꾸미기"
+    }
+   ],
    "exits": [
     {
      "id": "exit_annex",
@@ -1096,7 +1107,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     },
     {
      "id": "annex_2",
@@ -1107,7 +1121,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     },
     {
      "id": "annex_3",
@@ -1118,7 +1135,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     },
     {
      "id": "annex_4",
@@ -1129,7 +1149,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     },
     {
      "id": "annex_5",
@@ -1140,7 +1163,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     },
     {
      "id": "annex_6",
@@ -1151,7 +1177,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     },
     {
      "id": "annex_7",
@@ -1162,7 +1191,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     },
     {
      "id": "annex_8",
@@ -1173,7 +1205,10 @@
       64,
       60
      ],
-     "room": "annex"
+     "room": "annex",
+     "conditions": {
+      "home_stage_min": 2
+     }
     }
    ]
   },
@@ -1217,6 +1252,16 @@
      ],
      "radius": 70,
      "prompt": "홈게임 열기 (친한 주민과 한 판)"
+    },
+    {
+     "id": "hall_decorate",
+     "kind": "home_edit",
+     "pos": [
+      480,
+      560
+     ],
+     "radius": 60,
+     "prompt": "방 꾸미기"
     }
    ],
    "exits": [
@@ -1255,7 +1300,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     },
     {
      "id": "hall_2",
@@ -1266,7 +1314,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     },
     {
      "id": "hall_3",
@@ -1277,7 +1328,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     },
     {
      "id": "hall_4",
@@ -1288,7 +1342,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     },
     {
      "id": "hall_5",
@@ -1299,7 +1356,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     },
     {
      "id": "hall_6",
@@ -1310,7 +1370,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     },
     {
      "id": "hall_7",
@@ -1321,7 +1384,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     },
     {
      "id": "hall_8",
@@ -1332,7 +1398,10 @@
       64,
       60
      ],
-     "room": "hall"
+     "room": "hall",
+     "conditions": {
+      "home_stage_min": 3
+     }
     }
    ]
   },
@@ -1389,8 +1458,8 @@
      "id": "hall_meeting",
      "kind": "object",
      "pos": [
-      480,
-      240
+      700,
+      330
      ],
      "radius": 60,
      "prompt": "주민 회의 자리",

@@ -171,17 +171,18 @@ func active_quest_lines() -> Array:
 		return lines
 	var active: Array = []
 	for id in data.quest_order:
-		if data.is_quest(id) and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+		if QuestBook.state_of(state, id) == QuestBook.ACTIVE:
 			active.append(id)
 	if active.is_empty():
 		return lines
-	# One tracked request with where its recipient is right now (06_integration/07); the rest is in the journal.
+	# One tracked task with where its target is right now (06_integration/07); the rest is in the journal.
 	var shown: String = state.tracked_quest if active.has(state.tracked_quest) else active[0]
 	var q: Dictionary = data.quests[shown]
 	var carry := " (%s 소지)" % q["item_name"] if q.has("item_name") else ""
-	lines.append("의뢰 중 · %s%s → %s" % [q["name"], carry, npc_where_text(str(q["target"]))])
+	var label := "의뢰 중" if data.is_quest(shown) else "이야기"
+	lines.append("%s · %s%s → %s" % [label, q["name"], carry, npc_where_text(str(q["target"]))])
 	if active.size() > 1:
-		lines.append("진행 중인 의뢰 %d개 · 메뉴 > 일지에서 확인" % active.size())
+		lines.append("진행 중인 일 %d개 · 메뉴 > 일지에서 확인" % active.size())
 	return lines
 
 
@@ -296,7 +297,7 @@ func accept_quest(quest_id: String) -> bool:
 		return false
 	if not QuestBook.accept(state, quest_id):
 		return false
-	if data.is_quest(quest_id) and (state.tracked_quest == "" or QuestBook.state_of(state, state.tracked_quest) != QuestBook.ACTIVE):
+	if state.tracked_quest == "" or QuestBook.state_of(state, state.tracked_quest) != QuestBook.ACTIVE:
 		state.tracked_quest = quest_id
 	save_game()
 	state_changed.emit()
@@ -322,7 +323,7 @@ func complete_quest(arg: String) -> Dictionary:
 
 func _first_active_quest() -> String:
 	for id in data.quest_order:
-		if data.is_quest(id) and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+		if QuestBook.state_of(state, id) == QuestBook.ACTIVE:
 			return id
 	return ""
 
@@ -395,22 +396,35 @@ func buy_item(item_id: String) -> Dictionary:
 	return {"ok": true}
 
 
-func home_slots() -> Array:
-	return data.locations.get("player_home", {}).get("slots", [])
+const HOME_LOCATIONS := ["player_home", "player_home_annex", "player_home_hall"]
+
+
+## Furniture slots usable right now in a home room (slots appear with the house stages).
+func home_slots(loc_id: String = "player_home") -> Array:
+	return data.locations.get(loc_id, {}).get("slots", []).filter(
+		func(s): return Conditions.check(s.get("conditions", {}), state, loc_id))
 
 
 func slot_name(slot_id: String) -> String:
-	for s in home_slots():
-		if s["id"] == slot_id:
-			return s["name"]
+	for loc_id in HOME_LOCATIONS:
+		for s in data.locations.get(loc_id, {}).get("slots", []):
+			if s["id"] == slot_id:
+				return s["name"] if s.has("name") else slot_id
 	return slot_id
+
+
+## Items that can go into slots: furniture, decor and mementos (clothing and styles are equipped).
+func is_placeable(item_id: String) -> bool:
+	var item: Dictionary = data.items.get(item_id, {})
+	return item.get("placeable", false) and DataDB.PLACEABLE_CATEGORIES.has(str(item.get("category", "furniture")))
 
 
 func place_item(slot_id: String, item_id: String) -> bool:
 	var known_slot := false
-	for s in home_slots():
-		known_slot = known_slot or s["id"] == slot_id
-	if not known_slot or not data.items.get(item_id, {}).get("placeable", false):
+	for loc_id in HOME_LOCATIONS:
+		for s in home_slots(loc_id):
+			known_slot = known_slot or s["id"] == slot_id
+	if not known_slot or not is_placeable(item_id):
 		return false
 	if not state.place_item(slot_id, item_id):
 		return false
@@ -451,6 +465,11 @@ func location_name(loc_id: String) -> String:
 ## "루미: 지금 마을 광장 (저녁엔 카드룸)" for HUD, journal and hints.
 func npc_where_text(target: String) -> String:
 	if not data.npcs.has(target):
+		# A place or object in the village: name it and where it is.
+		for loc_id in data.locations:
+			for it in data.locations[loc_id].get("interactables", []):
+				if it["id"] == target:
+					return "%s: %s" % [str(it.get("title", it.get("prompt", target))), location_name(loc_id)]
 		return "대상 위치 확인"
 	var here := npc_place(target)
 	var other_time := "evening" if state.time_of_day == "day" else "day"
@@ -626,6 +645,22 @@ func trade(trade_id: String) -> Dictionary:
 		state_changed.emit()
 		return {"ok": true}
 	return {"ok": false, "reason": "unknown"}
+
+
+## Which task the HUD follows (requests and episodes alike).
+func track_quest(quest_id: String) -> bool:
+	if QuestBook.state_of(state, quest_id) != QuestBook.ACTIVE:
+		return false
+	state.tracked_quest = quest_id
+	save_game()
+	state_changed.emit()
+	return true
+
+
+func unequip(category: String) -> void:
+	state.equipped.erase(category)
+	save_game()
+	state_changed.emit()
 
 
 func equip(item_id: String) -> bool:

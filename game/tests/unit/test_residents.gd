@@ -193,3 +193,17 @@ func test_resident_pairs_change_only_through_events() -> void:
 	QuestBook.complete(s, db.quests["npc_moa.bond_02"], 1)
 	check_eq(s.edge_phase("moa_nora"), "bonded", "episode bonds Moa and Nora")
 	check_eq(talk(db, s, "npc_nora", "residential")[0], "nora_moa_edge", "Nora mentions it")
+
+
+func test_residents_can_be_reached_next_to_objects() -> void:
+	# Standing just below a resident must focus the resident, not a nearby object.
+	for npc in db.npc_order:
+		var def: Dictionary = db.npcs[npc]
+		var places: Array = [def["schedule"]["day"], def["schedule"]["evening"]]
+		places.append_array(def.get("overrides", []))
+		for pl in places:
+			var p := Geo.vec(pl["pos"])
+			var stand := p + Vector2(0, 40)
+			for it in db.locations[pl["loc"]].get("interactables", []):
+				var d := Geo.vec(it["pos"]).distance_to(stand)
+				check(d > 40.0 or d > float(it.get("radius", 60)), "%s at %s: %s is closer than the resident" % [npc, pl["loc"], it["id"]])

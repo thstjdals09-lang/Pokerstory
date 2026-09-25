@@ -64,7 +64,10 @@ func _draw() -> void:
 	var r := Rect2(Vector2(0, top), CARD_SIZE)
 	draw_rect(Rect2(r.position + Vector2(4, 6), r.size), Color(0, 0, 0, 0.25))
 	if card == null:
-		draw_style_box(UiKit.stylebox(Color("#2e4a74"), Color("#f3dfc1"), 4, 10, 0), r)
+		var back := Color("#2e4a74")
+		if Game.state != null and Game.state.equipped.has("card_back"):
+			back = Game.item_color(str(Game.state.equipped["card_back"]), back)
+		draw_style_box(UiKit.stylebox(back, Color("#f3dfc1"), 4, 10, 0), r)
 		var inner := r.grow(-12)
 		draw_rect(inner, Color("#f3dfc1"), false, 2.0)
 		var y := inner.position.y + 10

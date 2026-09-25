@@ -12,6 +12,9 @@ extends "res://tests/e2e/first_play_e2e.gd"
 ##          accept and finish all 32 personal episodes at their real targets
 ##   cc06   rivalry scene vs friendship, romance accepted -> dates -> together -> ended,
 ##          romance declined, resident pair bonded by an episode and its reaction
+##   cc07   8 town projects funded at the hall board with their world changes, house stages 1-3,
+##          one item placed in each room, occupied slots refused, placements kept after continue
+##   life   the 4 odd jobs (including a cancelled run) and all 16 requests through play
 
 
 func run(scenario: String) -> void:
@@ -30,6 +33,10 @@ func run(scenario: String) -> void:
 			await _cc05()
 		"cc06":
 			await _cc06()
+		"cc07":
+			await _cc07()
+		"life":
+			await _life()
 		_:
 			_check(false, "unknown scenario " + scenario)
 	_finish()
@@ -443,6 +450,216 @@ func _cc06() -> void:
 	_check_ledger()
 
 
+# --- cc07: house and town projects --------------------------------------------------------
+
+## Money for long-loop features comes from a single visible ledger entry ("test_grant"); the
+## real earning loop is covered by story/cc03 and the unit tests.
+func _grant_test_chips(n: int) -> void:
+	Game.state.add_chips(n, "test_grant")
+	Game.save_game()
+
+
+func _choose_arg(action: String, arg: String) -> void:
+	await _read_to_choices()
+	var choices: Array = main.dialogue._choices
+	for i in choices.size():
+		if choices[i].get("action", "") == action and str(choices[i].get("arg", "")) == arg:
+			main.dialogue.choice_buttons[i].pressed.emit()
+			await _frames(2)
+			return
+	_check(false, "choice %s(%s) not offered" % [action, arg])
+
+
+func _fund(pid: String) -> void:
+	await _use("project_board", "community_hall")
+	await _choose_arg("fund_project", pid)
+	await _close_any()
+	_check(Game.state.project_done(pid), pid + " funded in play")
+
+
+func _upgrade_home(stage: int) -> void:
+	await _use("home_blueprint", "player_home")
+	await _read_to_choices()
+	await _choose("upgrade_home")
+	await _wait_world("player_home")
+	_check_eq(Game.state.home_stage, stage, "house stage %d" % stage)
+
+
+func _place_in_room(room: String, decorate_id: String, item_id: String) -> String:
+	await _travel(room)
+	await _go_to("home_edit", decorate_id)
+	await _press("interact")
+	_check_eq(main.ui_mode, "home_edit", "decorating " + room)
+	var slot := ""
+	for s in Game.home_slots(room):
+		if Game.state.placement_at(s["id"]) == "":
+			slot = s["id"]
+			break
+	_check(main.home_edit.item_buttons.has(item_id), "%s listed in %s" % [item_id, room])
+	if slot == "" or not main.home_edit.item_buttons.has(item_id):
+		main.home_edit.close_button.pressed.emit()
+		await _frames(2)
+		return ""
+	main.home_edit.item_buttons[item_id].pressed.emit()
+	await _frames(1)
+	main.home_edit.slot_buttons[slot].pressed.emit()
+	await _frames(1)
+	main.home_edit.confirm_button.pressed.emit()
+	await _frames(2)
+	_check_eq(Game.state.placement_at(slot), item_id, "%s placed in %s" % [item_id, slot])
+	# The same slot cannot take a second item.
+	main.home_edit.slot_buttons[slot].pressed.emit()
+	await _frames(1)
+	_check(main.home_edit.confirm_button.disabled, "occupied slot cannot be filled again")
+	main.home_edit.close_button.pressed.emit()
+	await _frames(2)
+	return slot
+
+
+func _cc07() -> void:
+	await _new_game("집과 마을")
+	_setup_open_town()
+	for pid in ["board_restoration", "guest_cottage"]:
+		Game.state.projects.erase(pid)
+	_grant_test_chips(2000)
+	var start: int = Game.state.chips_balance
+	# Blueprint explains the first condition before any project or episode.
+	await _use("home_blueprint", "player_home")
+	_check(main.dialogue.current_line().contains("조건"), "blueprint shows the condition")
+	await _close_any()
+	# Projects in unlock order, each with a visible change.
+	await _fund("board_restoration")
+	_check(Conditions.check({"project_complete": "board_restoration"}, Game.state), "workshop unlocked")
+	await _travel("workshop")
+	_check(main.world.npc_nodes.has("npc_bibi"), "Bibi works inside the workshop now")
+	await _upgrade_home(1)
+	await _fund("square_seating")
+	await _travel("village_square")
+	_check(Game.state.owned_count("item.memento.05_08") == 1, "seating memento")
+	await _shot("cc07_square_seating")
+	Game.state.set_flag("story.act2_started")
+	await _fund("guest_cottage")
+	await _travel("guest_cottage")
+	_check(main.world.npc_nodes.has("npc_sia"), "Sia moved into the guest cottage")
+	await _fund("market_awning")
+	_check(Game.shop_items("bibi_workshop").has("item.furniture.07_01"), "awning brings new workshop furniture")
+	Game.state.quests["npc_nora.bond_01"] = QuestBook.COMPLETED
+	await _fund("postbox_garden")
+	Game.state.quests["npc_haru.bond_01"] = QuestBook.COMPLETED
+	await _fund("lantern_path")
+	Game.state.set_flag("story.act2_complete")
+	await _fund("card_room_extension")
+	await _rest_until("evening")
+	await _travel("card_room")
+	var practice: Dictionary = main.world.find_interactable("poker_table", "practice_table")
+	_check(not practice.is_empty() and Conditions.check(practice["conditions"], Game.state), "practice table in the card room")
+	Game.state.set_flag("story.act3_started")
+	await _fund("festival_decor")
+	_check_eq(Game.state.projects.size(), 8, "all 8 projects complete")
+	# Funding twice is impossible: the board lists it as done.
+	await _use("project_board", "community_hall")
+	await _read_to_choices()
+	var again := false
+	for c in main.dialogue._choices:
+		again = again or c.get("action", "") == "fund_project"
+	_check(not again, "nothing left to fund")
+	await _close_any()
+	# House: stages 2 and 3, rooms open, one item placed in every room.
+	await _rest_until("day")
+	await _upgrade_home(2)
+	await _upgrade_home(3)
+	for item in ["item.furniture.01_01", "item.decor.01_04", "item.furniture.02_02"]:
+		Game.state.grant_item(item)
+	var slots := {}
+	slots["player_home"] = await _place_in_room("player_home", "home_decorate", "item.furniture.01_01")
+	slots["player_home_annex"] = await _place_in_room("player_home_annex", "annex_decorate", "item.decor.01_04")
+	slots["player_home_hall"] = await _place_in_room("player_home_hall", "hall_decorate", "item.memento.05_08")
+	await _shot("cc07_hall")
+	var costs := 0
+	for st in Game.data.home["stages"]:
+		costs += int(st["cost"])
+	for pid in Game.data.project_order:
+		costs += int(Game.data.projects[pid]["cost"])
+	_check_eq(start - Game.state.chips_balance, costs, "every house stage and project paid exactly once")
+	# Placements survive a save and continue.
+	main.return_to_title()
+	await _frames(3)
+	main.title.continue_button.pressed.emit()
+	await _wait_world("player_home_hall")
+	for room in slots:
+		_check(slots[room] != "" and Game.state.placement_at(slots[room]) != "", "placement in %s kept" % room)
+	_check_ledger()
+
+
+# --- life: odd jobs and requests -------------------------------------------------------------
+
+func _life() -> void:
+	await _new_game("생활")
+	_setup_open_town()
+	for f in ["story.act2_started", "story.act3_started"]:
+		Game.state.set_flag(f)
+	Game.state.quests.erase("quest.sera_delivery")
+	# Plaza job (board), letter delivery (postbox), shelving (shop), lantern check (grove).
+	await _start_job()
+	for spot in Game.job.remaining():
+		await _collect_spot(spot)
+	_check_eq(Game.state.jobs_completed, 1, "plaza job done")
+	await _use("postbox", "residential")
+	await _choose_arg("start_job", "job.post_delivery")
+	_check(Game.job != null and Game.job.job_type == "deliver", "letter job started")
+	var to: String = Game.job.recipient
+	await _talk_npc(to)
+	_check(Game.job != null, "travelling does not cancel the letter job")
+	await _read_to_choices()
+	await _choose("job_deliver")
+	await _close_any()
+	_check_eq(Game.state.jobs_completed, 2, "letter delivered to " + to)
+	await _use("shop_shelves", "small_shop")
+	await _choose_arg("start_job", "job.shop_shelving")
+	for i in 3:
+		await _use("shop_shelves", "small_shop")
+		var need: String = Game.job.next_shelf_good()
+		var wrong: String = "리본" if need != "리본" else "찻잔"
+		if i == 0:
+			await _choose_arg("shelve", wrong)
+			_check_eq(Game.job.done_count(), 0, "wrong good is refused")
+		await _choose_arg("shelve", need)
+		await _close_any()
+	_check_eq(Game.state.jobs_completed, 3, "shelving done")
+	await _use("lantern_path_marker", "grove")
+	await _choose_arg("start_job", "job.lantern_check")
+	var spots: Array = Game.job.remaining()
+	await _collect_spot(spots[0])
+	var before: int = Game.state.chips_balance
+	await _travel("village_square")
+	_check(Game.job == null, "leaving the grove cancels the lantern check")
+	_check_eq(Game.state.chips_balance, before, "no pay for a cancelled run")
+	await _use("lantern_path_marker", "grove")
+	await _choose_arg("start_job", "job.lantern_check")
+	for spot in Game.job.remaining():
+		await _collect_spot(spot)
+	_check_eq(Game.state.jobs_completed, 4, "lantern check done on a new run")
+	# Sera's first request comes from her own dialogue (D4); the other 15 are offered by residents.
+	await _talk_npc("npc_sera")
+	await _choose_arg("dialogue", "sera_quest_offer")
+	await _choose_arg("accept_quest", "quest.sera_delivery")
+	await _finish_task("quest.sera_delivery", 0)
+	var done := 1
+	for round in 3:
+		for id in Game.data.quest_order:
+			var q: Dictionary = Game.data.quests[id]
+			if q.get("kind", "quest") != "quest" or not Game.quest_available(id):
+				continue
+			var chips0: int = Game.state.chips_balance
+			await _accept_offer(str(q["giver"]), id)
+			_check(main.hud.quest_text().contains(str(q["name"])) or Game.state.tracked_quest != id, id + " shown in the HUD")
+			await _finish_task(id, 0)
+			_check_eq(Game.state.chips_balance - chips0, int(q["reward"]), id + " reward once")
+			done += 1
+	_check_eq(done, 16, "16 requests finished in play")
+	_check_ledger()
+
+
 # --- helpers ------------------------------------------------------------------------------
 
 ## Door route from the current location to `dest` over the location data (breadth-first).
@@ -586,7 +803,7 @@ func _close_any() -> void:
 			else:
 				await _press("interact")
 		await _frames(2)
-	_check_eq(main.ui_mode, "world", "back in the world")
+	_check(main.ui_mode == "world", "back in the world (mode %s, entry %s, lines %s, choices %s)" % [main.ui_mode, main.last_entry_id, main.dialogue._lines, main.dialogue._choices.map(func(c): return c.get("text", ""))])
 
 
 func _approach(target: Dictionary) -> Vector2:

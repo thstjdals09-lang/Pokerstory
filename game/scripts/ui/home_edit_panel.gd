@@ -69,7 +69,7 @@ func refresh() -> void:
 	item_buttons.clear()
 	for item_id in Game.state.owned_items:
 		var item: Dictionary = Game.data.items.get(item_id, {})
-		if not item.get("placeable", false):
+		if not Game.is_placeable(item_id) or Game.state.owned_count(item_id) <= 0:
 			continue
 		var b := UiKit.button("%s × %d" % [item["name"], Game.state.owned_count(item_id)], 280)
 		b.toggle_mode = true
@@ -84,7 +84,7 @@ func refresh() -> void:
 
 	UiKit.clear_children(_slots_box)
 	slot_buttons.clear()
-	for s in Game.home_slots():
+	for s in Game.home_slots(world.location_id):
 		var placed := Game.state.placement_at(s["id"])
 		var status := "비어 있음" if placed == "" else str(Game.data.items[placed]["name"])
 		var b := UiKit.button("%s — %s" % [s["name"], status], 280)

@@ -283,6 +283,10 @@ class PickupView extends Node2D:
 				draw_rect(card, Color("#8a5a3c"), false, 2.0)
 				draw_circle(Vector2.ZERO, 4, Color("#c0392b"))
 				draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+			elif spots[id]["kind"] == "lantern":
+				draw_circle(p, 16, Color(1, 0.85, 0.4, 0.3))
+				draw_rect(Rect2(p + Vector2(-6, -10), Vector2(12, 16)), Color("#ffd27a"))
+				draw_rect(Rect2(p + Vector2(-6, -10), Vector2(12, 16)), Color("#6b4a2f"), false, 2.0)
 			else:
 				draw_circle(p, 10, Color("#c8553d"))
 				draw_circle(p, 10, Color("#fff3d6"), false, 2.5)

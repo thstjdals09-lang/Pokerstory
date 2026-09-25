@@ -3318,6 +3318,26 @@
      "action": "close"
     }
    ]
+  },
+  {
+   "id": "bibi_awning",
+   "npc": "npc_bibi",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "met": "npc_bibi",
+    "project_complete": "market_awning"
+   },
+   "lines": [
+    "장터에 비 가림막이 생겼어요! 이제 비 오는 날에도 공방 물건을 밖에 내놓을 수 있어요.",
+    "새로 만든 가구도 몇 개 들여놨어요. 구경하러 와요."
+   ],
+   "choices": [
+    {
+     "text": "보러 갈게요",
+     "action": "close"
+    }
+   ]
   }
  ]
 }

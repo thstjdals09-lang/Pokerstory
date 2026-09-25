@@ -6,6 +6,8 @@ signal interact_pressed
 signal menu_pressed
 
 var _chips_label: Label
+## Chip mark before the balance; coloured by the equipped chip style.
+var chip_dot: Label
 var _goal_label: Label
 var _quest_label: Label
 var _goal_toggle: Button
@@ -30,6 +32,8 @@ func _ready() -> void:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 12)
 	col.add_child(row)
+	chip_dot = UiKit.label("●", 22, UiKit.TEXT)
+	row.add_child(chip_dot)
 	_chips_label = UiKit.label("칩 0", 22, UiKit.TEXT)
 	row.add_child(_chips_label)
 	_goal_toggle = UiKit.button("목표 접기 (Tab)", 130, false)
@@ -83,7 +87,10 @@ func _ready() -> void:
 func refresh() -> void:
 	if Game.state == null:
 		return
-	_chips_label.text = "● 칩 %d" % Game.state.chips_balance
+	_chips_label.text = "칩 %d" % Game.state.chips_balance
+	# Equipped chip style colours the chip mark (placeholder art).
+	var style := str(Game.state.equipped.get("chip_style", ""))
+	chip_dot.add_theme_color_override("font_color", Game.item_color(style, UiKit.TEXT) if style != "" else UiKit.TEXT)
 	_goal_label.text = "목표 · " + Game.current_goal()
 	_goal_label.visible = not _goal_collapsed
 	# Quests in progress stay visible even when the goal line is collapsed.

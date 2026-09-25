@@ -42,6 +42,10 @@ func _draw() -> void:
 	draw_circle(Vector2(0, 11), RADIUS * 0.9, Color(0, 0, 0, 0.2))
 	draw_circle(Vector2.ZERO, RADIUS + 3, Color.WHITE)
 	draw_circle(Vector2.ZERO, RADIUS, BODY_COLOR)
+	# Equipped clothing shows as a coloured coat band (placeholder art).
+	var cloth := str(Game.state.equipped.get("clothing", "")) if Game.state != null else ""
+	if cloth != "":
+		draw_arc(Vector2.ZERO, RADIUS - 4, 0.2 * PI, 0.8 * PI, 16, Game.item_color(cloth, BODY_COLOR), 7.0)
 	var tip := facing * (RADIUS + 8)
 	var side := facing.orthogonal() * 6
 	var base := facing * RADIUS * 0.55

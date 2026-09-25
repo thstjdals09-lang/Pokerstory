@@ -562,6 +562,7 @@ func _open_shelving() -> void:
 	var choices: Array = []
 	for g in goods:
 		choices.append({"text": str(g), "action": "shelve", "arg": str(g)})
+	choices.append({"text": "잠깐 쉬기 (나중에 이어서)", "action": "close"})
 	_show_system_dialogue("잡화점 선반", ["%d번 칸 쪽지: '%s'을(를) 놓아 주세요." % [shelf, need]], choices)
 
 
@@ -688,6 +689,7 @@ func _back_to_world() -> void:
 		screen.visible = false
 	if world:
 		world.refresh_markers()
+		world.player.queue_redraw()
 	hud.refresh()
 	set_mode("world")
 
@@ -724,7 +726,7 @@ func _maybe_start_e2e() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--e2e="):
 			var scenario := arg.get_slice("=", 1)
-			var script_path := "res://tests/e2e/content_e2e.gd" if scenario.begins_with("cc") or scenario == "story" else "res://tests/e2e/first_play_e2e.gd"
+			var script_path := "res://tests/e2e/content_e2e.gd" if scenario.begins_with("cc") or scenario in ["story", "life"] else "res://tests/e2e/first_play_e2e.gd"
 			var driver: Node = load(script_path).new()
 			driver.main = self
 			add_child(driver)
