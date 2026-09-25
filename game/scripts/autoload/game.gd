@@ -699,6 +699,10 @@ func entry_choices(entry: Dictionary, speaker: String, location: String) -> Arra
 					and not _has_choice(base, "quest_offer", id):
 				var prefix := "부탁 듣기: " if q.get("kind", "quest") == "quest" else "이야기 나누기: "
 				offers.append({"text": prefix + str(q["name"]), "action": "quest_offer", "arg": id})
+		# Shop owners can always show their goods, wherever their day takes them (content alpha).
+		for shop_id in data.shops:
+			if str(data.shops[shop_id].get("owner", "")) == target and state.has_met(target) 					and not _has_choice(base, "open_shop", shop_id):
+				offers.append({"text": "%s 물건 보기" % str(data.shops[shop_id]["name"]), "action": "open_shop", "arg": shop_id})
 		if location == "card_room" and data.opponents.has(target) and target != str(poker_rules().get("opponent", "")) \
 				and not _has_choice(base, "start_poker", ""):
 			offers.append({"text": "한 판 할래요? (참가금 %d칩)" % poker_stake(), "action": "start_poker", "arg": "homegame|" + target})
@@ -893,6 +897,12 @@ func poker_result_notes(m: PokerMatch, result: Dictionary) -> Array:
 		notes.append("%s에게 처음 이겼어요! 기념 칩 +%d" % [data.npc_name(opp), int(result["first_win_bonus"])])
 	if result.has("round_prize"):
 		notes.append("대회 라운드 상금 +%d칩" % int(result["round_prize"]))
+	if m.mode == "practice":
+		# Practice is for learning: Moa comments on the hand the player ended with.
+		var tips: Dictionary = data.poker.get("practice_tips", {})
+		var cat := int(m.player_eval.get("category", 0))
+		notes.append("모아의 한마디: " + str(tips.get(str(cat), tips.get("default", ""))))
+		return notes
 	var hands := int(state.relation(opp)["poker_hands"])
 	if m.mode == "friendly_challenge" and hands > 1:
 		notes.append("%s와의 %d번째 승부" % [data.npc_name(opp), hands])

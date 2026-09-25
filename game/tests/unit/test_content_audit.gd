@@ -139,7 +139,7 @@ func test_repeating_an_event_never_pays_twice() -> void:
 	for e in db.dialogue:
 		for c in e.get("choices", []):
 			if JSON.stringify(c.get("effects", [])).contains("item.memento.04_08"):
-				if e["id"] == "festival_booth_again":
+				if str(e["id"]).begins_with("festival_booth_again"):
 					again = c
 				else:
 					first = c["effects"]

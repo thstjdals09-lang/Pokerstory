@@ -747,7 +747,8 @@ func _stand_and_check(opponent: String, expect: String) -> void:
 	var line: String = Game.opponent_line(opponent, expect)
 	_check(main.poker._result_line.text.contains(line), opponent + " speaks their own line")
 	if main.poker.hand_stake() > 0:
-		_check_eq(Game.state.chips_balance - chips0, {"win": 40, "draw": 20, "lose": 0}[expect], "payout vs " + opponent)
+		var prizes := int(main.poker.last_result.get("first_win_bonus", 0)) + int(main.poker.last_result.get("round_prize", 0))
+		_check_eq(Game.state.chips_balance - chips0, {"win": 40, "draw": 20, "lose": 0}[expect] + prizes, "payout vs " + opponent)
 		_check_eq(int(Game.state.relation(opponent)["poker_hands"]), int(r0["poker_hands"]) + 1, "hand counted with " + opponent)
 		_check_eq(int(Game.state.relation(opponent)["rivalry"]), mini(100, int(r0["rivalry"]) + 5), "rivalry +5 with " + opponent)
 		_check_eq(int(Game.state.relation(opponent)["friendship"]), f0, "friendship untouched by poker")
@@ -1318,7 +1319,7 @@ func _cc12() -> void:
 	# Holding it again: more evenings, never a second memento.
 	for i in 2:
 		await _use("festival_booth", "village_square")
-		_check_eq(main.last_entry_id, "festival_booth_again", "festival again")
+		_check(main.last_entry_id.begins_with("festival_booth_again"), "festival again (%s)" % main.last_entry_id)
 		await _choose_text("정리 돕기")
 		await _close_any()
 	_check_eq(Game.state.owned_count("item.memento.04_08"), 1, "helper memento once")
@@ -1628,7 +1629,7 @@ func _savefail() -> void:
 	main.poker.again_button.pressed.emit()
 	await _frames(2)
 	_check(not main.poker.save_retry, "settle: saved on retry")
-	_check_eq(Game.state.chips_balance, chips0 + 20, "settle: paid once (+40 on a 20 stake)")
+	_check_eq(Game.state.chips_balance, chips0 + 20 + int(main.poker.last_result.get("first_win_bonus", 0)), "settle: paid once (+40 on a 20 stake, plus a first-win prize)")
 	_check_eq(_ledger_count("poker_payout_win"), 1, "settle: one payout line")
 	await _leave_table()
 	for f in ["story.act3_started", "story.festival_ready", "story.act3_complete"]:

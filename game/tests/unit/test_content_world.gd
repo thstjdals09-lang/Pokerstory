@@ -189,3 +189,24 @@ func test_v3_save_migrates_to_v4_and_keeps_progress() -> void:
 	check_eq(s.abilities_unlocked, ["ability.star_sense"], "first ability kept")
 	check_eq(s.to_dict()["save_version"], GameState.SAVE_VERSION, "written as the current version")
 	SaveSystem.delete(path)
+
+
+func test_v4_save_migrates_to_v5_with_defaults() -> void:
+	# Content alpha: v5 adds a day counter; relations read "poker_talked" with a default.
+	var s := GameState.new()
+	s.add_chips(90, "start")
+	s.relation("npc_kyle")["poker_hands"] = 2
+	var d := s.to_dict()
+	d["save_version"] = 4
+	d.erase("day_count")
+	d["relations"]["npc_kyle"].erase("poker_talked")
+	var path := "user://test_v4_migration.json"
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	f.store_string(JSON.stringify(d))
+	f.close()
+	var r := SaveSystem.load_state(path)
+	check(r["ok"], "v4 loads")
+	var back: GameState = r["state"]
+	check_eq([back.chips_balance, back.day_count, int(back.relation("npc_kyle")["poker_talked"])], [90, 0, 0], "defaults added, balance kept")
+	check(Conditions.check({"poker_unmentioned": "npc_kyle"}, back), "earlier hands can still be talked about once")
+	SaveSystem.delete(path)

@@ -672,8 +672,10 @@ func open_poker_setup(mode: String, opponent: String = "", pick_opponent: bool =
 	if opponent == "" and (pick_opponent or def.has("opponents")):
 		var choices: Array = []
 		for npc in Game.poker_opponents(mode):
-			var persona := str(Game.data.opponents[npc].get("context", ""))
-			choices.append({"text": "%s와 한 판 (%s)" % [Game.data.npc_name(npc), persona], "action": "poker_loadout", "arg": "%s|%s|" % [mode, npc]})
+			var o: Dictionary = Game.data.opponents[npc]
+			var hands := int(Game.state.relation(npc)["poker_hands"])
+			var seen := " · 함께한 판 %d" % hands if hands > 0 else " · 첫 대결"
+			choices.append({"text": "%s와 한 판 (%s%s)" % [Game.data.npc_name(npc), str(o.get("style", o.get("context", ""))), seen], "action": "poker_loadout", "arg": "%s|%s|" % [mode, npc]})
 		if choices.is_empty():
 			_show_system_dialogue(str(def["name"]), ["아직 함께 칠 주민이 없어요. 마을 사람들과 먼저 인사해 보세요."], [])
 			return

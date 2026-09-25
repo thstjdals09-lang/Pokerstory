@@ -1552,8 +1552,7 @@
    "npc": "npc_taeo",
    "priority": 12,
    "conditions": {
-    "met": "npc_taeo",
-    "location": "tailor"
+    "met": "npc_taeo"
    },
    "lines": [
     "구경하고 가요. 사지 않아도 괜찮아요."
@@ -1575,8 +1574,7 @@
    "npc": "npc_bibi",
    "priority": 12,
    "conditions": {
-    "met": "npc_bibi",
-    "location": "workshop"
+    "met": "npc_bibi"
    },
    "lines": [
     "구경하고 가요. 사지 않아도 괜찮아요."
@@ -1598,8 +1596,7 @@
    "npc": "npc_ren",
    "priority": 12,
    "conditions": {
-    "met": "npc_ren",
-    "location": "market"
+    "met": "npc_ren"
    },
    "lines": [
     "구경하고 가요. 사지 않아도 괜찮아요."
@@ -1635,6 +1632,84 @@
    "lines": [
     "새 페이지에 시아의 글씨가 있다.",
     "'처음 온 손님도 관전부터 할 수 있대요. 다음엔 친구를 데려올게요!'"
+   ]
+  },
+  {
+   "id": "festival_booth_again_1",
+   "npc": "obj:festival_booth",
+   "priority": 31,
+   "conditions": {
+    "flags_true": [
+     "story.act3_complete"
+    ],
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘의 저녁제는 찻집 협찬! 리라가 부스마다 찻잔을 돌리고 있어요.",
+    "주노: 두 번째 저녁제도 환영합니다! 처음 온 분 손 들어 주세요!"
+   ],
+   "choices": [
+    {
+     "text": "포커 대회 참가하기",
+     "action": "start_poker",
+     "arg": "tournament|"
+    },
+    {
+     "text": "관전하고 정리 돕기",
+     "action": "close",
+     "effects": [
+      {
+       "type": "item",
+       "item": "item.memento.04_08"
+      }
+     ],
+     "once_key": "evt:festival_help_memento"
+    },
+    {
+     "text": "닫기",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "festival_booth_again_2",
+   "npc": "obj:festival_booth",
+   "priority": 31,
+   "conditions": {
+    "flags_true": [
+     "story.act3_complete"
+    ],
+    "day_mod3": [
+     2
+    ]
+   },
+   "lines": [
+    "오늘의 저녁제는 등불 산책과 함께! 오나가 숲길까지 불을 이어 놨어요.",
+    "카일이 대회 규칙판 옆에 빈 의자를 하나 더 놓았어요."
+   ],
+   "choices": [
+    {
+     "text": "포커 대회 참가하기",
+     "action": "start_poker",
+     "arg": "tournament|"
+    },
+    {
+     "text": "관전하고 정리 돕기",
+     "action": "close",
+     "effects": [
+      {
+       "type": "item",
+       "item": "item.memento.04_08"
+      }
+     ],
+     "once_key": "evt:festival_help_memento"
+    },
+    {
+     "text": "닫기",
+     "action": "close"
+    }
    ]
   }
  ]
