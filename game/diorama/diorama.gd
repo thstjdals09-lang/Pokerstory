@@ -63,6 +63,10 @@ func _ready() -> void:
 	_build_hud()
 	_build_editor()
 	_apply_time()
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--persp="):
+			_set_perspective(float(a.get_slice("=", 1)))
+			_follow(1.0)
 	if "--edit" in OS.get_cmdline_user_args():
 		_set_edit(true)
 	if _shot != "":
@@ -297,7 +301,7 @@ func _build_ground() -> void:
 	grass.roughness = 0.95
 	var g := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
-	pm.size = Vector2(60, 50)
+	pm.size = Vector2(300, 300)
 	g.mesh = pm
 	g.material_override = grass
 	add_child(g)
@@ -1040,7 +1044,8 @@ func _build_editor() -> void:
 	col.add_theme_constant_override("separation", 2)
 	_edit_panel.add_child(col)
 	col.add_child(UiKit.label("카메라", 17, UiKit.ACCENT))
-	_slider_row(col, "cam.dist", "거리", 15, 80, 0.5)
+	_slider_row(col, "persp", "원근감", 8, 60, 0.5)
+	_slider_row(col, "cam.dist", "거리", 5, 80, 0.5)
 	_slider_row(col, "cam.fov", "줌 (화각)", 6, 60, 0.5)
 	_slider_row(col, "cam.pitch", "내려다보는 각도", 15, 85, 1)
 	_slider_row(col, "cam.yaw", "좌우 회전", -60, 60, 1)
@@ -1073,7 +1078,7 @@ func _build_editor() -> void:
 	reset.pressed.connect(_reset_layout)
 	row.add_child(save)
 	row.add_child(reset)
-	col.add_child(UiKit.wrap_label("건물 클릭: 선택 · 드래그: 이동 · Q/E: 회전\n휠: 줌 · 오른쪽 드래그: 회전 · 가운데 드래그: 이동 · F1: 닫기", 13, UiKit.MUTED))
+	col.add_child(UiKit.wrap_label("원근감: 올리면 뒤가 더 작아짐(화면 크기는 유지)\n건물 클릭: 선택 · 드래그: 이동 · Q/E: 회전\n휠: 줌 · 오른쪽 드래그: 회전 · 가운데 드래그: 이동 · F1: 닫기", 13, UiKit.MUTED))
 	_sel_ring = MeshInstance3D.new()
 	var torus := TorusMesh.new()
 	torus.inner_radius = 0.95
@@ -1110,6 +1115,9 @@ func _slider_row(parent: Control, key: String, label: String, lo: float, hi: flo
 
 func _on_slider(key: String, v: float) -> void:
 	_sliders[key][1].text = str(snappedf(v, 0.01))
+	if key == "persp":
+		_set_perspective(v)
+		return
 	if key.begins_with("cam."):
 		cam[key.substr(4)] = v
 		return
@@ -1127,7 +1135,19 @@ func _on_slider(key: String, v: float) -> void:
 	_pave_dirty = 0.35
 
 
+## Dolly zoom: a wider view from closer by, keeping the square the same size on screen, so
+## things further back look smaller. `fov` is the new field of view in degrees.
+func _set_perspective(fov: float) -> void:
+	var keep := float(cam["dist"]) * tan(deg_to_rad(float(cam["fov"]) / 2.0))
+	cam["fov"] = fov
+	cam["dist"] = keep / tan(deg_to_rad(fov / 2.0))
+	_sync_sliders()
+
+
 func _sync_sliders() -> void:
+	if _sliders.has("persp"):
+		_sliders["persp"][0].set_value_no_signal(cam["fov"])
+		_sliders["persp"][1].text = str(snappedf(cam["fov"], 0.1)) + "°"
 	for k in cam:
 		if _sliders.has("cam." + k):
 			_sliders["cam." + k][0].set_value_no_signal(cam[k])
