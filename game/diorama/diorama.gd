@@ -33,8 +33,9 @@ var _prompt: Control
 var _lumi: Node3D
 var _shot := ""
 ## Editable camera (Inspector exports and the F1 sliders; saved into the scene).
-## Defaults are the owner's saved layout (2026-09-25).
-const CAM_DEFAULT := {"dist": 11.00, "pitch": 24.0, "fov": 47.5, "yaw": 0.0, "cx": 0.00, "cz": -5.20, "lean_x": 0.60, "lean_z": 0.75}
+## Defaults reproduce the A reference image's camera (FOV 20, looking down 22 degrees); at the
+## spawn point the frame matches A, and the camera then follows the player from there.
+const CAM_DEFAULT := {"dist": 28.74, "pitch": 22.0, "fov": 20.0, "yaw": 0.0, "cx": -0.08, "cz": -1.01, "lean_x": 0.60, "lean_z": 0.75}
 var cam := CAM_DEFAULT.duplicate()
 
 @export_group("Camera")
@@ -366,7 +367,7 @@ func _build_camera() -> void:
 
 func _follow(weight: float) -> void:
 	var centre := Vector3(cam["cx"], 0, cam["cz"])
-	var off := _player.position - centre
+	var off := _player.position - SPAWN
 	var lean := Vector3(clampf(off.x * float(cam["lean_x"]), -8.0, 8.0), 0.0, clampf(off.z * float(cam["lean_z"]), -8.0, 8.0))
 	var focus := centre + lean
 	var pitch := deg_to_rad(float(cam["pitch"]))
@@ -383,7 +384,7 @@ func _follow(weight: float) -> void:
 func _paved(c: Vector2) -> bool:
 	if c.length() < PLAZA_R:
 		return true
-	var ends: Array = [GATE_AT + Vector2(0, 4.0), Vector2(0.6, 9.0)]
+	var ends: Array = [GATE_AT + Vector2(0, 4.0), Vector2(-0.5, 12.0)]
 	for b in _buildings:
 		ends.append(_door_world(b))
 	for e in ends:
@@ -428,10 +429,10 @@ func _build_ground() -> void:
 	floor_body.add_child(cs)
 	add_child(floor_body)
 	# Walkable area: the plaza between the buildings.
-	_solid_box(Vector3(0, 1, -8.6), Vector3(24, 2, 1))
-	_solid_box(Vector3(0, 1, 7.6), Vector3(24, 2, 1))
-	_solid_box(Vector3(-9.6, 1, 0), Vector3(1, 2, 20))
-	_solid_box(Vector3(9.6, 1, 0), Vector3(1, 2, 20))
+	_solid_box(Vector3(0, 1, -9.8), Vector3(26, 2, 1))
+	_solid_box(Vector3(0, 1, 10.5), Vector3(26, 2, 1))
+	_solid_box(Vector3(-11.0, 1, 0), Vector3(1, 2, 22))
+	_solid_box(Vector3(11.0, 1, 0), Vector3(1, 2, 22))
 	_build_paving()
 
 
@@ -548,9 +549,12 @@ const BUILDINGS := [
 	{"id": "card_room_building", "at": Vector2(7.30, -2.10), "w": 4.15, "d": 2.40, "h": 2.60, "rot": -0.8901, "door": 0.00},
 	{"id": "community_hall_building", "at": Vector2(-6.30, 3.55), "w": 2.20, "d": 3.65, "h": 1.55, "rot": 1.3265, "door": 0.00},
 ]
-const PLAZA_R := 4.3
+const PLAZA_R := 7.0
+const FOUNTAIN_R := 1.35
+## Player start (the frame at this spot is the A composition).
+const SPAWN := Vector3(-0.16, 0, 4.32)
 ## Where the gate out of the square stands (the path to the waterfront).
-const GATE_AT := Vector2(3.5, 5.7)
+const GATE_AT := Vector2(3.28, 8.72)
 
 
 const STYLES := {
@@ -682,56 +686,86 @@ func _p(x: float, z: float) -> Vector3:
 
 ## Props laid out for the camera: flower beds and lamps between the fountain and the buildings,
 ## the notice board and a bench at the sides, trees and fences framing the edges.
+## The fountain in the middle, then every prop marker under "Props" (editable in the editor).
 func _build_decor() -> void:
 	_fountain(Vector3.ZERO)
-	# flower beds (raised borders) ring the plaza without blocking the paths
-	for bed in [[-1.9, -3.6, 1.7, 0.9], [2.3, -3.8, 1.7, 0.9], [-3.4, -1.9, 1.3, 1.0], [3.6, -2.7, 1.2, 0.9],
-			[-2.4, 3.3, 1.8, 0.9], [2.1, 3.6, 1.5, 0.9], [-5.6, 2.4, 1.6, 1.0], [5.7, 1.2, 1.2, 1.4], [-5.8, -3.6, 1.2, 0.8]]:
-		_bed(_p(bed[0], bed[1]), bed[2], bed[3])
-	for at in [_p(-3.2, -3.0), _p(-2.1, 3.0), _p(4.3, -3.6), _p(4.7, 2.7), _p(2.8, 5.8), _p(4.2, 5.8), _p(-1.0, -4.6)]:
-		_lamp(at)
-	_board(_p(-3.6, 1.5), 0.35)
-	_bench(_p(5.0, 0.9), -1.25)
-	_bench(_p(-4.3, -0.4), 1.2)
-	_booth(_p(7.4, 2.5), -0.55)
-	_aframe(_p(5.1, -1.3))
-	_crates(_p(-6.9, -4.3))
-	_crates(_p(-2.6, -5.0))
-	_pot(_p(-0.5, -4.9))
-	_pot(_p(1.1, -4.9))
-	_pot(_p(5.4, -2.3))
-	_pot(_p(-5.6, 0.9))
-	_mailbox(_p(1.9, -4.8))
-	_gate(Vector3(GATE_AT.x, 0, GATE_AT.y))
-	# framing: trees behind and at the sides, fences, big bushes in the near corners
-	for t in [[-9.8, -8.4, false], [-2.4, -8.9, true], [3.4, -9.0, false], [9.9, -7.4, true], [-10.4, 3.9, false],
-			[10.5, 4.6, false], [-8.9, -5.6, true], [9.6, -1.2, false], [-6.0, -8.2, false], [6.2, -7.8, false]]:
-		_tree(_p(t[0], t[1]), Color("#f0b3c4") if t[2] else Color("#6a9440"), 1.25)
-	_fence(_p(-10, -8.0), _p(10, -8.0))
-	_fence(_p(-9.0, 6.4), _p(-1.4, 6.4))
-	_fence(_p(9.2, 0.5), _p(9.2, 6.4))
-	for b in [[-7.6, 5.4], [-6.2, 5.9], [-4.4, 6.0], [6.6, 5.2], [8.2, 4.8], [-9.3, 4.6], [9.2, 6.2]]:
-		_bush(_p(b[0], b[1]), 1.8)
-	# near corners: big trees that frame the view
-	_tree(_p(-8.8, 6.3), Color("#5f8a3a"), 1.5)
-	_tree(_p(8.9, 6.6), Color("#6a9440"), 1.4)
-	for b in [[-8.3, 2.1], [8.6, -4.8], [-1.4, -7.3], [2.4, -7.2]]:
-		_bush(_p(b[0], b[1]), 1.1)
+	var holder := get_node_or_null("Props")
+	if holder == null:
+		return
+	for m in holder.get_children():
+		if m.has_method("to_prop"):
+			_prop(m.to_prop())
+
+
+func _prop(pr: Dictionary) -> void:
+	var at: Vector3 = pr["at"]
+	var rot: float = pr["rot"]
+	var sz: Vector2 = pr["size"]
+	match str(pr["kind"]):
+		"lamp":
+			_lamp(at)
+		"bench":
+			_bench(at, rot)
+		"board":
+			_board(at, rot)
+		"bed":
+			_bed(at, sz.x, sz.y, rot)
+		"stall":
+			_booth(at, rot, sz.x / 1.2)
+		"gate":
+			_gate(at, rot, sz.x)
+		"fence":
+			var dir := Vector3(cos(rot), 0, -sin(rot)) * sz.x / 2.0
+			_fence(at - dir, at + dir)
+		"tree":
+			_tree(at, Color("#6a9440"), sz.x)
+		"blossom":
+			_tree(at, Color("#f0b3c4"), sz.x)
+		"bush":
+			_bush(at, sz.x)
+		"barrel":
+			_cyl(self, 0.22, 0.22, 0.55, at + Vector3(0, 0.275, 0), _mat(Color("#7a5230")))
+			_solid_round(at, 0.24)
+		"crates":
+			_crates(at)
+		"pot":
+			_pot(at)
+		"aframe":
+			_aframe(at)
+		"mailbox":
+			_mailbox(at)
 
 
 ## A raised flower bed: low stone border, soil, and a mound of mixed flowers.
-func _bed(at: Vector3, w: float, d: float) -> void:
+func _bed(at: Vector3, w: float, d: float, rot: float = 0.0) -> void:
+	var n := Node3D.new()
+	n.position = at
+	n.rotation.y = rot
+	add_child(n)
+	_bed_parts(n, w, d)
+	var body := StaticBody3D.new()
+	var cs := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = Vector3(w, 2, d)
+	cs.shape = shape
+	body.add_child(cs)
+	body.position = Vector3(0, 1, 0)
+	n.add_child(body)
+
+
+func _bed_parts(n: Node3D, w: float, d: float) -> void:
+	var at := Vector3.ZERO
 	var stone := _mat(Color("#a89a86"))
-	_box(self, Vector3(w + 0.12, 0.2, d + 0.12), at + Vector3(0, 0.1, 0), stone)
-	_box(self, Vector3(w, 0.22, d), at + Vector3(0, 0.12, 0), _mat(Color("#5a4230")))
-	_ball(self, 0.5, at + Vector3(0, 0.22, 0), _mat(Color("#5e8a38")), Vector3(w * 0.95, 0.5, d * 0.95))
+	_box(n, Vector3(w + 0.12, 0.2, d + 0.12), at + Vector3(0, 0.1, 0), stone)
+	_box(n, Vector3(w, 0.22, d), at + Vector3(0, 0.12, 0), _mat(Color("#5a4230")))
+	_ball(n, 0.5, at + Vector3(0, 0.22, 0), _mat(Color("#5e8a38")), Vector3(w * 0.95, 0.5, d * 0.95))
 	var cols := [Color("#f7a8c0"), Color("#fff1d6"), Color("#ffd75e"), Color("#b79be8"), Color("#e8894a"), Color("#c9a0f0")]
 	var rng := RandomNumberGenerator.new()
-	rng.seed = int(at.x * 100 + at.z * 7)
+	rng.seed = int(n.position.x * 100 + n.position.z * 7)
 	for i in int(w * d * 22):
 		var q := Vector3(rng.randf_range(-w / 2.0 + 0.1, w / 2.0 - 0.1), 0, rng.randf_range(-d / 2.0 + 0.1, d / 2.0 - 0.1))
-		_ball(self, rng.randf_range(0.05, 0.08), at + q + Vector3(0, 0.42 + rng.randf() * 0.1, 0), _mat(cols[rng.randi() % cols.size()]))
-	_solid_box(at + Vector3(0, 1, 0), Vector3(w, 2, d))
+		_ball(n, rng.randf_range(0.05, 0.08), at + q + Vector3(0, 0.42 + rng.randf() * 0.1, 0), _mat(cols[rng.randi() % cols.size()]))
+
 
 
 func _fence(a: Vector3, b: Vector3) -> void:
@@ -752,24 +786,30 @@ func _mailbox(at: Vector3) -> void:
 
 
 func _fountain(at: Vector3) -> void:
+	var n := Node3D.new()
+	n.position = at
+	n.scale = Vector3.ONE * (FOUNTAIN_R / 1.0)
+	add_child(n)
+	var origin := at
+	at = Vector3.ZERO
 	var stone := _mat(Color("#cfc4b0"))
-	_cyl(self, 0.95, 1.0, 0.4, at + Vector3(0, 0.2, 0), stone, 36)
+	_cyl(n, 0.95, 1.0, 0.4, at + Vector3(0, 0.2, 0), stone, 36)
 	var water := _mat(Color("#5fa8b8"), 0.08)
 	water.metallic = 0.2
-	_cyl(self, 0.86, 0.86, 0.36, at + Vector3(0, 0.21, 0), water, 36)
-	_cyl(self, 0.16, 0.22, 0.8, at + Vector3(0, 0.6, 0), stone)
-	_cyl(self, 0.42, 0.18, 0.18, at + Vector3(0, 1.0, 0), stone)
-	_cyl(self, 0.36, 0.36, 0.12, at + Vector3(0, 1.06, 0), water)
-	_cyl(self, 0.08, 0.1, 0.4, at + Vector3(0, 1.25, 0), stone)
+	_cyl(n, 0.86, 0.86, 0.36, at + Vector3(0, 0.21, 0), water, 36)
+	_cyl(n, 0.16, 0.22, 0.8, at + Vector3(0, 0.6, 0), stone)
+	_cyl(n, 0.42, 0.18, 0.18, at + Vector3(0, 1.0, 0), stone)
+	_cyl(n, 0.36, 0.36, 0.12, at + Vector3(0, 1.06, 0), water)
+	_cyl(n, 0.08, 0.1, 0.4, at + Vector3(0, 1.25, 0), stone)
 	var spray := _glow_mat(Color("#dff4ff"), 0.4, 0.8)
-	_cyl(self, 0.03, 0.08, 0.35, at + Vector3(0, 1.55, 0), spray)
+	_cyl(n, 0.03, 0.08, 0.35, at + Vector3(0, 1.55, 0), spray)
 	var suits := [Color("#c9473f"), Color("#2b2320"), Color("#c9473f"), Color("#2b2320")]
 	for i in 4:
 		var a := PI / 2.0 + i * PI / 2.0 - PI / 4.0
 		var p := at + Vector3(cos(a) * 1.0, 0.24, sin(a) * 1.0)
-		var s := _box(self, Vector3(0.18, 0.18, 0.02), p, _mat(suits[i]), -a + PI / 2.0)
+		var s := _box(n, Vector3(0.18, 0.18, 0.02), p, _mat(suits[i]), -a + PI / 2.0)
 		s.rotation.z = PI / 4.0
-	_solid_round(at, 1.0)
+	_solid_round(origin, FOUNTAIN_R)
 
 
 func _tree(at: Vector3, leaf: Color, k: float = 1.0) -> void:
@@ -842,10 +882,11 @@ func _board_parts(n: Node3D) -> void:
 		_box(n, Vector3(0.16, 0.2, 0.01), at + Vector3(-0.3 + i * 0.2, 0.95 + (0.08 if i % 2 == 0 else -0.06), 0.04), _mat(Color("#fbf1dc")))
 
 
-func _booth(at: Vector3, rot: float = 0.0) -> void:
+func _booth(at: Vector3, rot: float = 0.0, k: float = 1.0) -> void:
 	var holder := Node3D.new()
 	holder.position = at
 	holder.rotation.y = rot
+	holder.scale = Vector3.ONE * k
 	add_child(holder)
 	_booth_parts(holder)
 	_solid_round(at, 0.8)
@@ -890,16 +931,32 @@ func _signpost(at: Vector3) -> void:
 		_box(self, Vector3(0.5, 0.12, 0.04), at + Vector3(0.12 * (1 if i % 2 == 0 else -1), 0.95 - i * 0.18, 0.04), wood)
 
 
-func _gate(at: Vector3) -> void:
+func _gate(at: Vector3, rot: float = 0.0, width: float = 2.2) -> void:
+	var n := Node3D.new()
+	n.position = at
+	n.rotation.y = rot
+	add_child(n)
 	var wood := _mat(Color("#7a5230"))
-	for x in [-0.55, 0.55]:
-		_box(self, Vector3(0.14, 1.7, 0.14), at + Vector3(x, 0.85, 0), wood)
-		_box(self, Vector3(0.24, 0.2, 0.24), at + Vector3(x, 0.1, 0), _mat(Color("#a79a88")))
-	_box(self, Vector3(1.4, 0.16, 0.18), at + Vector3(0, 1.72, 0), wood)
+	var stone := _mat(Color("#a79a88"))
+	var half := width / 2.0
+	for x in [-half, half]:
+		_box(n, Vector3(0.4, 1.2, 0.4), Vector3(x, 0.6, 0), stone)
+		_box(n, Vector3(0.18, 2.2, 0.18), Vector3(x, 1.1, 0), wood)
+	var beam := _box(n, Vector3(width + 0.4, 0.22, 0.22), Vector3(0, 2.25, 0), wood)
+	beam.rotation.z = 0.0
 	var ivy := _mat(Color("#5f8f3c"))
-	for i in 6:
-		_ball(self, 0.1, at + Vector3(-0.6 + i * 0.24, 1.8, 0.02), ivy)
-	_box(self, Vector3(0.36, 0.26, 0.03), at + Vector3(0, 1.45, 0.05), _mat(Color("#2f4a7a")))
+	for i in int(width * 3):
+		_ball(n, 0.12, Vector3(-half + i * width / (width * 3 - 1), 2.38, 0.02), ivy)
+	_box(n, Vector3(0.45, 0.6, 0.03), Vector3(0, 1.8, 0.06), _mat(Color("#2f4a7a")))
+	for x in [-half, half]:
+		var body := StaticBody3D.new()
+		var cs := CollisionShape3D.new()
+		var shape := BoxShape3D.new()
+		shape.size = Vector3(0.4, 2, 0.4)
+		cs.shape = shape
+		body.add_child(cs)
+		body.position = Vector3(x, 1, 0)
+		n.add_child(body)
 
 
 # --- people --------------------------------------------------------------------------------------
@@ -913,12 +970,12 @@ func _build_people() -> void:
 	cs.shape = cap
 	cs.position = Vector3(0, 0.45, 0)
 	_player.add_child(cs)
-	_player.position = Vector3(0.1, 0, 2.7)
+	_player.position = SPAWN
 	add_child(_player)
 	_player_body = _person(_player, Color("#d9a441"), Color("#6b3f24"), Color("#3f7f7a"))
 	# Who is in the square follows the game's schedule; where they stand follows the composition.
 	var places := {"npc_lumi": "fox", "npc_moa": "fairy", "npc_juno": "bird"}
-	var spots := {"npc_lumi": Vector3(1.3, 0, 2.2), "npc_moa": Vector3(-2.3, 0, -1.3), "npc_juno": Vector3(5.8, 0, 0.1)}
+	var spots := {"npc_lumi": Vector3(0.77, 0, 3.30), "npc_moa": Vector3(-1.94, 0, 0.23), "npc_juno": Vector3(3.91, 0, 1.13)}
 	for id in places:
 		if not Engine.is_editor_hint():
 			var place: Dictionary = Game.data.npc_place(id, "evening" if _evening else "day", Game.state if Game.state != null else GameState.new())

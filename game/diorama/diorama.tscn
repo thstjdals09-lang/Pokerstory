@@ -1,54 +1,295 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://diorama/diorama.gd" id="1_u4jjr"]
-[ext_resource type="Script" path="res://diorama/building_marker.gd" id="2_82lga"]
+[ext_resource type="Script" path="res://diorama/diorama.gd" id="1_82lga"]
+[ext_resource type="Script" path="res://diorama/building_marker.gd" id="2_xyjrw"]
+[ext_resource type="Script" path="res://diorama/prop_marker.gd" id="3_h7y3f"]
 
-[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_u4jjr"]
-dof_blur_far_enabled = true
-dof_blur_far_distance = 17.0
-dof_blur_far_transition = 6.0
-dof_blur_near_enabled = true
-dof_blur_near_distance = 6.0
-dof_blur_near_transition = 4.0
-dof_blur_amount = 0.07
+[node name="Diorama" type="Node3D" unique_id=1801446233]
+script = ExtResource("1_82lga")
 
-[node name="Diorama" type="Node3D" unique_id=292455815]
-script = ExtResource("1_u4jjr")
+[node name="Buildings" type="Node3D" parent="." unique_id=1666265949]
 
-[node name="Buildings" type="Node3D" parent="." unique_id=1240447554]
+[node name="Home" type="Marker3D" parent="Buildings" unique_id=274594338]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.31, 0, -7.18)
+script = ExtResource("2_xyjrw")
+width = 3.09
+depth = 2.32
+wall_height = 2.28
+door_offset = -0.39
 
-[node name="Home" type="Marker3D" parent="Buildings" unique_id=1728401376]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0, -7.1)
-script = ExtResource("2_82lga")
-depth = 1.6
-wall_height = 1.55
-
-[node name="Shop" type="Marker3D" parent="Buildings" unique_id=2094944367]
-transform = Transform3D(0.6819984, 0, 0.7313537, 0, 1, 0, -0.7313537, 0, 0.6819984, -6.1, 0, -4.15)
-script = ExtResource("2_82lga")
+[node name="Shop" type="Marker3D" parent="Buildings" unique_id=190149118]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1, 0, -7.1)
+script = ExtResource("2_xyjrw")
 building_id = "shop_building"
-width = 3.5
-depth = 2.35
-wall_height = 2.4
-door_offset = 0.8
+width = 4.88
+depth = 2.93
+wall_height = 3.64
+door_offset = 1.42
 
-[node name="CardRoom" type="Marker3D" parent="Buildings" unique_id=2049779815]
-transform = Transform3D(0.6293204, 0, -0.777146, 0, 1, 0, 0.777146, 0, 0.6293204, 7.3, 0, -2.1)
-script = ExtResource("2_82lga")
+[node name="CardRoom" type="Marker3D" parent="Buildings" unique_id=1587679895]
+transform = Transform3D(0.9515944, 0, -0.30735663, 0, 1, 0, 0.30735663, 0, 0.9515944, 7.95, 0, -4.58)
+script = ExtResource("2_xyjrw")
 building_id = "card_room_building"
-width = 4.15
-wall_height = 2.6
+width = 6.09
+depth = 3.35
+wall_height = 4.08
+door_offset = -0.76
 
-[node name="Hall" type="Marker3D" parent="Buildings" unique_id=474482071]
-transform = Transform3D(0.2419219, 0, 0.9702957, 0, 1, 0, -0.9702957, 0, 0.2419219, -6.3, 0, 3.55)
-script = ExtResource("2_82lga")
+[node name="Hall" type="Marker3D" parent="Buildings" unique_id=661457086]
+transform = Transform3D(0.9063078, 0, 0.4226183, 0, 1, 0, -0.4226183, 0, 0.9063078, -7.28, 0, 1.52)
+script = ExtResource("2_xyjrw")
 building_id = "community_hall_building"
-width = 2.2
-depth = 3.65
-wall_height = 1.55
+wall_height = 2.69
+door_offset = 1.38
+width = 3.4
+depth = 5.0
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1732851293]
-transform = Transform3D(1, 0, 0, 0, 0.9135454, 0.40673664, 0, -0.40673664, 0.9135454, 0.060000002, 4.474103, 10.774)
-attributes = SubResource("CameraAttributesPractical_u4jjr")
-current = true
-fov = 47.5
+[node name="Props" type="Node3D" parent="." unique_id=1206027217]
+
+[node name="Lamp1" type="Marker3D" parent="Props" unique_id=1393837894]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.26, 0, 6.57)
+script = ExtResource("3_h7y3f")
+
+[node name="Lamp2" type="Marker3D" parent="Props" unique_id=615478202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.77, 0, 0)
+script = ExtResource("3_h7y3f")
+
+[node name="Lamp3" type="Marker3D" parent="Props" unique_id=377937857]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7, 0, -4.36)
+script = ExtResource("3_h7y3f")
+
+[node name="Lamp4" type="Marker3D" parent="Props" unique_id=271590150]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.67, 0, 3.56)
+script = ExtResource("3_h7y3f")
+
+[node name="Lamp5" type="Marker3D" parent="Props" unique_id=2062013329]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.11, 0, 8.41)
+script = ExtResource("3_h7y3f")
+
+[node name="Lamp6" type="Marker3D" parent="Props" unique_id=1384946563]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.34, 0, 8.28)
+script = ExtResource("3_h7y3f")
+
+[node name="Board1" type="Marker3D" parent="Props" unique_id=1274790625]
+transform = Transform3D(0.9659258, 0, 0.25881904, 0, 1, 0, -0.25881904, 0, 0.9659258, -3.6, 0, 5.2)
+script = ExtResource("3_h7y3f")
+kind = "board"
+
+[node name="Bench1" type="Marker3D" parent="Props" unique_id=1670793182]
+transform = Transform3D(0.42261824, 0, -0.9063078, 0, 1, 0, 0.9063078, 0, 0.42261824, 4.33, 0, 2.81)
+script = ExtResource("3_h7y3f")
+kind = "bench"
+
+[node name="Stall1" type="Marker3D" parent="Props" unique_id=1158927028]
+transform = Transform3D(0.76604444, 0, -0.6427876, 0, 1, 0, 0.6427876, 0, 0.76604444, 6.22, 0, 4.49)
+script = ExtResource("3_h7y3f")
+kind = "stall"
+size = Vector2(2.3, 1)
+
+[node name="Gate1" type="Marker3D" parent="Props" unique_id=1501160510]
+transform = Transform3D(0.99026805, 0, -0.1391731, 0, 1, 0, 0.1391731, 0, 0.99026805, 3.28, 0, 8.72)
+script = ExtResource("3_h7y3f")
+kind = "gate"
+size = Vector2(2.3, 1)
+
+[node name="Mailbox1" type="Marker3D" parent="Props" unique_id=155852426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.93, 0, -5.74)
+script = ExtResource("3_h7y3f")
+kind = "mailbox"
+
+[node name="Aframe1" type="Marker3D" parent="Props" unique_id=917556102]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.53, 0, -6.57)
+script = ExtResource("3_h7y3f")
+kind = "aframe"
+
+[node name="Aframe2" type="Marker3D" parent="Props" unique_id=1024602667]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.43, 0, -2.68)
+script = ExtResource("3_h7y3f")
+kind = "aframe"
+
+[node name="Barrel1" type="Marker3D" parent="Props" unique_id=228172479]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.77, 0, -7.75)
+script = ExtResource("3_h7y3f")
+kind = "barrel"
+
+[node name="Barrel2" type="Marker3D" parent="Props" unique_id=1147924688]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.39, 0, -6.82)
+script = ExtResource("3_h7y3f")
+kind = "barrel"
+
+[node name="Barrel3" type="Marker3D" parent="Props" unique_id=1318902430]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.3, 0, -2.17)
+script = ExtResource("3_h7y3f")
+kind = "barrel"
+
+[node name="Crates1" type="Marker3D" parent="Props" unique_id=1219509817]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.98, 0, -6.32)
+script = ExtResource("3_h7y3f")
+kind = "crates"
+
+[node name="Pot1" type="Marker3D" parent="Props" unique_id=295778274]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.93, 0, 4.44)
+script = ExtResource("3_h7y3f")
+kind = "pot"
+
+[node name="Pot2" type="Marker3D" parent="Props" unique_id=697869426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.08, 0, 5.83)
+script = ExtResource("3_h7y3f")
+kind = "pot"
+
+[node name="Pot3" type="Marker3D" parent="Props" unique_id=1959778153]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0, -3.16)
+script = ExtResource("3_h7y3f")
+kind = "pot"
+
+[node name="Bed1" type="Marker3D" parent="Props" unique_id=749198274]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.74, 0, -5.74)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(2.32, 1.28)
+
+[node name="Bed2" type="Marker3D" parent="Props" unique_id=233322906]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.83, 0, -5.74)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(2.02, 1.11)
+
+[node name="Bed3" type="Marker3D" parent="Props" unique_id=1512971779]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.81, 0, -1.6)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(2.06, 1.13)
+
+[node name="Bed4" type="Marker3D" parent="Props" unique_id=1703596521]
+transform = Transform3D(0.95105654, 0, -0.309017, 0, 1, 0, 0.309017, 0, 0.95105654, 3.56, 0, -2.44)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(1.84, 1.01)
+
+[node name="Bed5" type="Marker3D" parent="Props" unique_id=1545836782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.35, 0, 4.92)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(1.53, 0.55)
+
+[node name="Bed6" type="Marker3D" parent="Props" unique_id=1591011917]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.98, 0, 4.49)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(0.89, 0.49)
+
+[node name="Bed7" type="Marker3D" parent="Props" unique_id=1899579794]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.88, 0, 4.97)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(1.42, 0.78)
+
+[node name="Bed8" type="Marker3D" parent="Props" unique_id=1870792853]
+transform = Transform3D(0.95105654, 0, -0.309017, 0, 1, 0, 0.309017, 0, 0.95105654, 5.48, 0, 0.1)
+script = ExtResource("3_h7y3f")
+kind = "bed"
+size = Vector2(1.56, 0.86)
+
+[node name="Fence1" type="Marker3D" parent="Props" unique_id=91874835]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.45, 0, -9.84)
+script = ExtResource("3_h7y3f")
+kind = "fence"
+size = Vector2(1.9, 1)
+
+[node name="Fence2" type="Marker3D" parent="Props" unique_id=1366266108]
+transform = Transform3D(0.9822872, 0, -0.18738131, 0, 1, 0, 0.18738131, 0, 0.9822872, 3.72, 0, -9.84)
+script = ExtResource("3_h7y3f")
+kind = "fence"
+size = Vector2(3.21, 1)
+
+[node name="Fence3" type="Marker3D" parent="Props" unique_id=577394560]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.39, 0, 7.27)
+script = ExtResource("3_h7y3f")
+kind = "fence"
+size = Vector2(1.68, 1)
+
+[node name="Fence4" type="Marker3D" parent="Props" unique_id=472215898]
+transform = Transform3D(0.9449489, 0, 0.3272179, 0, 1, 0, -0.3272179, 0, 0.9449489, 6.1, 0, 5.94)
+script = ExtResource("3_h7y3f")
+kind = "fence"
+size = Vector2(1.99, 1)
+
+[node name="Tree1" type="Marker3D" parent="Props" unique_id=712248381]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.93, 0, -8.97)
+script = ExtResource("3_h7y3f")
+kind = "tree"
+size = Vector2(1.6, 1)
+
+[node name="Tree2" type="Marker3D" parent="Props" unique_id=1967953612]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.99, 0, -14.11)
+script = ExtResource("3_h7y3f")
+kind = "tree"
+size = Vector2(1.6, 1)
+
+[node name="Blossom1" type="Marker3D" parent="Props" unique_id=1547226964]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.59, 0, -14.85)
+script = ExtResource("3_h7y3f")
+kind = "blossom"
+size = Vector2(1.6, 1)
+
+[node name="Tree3" type="Marker3D" parent="Props" unique_id=1954935296]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.27, 0, -12.7)
+script = ExtResource("3_h7y3f")
+kind = "tree"
+size = Vector2(1.6, 1)
+
+[node name="Tree4" type="Marker3D" parent="Props" unique_id=245168037]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.16, 0, 7.83)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.6, 1)
+
+[node name="Tree5" type="Marker3D" parent="Props" unique_id=1207415558]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85, 0, 5.39)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.6, 1)
+
+[node name="Tree6" type="Marker3D" parent="Props" unique_id=643511939]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.55, 0, 8.55)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.6, 1)
+
+[node name="Bush1" type="Marker3D" parent="Props" unique_id=1997604621]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.27, 0, 7.46)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.8, 1)
+
+[node name="Bush2" type="Marker3D" parent="Props" unique_id=1282292268]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.83, 0, 8.2)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.8, 1)
+
+[node name="Bush3" type="Marker3D" parent="Props" unique_id=1776058685]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.6, 0, 8.2)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.8, 1)
+
+[node name="Bush4" type="Marker3D" parent="Props" unique_id=260271832]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.58, 0, 7.46)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.8, 1)
+
+[node name="Bush5" type="Marker3D" parent="Props" unique_id=634288785]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.65, 0, 6.47)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.8, 1)
+
+[node name="Bush6" type="Marker3D" parent="Props" unique_id=2115383854]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.42, 0, 6.67)
+script = ExtResource("3_h7y3f")
+kind = "bush"
+size = Vector2(1.8, 1)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=558878491]
