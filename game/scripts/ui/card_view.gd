@@ -68,23 +68,26 @@ func _draw() -> void:
 	var r := Rect2(Vector2(0, top), CARD_SIZE)
 	draw_rect(Rect2(r.position + Vector2(4, 6), r.size), Color(0, 0, 0, 0.25))
 	if card == null:
-		var back := Color("#2e4a74")
-		if Game.state != null and Game.state.equipped.has("card_back"):
-			back = Game.item_color(str(Game.state.equipped["card_back"]), back)
-		draw_style_box(UiKit.stylebox(back, Color("#f3dfc1"), 4, 10, 0), r)
-		var inner := r.grow(-12)
-		draw_rect(inner, Color("#f3dfc1"), false, 2.0)
-		var y := inner.position.y + 10
-		while y < inner.end.y - 6:
-			draw_string(UI_FONT, Vector2(inner.position.x, y + 12), "◆ ◆ ◆", HORIZONTAL_ALIGNMENT_CENTER, inner.size.x, 14, Color(1, 1, 1, 0.25))
-			y += 22
+		_draw_back(r)
 		return
-	var border := UiKit.GOLD if selected else Color("#8a5a3c")
-	draw_style_box(UiKit.stylebox(Color("#fffdf8"), border, 5 if selected else 2, 10, 0), r)
+	var border := UiKit.GOLD if selected else Color("#b08a66")
+	draw_style_box(UiKit.stylebox(Color("#fffaf0"), border, 5 if selected else 2, 10, 0), r)
+	draw_style_box(UiKit.stylebox(Color(0, 0, 0, 0), Color("#eadbc4"), 1, 6, 0), r.grow(-6))
 	var col := RED if card.is_red() else INK
-	var corner := "%s\n%s" % [card.rank_label(), card.suit_symbol()]
-	draw_multiline_string(UI_FONT, r.position + Vector2(9, 26), corner, HORIZONTAL_ALIGNMENT_LEFT, 40, 22, 2, col)
-	draw_string(UI_FONT, Vector2(r.position.x, r.position.y + 100), card.suit_symbol(), HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 54, col)
+	_draw_index(r.position + Vector2(10, 24), col)
+	# the same index upside down in the far corner
+	draw_set_transform(r.end, PI, Vector2.ONE)
+	_draw_index(Vector2(10, 24), col)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	var rank := card.rank_label()
+	if rank in ["J", "Q", "K"]:
+		var frame := Rect2(r.position + Vector2(32, 30), r.size - Vector2(64, 60))
+		draw_style_box(UiKit.stylebox(Color("#fbe9e4") if card.is_red() else Color("#e7ecf3"), Color(col, 0.6), 2, 6, 0), frame)
+		draw_string(UI_FONT, Vector2(frame.position.x, frame.position.y + 44), rank, HORIZONTAL_ALIGNMENT_CENTER, frame.size.x, 36, col)
+		draw_string(UI_FONT, Vector2(frame.position.x, frame.end.y - 10), card.suit_symbol(), HORIZONTAL_ALIGNMENT_CENTER, frame.size.x, 28, col)
+	else:
+		var big := 64 if rank == "A" else 50
+		draw_string(UI_FONT, Vector2(r.position.x, r.position.y + 92 + (6 if rank == "A" else 0)), card.suit_symbol(), HORIZONTAL_ALIGNMENT_CENTER, r.size.x, big, col)
 	if marked:
 		draw_circle(Vector2(r.end.x - 14, r.position.y + 14), 9, UiKit.GOLD)
 		draw_string(UI_FONT, Vector2(r.end.x - 23, r.position.y + 20), "★", HORIZONTAL_ALIGNMENT_CENTER, 18, 14, INK)
@@ -94,3 +97,33 @@ func _draw() -> void:
 		draw_string(UI_FONT, Vector2(tag.position.x, tag.end.y - 5), "교체", HORIZONTAL_ALIGNMENT_CENTER, tag.size.x, 15, INK)
 	elif _hover and interactive:
 		draw_rect(r.grow(2), UiKit.ACCENT, false, 3.0)
+
+
+func _draw_index(at: Vector2, col: Color) -> void:
+	draw_string(UI_FONT, at, card.rank_label(), HORIZONTAL_ALIGNMENT_CENTER, 22, 21, col)
+	draw_string(UI_FONT, at + Vector2(0, 19), card.suit_symbol(), HORIZONTAL_ALIGNMENT_CENTER, 22, 16, col)
+
+
+## Card back: the equipped colour, a cream frame, a faint diamond lattice and a club medallion.
+func _draw_back(r: Rect2) -> void:
+	var back := Color("#2e4a74")
+	if Game.state != null and Game.state.equipped.has("card_back"):
+		back = Game.item_color(str(Game.state.equipped["card_back"]), back)
+	draw_style_box(UiKit.stylebox(back, Color("#f3dfc1"), 4, 10, 0), r)
+	var inner := r.grow(-11)
+	draw_style_box(UiKit.stylebox(Color(0, 0, 0, 0), Color("#f3dfc1"), 1, 5, 0), inner)
+	var step := 14.0
+	var y := inner.position.y + step / 2.0
+	var row := 0
+	while y < inner.end.y:
+		var x := inner.position.x + (step / 2.0 if row % 2 == 0 else step)
+		while x < inner.end.x - 2:
+			var d := PackedVector2Array([Vector2(x, y - 4), Vector2(x + 4, y), Vector2(x, y + 4), Vector2(x - 4, y)])
+			draw_colored_polygon(d, Color(1, 1, 1, 0.13))
+			x += step
+		y += step / 2.0
+		row += 1
+	var c := r.get_center()
+	draw_circle(c, 21, back.darkened(0.15))
+	draw_arc(c, 21, 0, TAU, 40, Color("#f3dfc1"), 2.0, true)
+	draw_string(UI_FONT, c + Vector2(-20, 10), "♣", HORIZONTAL_ALIGNMENT_CENTER, 40, 26, Color("#f3dfc1"))

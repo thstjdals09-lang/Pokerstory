@@ -8,6 +8,10 @@ const TEXT := Color("#3b2a20")
 const ACCENT := Color("#c8553d")
 const MUTED := Color("#8c7b6b")
 const GOLD := Color("#e0a526")
+## Visual slice 01: dark wood for tabs and in-world prompts, cream text on it.
+const WOOD := Color("#5a3a28")
+const CREAM := Color("#fff3d6")
+const SHADOW := Color(0.16, 0.09, 0.05, 0.28)
 
 
 static func stylebox(bg: Color, border: Color = BORDER, border_w: int = 3, radius: int = 12, pad: int = 14) -> StyleBoxFlat:
@@ -22,8 +26,34 @@ static func stylebox(bg: Color, border: Color = BORDER, border_w: int = 3, radiu
 
 static func panel(bg: Color = PAPER, pad: int = 16) -> PanelContainer:
 	var p := PanelContainer.new()
-	p.add_theme_stylebox_override("panel", stylebox(bg, BORDER, 3, 14, pad))
+	var sb := stylebox(bg, BORDER, 3, 14, pad)
+	sb.shadow_color = SHADOW
+	sb.shadow_size = 6
+	sb.shadow_offset = Vector2(0, 3)
+	p.add_theme_stylebox_override("panel", sb)
 	return p
+
+
+## Small dark pill (in-world prompt, name tab).
+static func dark_style(radius: int = 12, pad: int = 8) -> StyleBoxFlat:
+	var sb := stylebox(Color(WOOD, 0.92), Color("#2e1d14"), 2, radius, pad)
+	sb.shadow_color = SHADOW
+	sb.shadow_size = 4
+	sb.shadow_offset = Vector2(0, 2)
+	return sb
+
+
+## An art.json icon ("ui.chip", "ui.sun") at `px` square, or null when the art is missing.
+static func icon(key: String, px: int = 24) -> TextureRect:
+	if not ArtLib.has(key):
+		return null
+	var t := TextureRect.new()
+	t.texture = ArtLib.texture(key)
+	t.custom_minimum_size = Vector2(px, px)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return t
 
 
 static func label(text: String, font_size: int = 18, color: Color = TEXT) -> Label:

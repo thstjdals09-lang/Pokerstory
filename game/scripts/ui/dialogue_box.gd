@@ -17,6 +17,10 @@ var _text_label: Label
 var _hint_label: Label
 var _choice_box: VBoxContainer
 var _panel: PanelContainer
+## Visual slice: the speaker's name sits on a tab above the box; residents with art show a portrait.
+var _name_tab: PanelContainer
+var _portrait_frame: PanelContainer
+var _portrait: TextureRect
 
 
 func _ready() -> void:
@@ -41,15 +45,47 @@ func _ready() -> void:
 	_choice_box.add_theme_constant_override("separation", 8)
 	col.add_child(_choice_box)
 
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", -3)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(box)
+	var tab_margin := MarginContainer.new()
+	tab_margin.add_theme_constant_override("margin_left", 28)
+	tab_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(tab_margin)
+	_name_tab = PanelContainer.new()
+	var tab_style := UiKit.dark_style(10, 6)
+	tab_style.corner_radius_bottom_left = 0
+	tab_style.corner_radius_bottom_right = 0
+	tab_style.content_margin_left = 18
+	tab_style.content_margin_right = 18
+	_name_tab.add_theme_stylebox_override("panel", tab_style)
+	_name_tab.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	tab_margin.add_child(_name_tab)
+	_name_label = UiKit.label("", 19, UiKit.CREAM)
+	_name_tab.add_child(_name_label)
+
 	_panel = UiKit.panel(UiKit.PAPER, 18)
-	_panel.custom_minimum_size = Vector2(0, 170)
+	_panel.custom_minimum_size = Vector2(0, 160)
 	_panel.gui_input.connect(_on_panel_input)
-	col.add_child(_panel)
+	box.add_child(_panel)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 18)
+	_panel.add_child(row)
+	_portrait_frame = PanelContainer.new()
+	var frame_style := UiKit.stylebox(Color("#f3dfc1"), UiKit.BORDER, 2, 12, 4)
+	_portrait_frame.add_theme_stylebox_override("panel", frame_style)
+	_portrait_frame.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	row.add_child(_portrait_frame)
+	_portrait = TextureRect.new()
+	_portrait.custom_minimum_size = Vector2(104, 112)
+	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_portrait_frame.add_child(_portrait)
 	var inner := VBoxContainer.new()
 	inner.add_theme_constant_override("separation", 8)
-	_panel.add_child(inner)
-	_name_label = UiKit.label("", 20, UiKit.ACCENT)
-	inner.add_child(_name_label)
+	inner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(inner)
 	_text_label = UiKit.wrap_label("", 21)
 	_text_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	inner.add_child(_text_label)
@@ -59,8 +95,12 @@ func _ready() -> void:
 	visible = false
 
 
-func show_dialogue(speaker: String, lines: Array, choices: Array) -> void:
+func show_dialogue(speaker: String, lines: Array, choices: Array, portrait_key: String = "") -> void:
 	_name_label.text = speaker
+	_name_tab.modulate.a = 1.0 if speaker != "" else 0.0
+	var face := ArtLib.portrait(portrait_key) if portrait_key != "" else null
+	_portrait.texture = face
+	_portrait_frame.visible = face != null
 	_lines = lines if not lines.is_empty() else ["…"]
 	_choices = choices
 	_index = 0
