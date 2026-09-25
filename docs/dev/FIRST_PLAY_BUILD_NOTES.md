@@ -2,11 +2,11 @@
 
 | 항목 | 내용 |
 |---|---|
-| 기준 | [First Play Spec v0.2](../design/Project20_First_Play_Spec_v0.2.md) + [Design Correction 02](../design/Project20_Design_Correction_02.md) + [Economy v0.2.1](../design/Project20_Economy_v0.2.1.md) + [Design Review 03 / Economy v0.2.2](../design/Project20_Design_Review_03.md) |
+| 기준 | [First Play Spec v0.2](../design/Project20_First_Play_Spec_v0.2.md) + [Design Correction 02](../design/Project20_Design_Correction_02.md) + [Economy v0.2.1](../design/Project20_Economy_v0.2.1.md) + [Design Review 03 / Economy v0.2.2](../design/Project20_Design_Review_03.md) + [Design Review 04](../design/Project20_Design_Review_04.md) |
 | 엔진 | Godot 4.7.2 stable (GDScript만 사용, 렌더러 GL Compatibility) |
 | 대상 | Windows PC, 키보드 + 마우스 |
 | 작성 | Claude (개발 담당), 최종 갱신 2026-09-25 |
-| 상태 | Design Review 03 반영 완료, 자동 검증 통과. Gate 2(플레이어 시각 검수) 대기 |
+| 상태 | Design Review 04 승인 조건 반영, 자동 검증 통과. Gate 2(플레이어 시각 검수) 준비 |
 
 ---
 
@@ -91,13 +91,13 @@ tools/run_tests.sh e2e
 
 | 묶음 | 결과 |
 |---|---|
-| 단위 테스트 | **59개 통과** / 0개 실패 |
+| 단위 테스트 | **60개 통과** / 0개 실패 |
 | E2E `path_a` 포커 승리 → 등불 → 배치 → 반응 | 69개 검증 통과 |
 | E2E `path_b` 포커 패배 → 의뢰 → 등불 → 배치 → 반응 | 68개 검증 통과 |
 | E2E `path_c` 포커 없이 아르바이트 → 등불 → 배치 → 반응 | 47개 검증 통과 |
-| E2E `path_d1` → `path_d2` 판 도중 강제 종료 → 재실행 → 같은 판 이어서 정산 (프로세스 2개) | 16 / 28개 검증 통과 |
+| E2E `path_d1` → `path_d2` 판 도중 강제 종료 → 재실행 → 같은 판 이어서 정산 (프로세스 2개) | 19 / 28개 검증 통과 (창 닫기 요청 시 판 보존 포함) |
 | E2E `broke` 포기 → 파산 → 참가 제한 → 아르바이트 → 무승부 → 승리 | 89개 검증 통과 |
-| E2E `migrate` v1 저장 파일(잔액 유지), v2 저장 파일(참가금만 차감된 판) | 11~12개 검증 통과 (v2 경우는 무작위 판이라 원장 검사 수가 결과에 따라 다름) |
+| E2E `migrate` v1 저장 파일(잔액 유지), v2 저장 파일(참가금만 차감된 판) | 16~17개 검증 통과 (v2 파일은 새 판을 1회만 받고, 두 번 다시 불러와도 같은 손패인지 확인. 무작위 판이라 원장 검사 수가 결과에 따라 다름) |
 | E2E `reject` 읽을 수 없는 저장 파일 | 7개 검증 통과 |
 | 창 모드 E2E `path_a`·`path_b`·`path_c`·`path_d1/d2` + 스크린샷 | 모두 통과 |
 
@@ -117,7 +117,7 @@ tools/run_tests.sh e2e
 
 | 키 | 내용 |
 |---|---|
-| `save_version` | 3. v1·v2는 자동 변환(잔액 유지). 더 새 버전, 손상된 파일, 복원할 수 없는 진행 중 판은 거부하고 파일을 건드리지 않음 |
+| `save_version` | 3. v1·v2는 자동 변환(잔액 유지). 더 새 버전, 손상된 파일, 복원할 수 없는 진행 중 판, v3인데 참가금만 있고 카드가 없는 파일은 거부하고 파일을 건드리지 않음 |
 | `chips_balance`, `chips_ledger[]` | 잔액(음수 불가)과 원장 `{seq, delta, reason, balance}` |
 | `pending_poker_stake` | 정산 전 참가금. 판 진행 중에만 0이 아님 |
 | `poker_in_progress` | 진행 중인 판: 양쪽 손패, 남은 덱 순서, 시드, 교체 한도, 단계, 능력 사용·결과. 재실행 시 그대로 이어서 진행 |
@@ -135,7 +135,7 @@ tools/run_tests.sh e2e
 
 ## 6. 명세와의 차이
 
-v0.2 첫 빌드의 불일치 4건은 [Design Correction 02](../design/Project20_Design_Correction_02.md)에서 수정했습니다. D1~D7에 대한 기획 결정과 Economy v0.2.2는 [Design Review 03](../design/Project20_Design_Review_03.md)에 반영했습니다. 기획 확인이 필요한 2건(R1 창 닫기 처리, R2 이전 빌드 저장 파일 처리)은 같은 문서 4절에 있습니다.
+v0.2 첫 빌드의 불일치 4건은 [Design Correction 02](../design/Project20_Design_Correction_02.md)에서 수정했습니다. D1~D7에 대한 기획 결정과 Economy v0.2.2는 [Design Review 03](../design/Project20_Design_Review_03.md)에 반영했습니다. R1(창 닫기 처리)과 R2(이전 빌드 저장 파일 처리)는 [Design Review 04](../design/Project20_Design_Review_04.md)에서 승인되었고, R2의 조건(v2 파일에만 적용, 반복 로드 불가)을 반영했습니다.
 
 남아 있는 v0.2 해석 사항:
 

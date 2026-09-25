@@ -86,9 +86,11 @@ func load_game() -> Dictionary:
 		# An interrupted hand continues exactly where it stopped (Design Review 03, D2).
 		if not state.poker_in_progress.is_empty():
 			resumed_match = PokerMatch.from_dict(state.poker_in_progress)
-		elif state.pending_poker_stake > 0:
-			# Save from the previous build (v2): the stake was paid but the cards were not saved.
-			# The paid stake carries over to a newly dealt hand; nothing is refunded or charged again.
+		elif result["legacy_stake"]:
+			# One-time exception for saves from before v3 (Design Review 04, R2): the stake was paid but
+			# the cards were never saved. The paid stake carries over to a newly dealt hand, and the
+			# save is rewritten as v3 with that hand at once, so loading the same save again resumes
+			# this hand instead of dealing another. Nothing is refunded or charged again.
 			resumed_match = _deal_match()
 			state.poker_in_progress = resumed_match.to_dict()
 			save_game()

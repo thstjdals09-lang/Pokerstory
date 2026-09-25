@@ -22,7 +22,8 @@ static func save(state: GameState, path: String) -> Error:
 	return DirAccess.rename_absolute(tmp, path)
 
 
-## Returns {"ok": true, "state": GameState} or {"ok": false, "error": code, "message": text}.
+## Returns {"ok": true, "state": GameState, "original_version": n, "legacy_stake": bool}
+## or {"ok": false, "error": code, "message": text}.
 ## Error codes: no_save, corrupt, too_new, unsupported_old. A rejected file is never modified.
 static func load_state(path: String) -> Dictionary:
 	if not FileAccess.file_exists(path):
@@ -31,6 +32,7 @@ static func load_state(path: String) -> Dictionary:
 	if typeof(parsed) != TYPE_DICTIONARY or not parsed.has("save_version"):
 		return _fail("corrupt", "저장 파일을 읽을 수 없어요. 파일이 손상되었을 수 있어요.")
 	var version := int(parsed["save_version"])
+	var original_version := version
 	if version > GameState.SAVE_VERSION:
 		return _fail("too_new", "이 저장 파일은 더 새로운 버전의 게임에서 만들어졌어요 (저장 v%d, 현재 게임은 v%d까지 읽을 수 있어요)." % [version, GameState.SAVE_VERSION])
 	while version < GameState.SAVE_VERSION:
@@ -44,7 +46,13 @@ static func load_state(path: String) -> Dictionary:
 	# rather than inventing a refund.
 	if not state.poker_in_progress.is_empty() and PokerMatch.from_dict(state.poker_in_progress) == null:
 		return _fail("corrupt", "저장된 진행 중 포커 판을 복원할 수 없어요. 파일이 손상되었을 수 있어요.")
-	return {"ok": true, "state": state}
+	# A paid stake without saved cards is only possible in saves written before v3 (the stake and the
+	# cards are saved together since then). Design Review 04, R2: only such old saves get a one-time
+	# replacement hand; a v3 save in that state is damaged.
+	var legacy_stake := state.pending_poker_stake > 0 and state.poker_in_progress.is_empty()
+	if legacy_stake and original_version >= 3:
+		return _fail("corrupt", "저장된 진행 중 포커 판을 찾을 수 없어요. 파일이 손상되었을 수 있어요.")
+	return {"ok": true, "state": state, "original_version": original_version, "legacy_stake": legacy_stake}
 
 
 static func delete(path: String) -> void:

@@ -124,6 +124,32 @@ func test_v1_save_migrates_without_touching_chips() -> void:
 	SaveSystem.delete(PATH)
 
 
+func test_paid_stake_without_cards_is_legacy_only() -> void:
+	# Design Review 04, R2: only a save written before v3 may carry a stake without cards.
+	var base := GameState.new()
+	base.add_chips(100, "start")
+	PokerEconomy.place_stake(base, {"stake": 20})
+	var d := base.to_dict()
+	d.erase("poker_in_progress")
+	d["save_version"] = 2
+	var f := FileAccess.open(PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(d))
+	f.close()
+	var r := SaveSystem.load_state(PATH)
+	check(r["ok"] and r["legacy_stake"], "v2 save with a paid stake is accepted as legacy")
+	check_eq(r["original_version"], 2, "original version reported")
+	check_eq(r["state"].chips_balance, 80, "no refund")
+	d["save_version"] = 3
+	d["poker_in_progress"] = {}
+	f = FileAccess.open(PATH, FileAccess.WRITE)
+	f.store_string(JSON.stringify(d))
+	f.close()
+	var r3 := SaveSystem.load_state(PATH)
+	check(not r3["ok"], "v3 save with a stake but no cards is rejected")
+	check_eq(r3.get("error", ""), "corrupt", "reported as damaged, no new hand")
+	SaveSystem.delete(PATH)
+
+
 func test_saved_hand_that_cannot_restore_is_reported_not_refunded() -> void:
 	var s := GameState.new()
 	s.add_chips(40, "start")

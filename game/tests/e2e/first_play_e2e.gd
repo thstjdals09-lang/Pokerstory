@@ -234,7 +234,13 @@ func _path_d1() -> void:
 	_check_eq(hand.get("opponent_hand", []), WIN_OPPONENT, "opponent hand saved")
 	_check_eq((hand.get("deck", []) as Array).size(), 42, "remaining deck saved")
 	_check_eq(int(hand.get("ability_uses", {}).get("ability.star_sense", 0)), 1, "ability use saved")
-	print("[e2e] quitting mid-hand without saving (simulated forced quit)")
+	# R1: a window close request mid-hand saves the hand as it is and never folds it.
+	main._notification(NOTIFICATION_WM_CLOSE_REQUEST)
+	var after_close := _saved()
+	_check_eq(after_close.get("poker_in_progress", {}).get("player_hand", []), WIN_PLAYER, "window close keeps the hand")
+	_check_eq(int(after_close.get("pending_poker_stake", -1)), 20, "window close keeps the stake pending")
+	_check_eq(int(after_close.get("poker_record", {}).get("fold", -1)), 0, "window close is not a fold")
+	print("[e2e] quitting mid-hand (simulated forced quit / window close)")
 
 
 func _path_d2() -> void:
@@ -407,6 +413,19 @@ func _migrate() -> void:
 	_check_eq(Game.state.chips_balance, 80, "no refund and no second charge")
 	_check_eq(_ledger_count("poker_stake"), 1, "still one stake")
 	_check(not (_saved().get("poker_in_progress", {}) as Dictionary).is_empty(), "the new hand is saved at once")
+	_check_eq(int(_saved().get("save_version", -1)), 3, "rewritten as v3 at once")
+	var first_hand := _codes(main.poker.match_ref.player_hand)
+	# Loading the same save again must resume that hand, not deal another (R2).
+	for attempt in 2:
+		main.show_title()
+		await _frames(2)
+		main.title.continue_button.pressed.emit()
+		for i in 240:
+			if main.ui_mode == "poker":
+				break
+			await _frames(1)
+		_check_eq(_codes(main.poker.match_ref.player_hand), first_hand, "reload %d resumes the same hand" % (attempt + 1))
+		_check_eq(Game.state.chips_balance, 80, "reload %d: no charge, no refund" % (attempt + 1))
 	main.poker.stand_button.pressed.emit()
 	await _frames(2)
 	_check_eq(Game.state.pending_poker_stake, 0, "settled")
