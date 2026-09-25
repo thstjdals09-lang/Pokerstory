@@ -69,6 +69,9 @@ func _path_a() -> void:
 	_check_eq(Game.state.chips_balance, 40, "new game starts with 40 chips")
 	_check_eq(Game.state.time_of_day, "day", "starts in the day")
 	_check(main.tutorial.visible and main.tutorial.step == 1, "tutorial step 1 (move)")
+	# Playability pass 1: greetings carry no signal; one main signal (Lumi) on the first morning.
+	var first_signals: Dictionary = Game.world_signals()
+	_check_eq(first_signals, {"npc_lumi": "main"}, "first morning: only Lumi is marked")
 
 	# movement and collision with real input
 	var start: Vector2 = main.world.player.position
@@ -86,6 +89,11 @@ func _path_a() -> void:
 
 	await _meet_lumi_in_plaza()
 	_check_eq(main.tutorial.step, 0, "tutorial finished after the first talk")
+	await _go_to("job_board", "job_board")
+	await _press("interact")
+	await _read_to_choices()
+	_check_eq(main.dialogue._choices.map(func(c): return c.get("action", "")), ["start_job", "board", "close"], "board: today's job, news, close")
+	await _choose("close")
 	_check(Game.state.get_flag("tutorial_done"), "tutorial flag saved")
 	await _shot("01_village_day")
 	_check(main.hud._goal_label.text.contains("아르바이트") and main.hud._goal_label.text.contains("포커"), "goal lists poker as one option among others")
@@ -128,6 +136,10 @@ func _path_a() -> void:
 	await _talk("npc_lumi")
 	_check_eq(main.last_entry_id, "lumi_lamp_reaction", "PATH A: Lumi reacts to the lamp")
 	await _close_dialogue()
+	# After the lamp: a few resident stories open, not all of them at once.
+	var after: Dictionary = Game.world_signals()
+	_check(Game.open_stories().size() <= 3, "at most three resident stories open after the lamp")
+	_check(after.values().count("main") <= 1 and after.values().count("story") <= 2, "one main signal, two story signals at most: %s" % after)
 	_check_ledger()
 
 

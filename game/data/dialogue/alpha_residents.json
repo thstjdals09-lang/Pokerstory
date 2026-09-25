@@ -193,9 +193,6 @@
    "priority": 11,
    "conditions": {
     "met": "npc_moa",
-    "day_mod3": [
-     2
-    ],
     "act": "act1"
    },
    "lines": [
@@ -547,9 +544,6 @@
    "priority": 11,
    "conditions": {
     "met": "npc_kyle",
-    "day_mod3": [
-     2
-    ],
     "act": "act1"
    },
    "lines": [
@@ -735,9 +729,6 @@
    "priority": 11,
    "conditions": {
     "met": "npc_nora",
-    "day_mod3": [
-     2
-    ],
     "act": "act1"
    },
    "lines": [
@@ -1503,9 +1494,6 @@
    "priority": 11,
    "conditions": {
     "met": "npc_ella",
-    "day_mod3": [
-     2
-    ],
     "act": "act1"
    },
    "lines": [

@@ -329,7 +329,6 @@
      "moa_met"
     ]
    },
-   "marker": true,
    "set_flags": [
     "moa_met"
    ],
@@ -496,7 +495,8 @@
      "action": "close"
     }
    ],
-   "priority": 70
+   "priority": 70,
+   "signal": "story"
   },
   {
    "id": "sera_first",
@@ -506,7 +506,6 @@
      "sera_met"
     ]
    },
-   "marker": true,
    "set_flags": [
     "sera_met"
    ],

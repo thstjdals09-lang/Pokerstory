@@ -453,6 +453,7 @@ func _talk_until(npc: String, want: String, tries: int = 4) -> void:
 
 func _cc06() -> void:
 	await _new_game("관계")
+	Game.open_stories_max = 99  # relationship routes: every resident story may be open at once
 	_setup_open_town()
 	for npc in Game.data.npc_order:
 		Game.state.relation(npc)["met"] = true
@@ -671,6 +672,7 @@ func _cc07() -> void:
 
 func _life() -> void:
 	await _new_game("생활")
+	Game.open_stories_max = 0  # this scenario is about requests and odd jobs; resident stories stay closed (playability pass 1)
 	_setup_open_town()
 	for f in ["story.act2_started", "story.act2_complete", "story.act3_started"]:
 		Game.state.set_flag(f)
@@ -722,8 +724,15 @@ func _life() -> void:
 	await _choose_arg("accept_quest", "quest.sera_delivery")
 	await _finish_task("quest.sera_delivery", 0)
 	var done := 1
+	# Juno's festival-prep scene is the main story and comes before her poster request (playability pass 1).
+	await _talk_until("npc_juno", "scn.festival_prep_juno")
+	await _choose_text("장식 달기 돕기")
+	await _close_any()
+	# A request that is part of the main story comes up first in a talk (playability pass 1).
+	var ids: Array = Game.data.quest_order.filter(func(i): return Game.data.quests[i].get("main", false))
+	ids.append_array(Game.data.quest_order.filter(func(i): return not Game.data.quests[i].get("main", false)))
 	for round in 3:
-		for id in Game.data.quest_order:
+		for id in ids:
 			var q: Dictionary = Game.data.quests[id]
 			if q.get("kind", "quest") != "quest" or not Game.quest_available(id):
 				continue
@@ -789,6 +798,7 @@ func _leave_table() -> void:
 
 func _cc08() -> void:
 	await _new_game("카드")
+	Game.open_stories_max = 0  # this scenario is about poker; resident stories stay closed (playability pass 1)
 	_setup_open_town()
 	for npc in Game.data.npc_order:
 		Game.state.relation(npc)["met"] = true
@@ -799,11 +809,10 @@ func _cc08() -> void:
 		if not Game.state.abilities_unlocked.has(a):
 			Game.state.abilities_unlocked.append(a)
 	_grant_test_chips(1000)
-	# Practice: free, from the notice board, nothing changes but the lesson.
+	# Practice: free, from the card room notice board (playability pass 1), nothing changes but the lesson.
 	var chips0: int = Game.state.chips_balance
 	var ledger0: int = Game.state.chips_ledger.size()
-	await _go_to("job_board", "job_board")
-	await _press("interact")
+	await _use("card_room_notes", "card_room")
 	await _choose_arg("start_poker", "practice|")
 	await _pick_loadout("practice", "", "ability.suit_echo")
 	_check(main.poker._header.text.contains("연습"), "practice header")
@@ -843,6 +852,8 @@ func _cc08() -> void:
 	await _stand_and_check("npc_rira", "win")
 	await _leave_table()
 	# Card-room home game by invitation, twice more against Kyle -> his poker rivalry scene.
+	# He only invites when nothing more important is on (playability pass 1): his rules request is done.
+	Game.state.quests["quest.kyle_rules"] = QuestBook.COMPLETED
 	await _rest_until("evening")
 	for i in 2:
 		await _talk_until_choice("npc_kyle", "start_poker")
@@ -1025,7 +1036,7 @@ func _cc09() -> void:
 			_check_eq(Game.state.time_of_day, time, "%s same time" % loc_id)
 	# A hand in every mode survives a quit: same cards, same deck, no second stake.
 	var tables := [
-		["practice", "", "village_square", "job_board", "start_poker", "practice|"],
+		["practice", "", "card_room", "card_room_notes", "start_poker", "practice|"],
 		["social_mix", "npc_taeo", "village_square", "square_mix_table", "", ""],
 		["friendly_challenge", "npc_ren", "waterfront", "garden_table", "", ""],
 		["homegame", "npc_lumi", "player_home_hall", "home_table", "", ""],
@@ -1280,6 +1291,9 @@ func _cc11() -> void:
 
 ## Talks to a shop owner until the shop choice is offered (one-time lines may come first).
 func _open_shop_via(npc: String, shop_id: String) -> void:
+	# Goods are shown in the shop itself (playability pass 1): come by day, when the owner is there.
+	if str(Game.npc_place(npc).get("loc", "")) != str(Game.data.shops[shop_id].get("location", "")):
+		await _rest_until("day")
 	for i in 5:
 		await _talk_npc(npc)
 		await _read_to_choices()
@@ -1289,6 +1303,14 @@ func _open_shop_via(npc: String, shop_id: String) -> void:
 				_check_eq(main.ui_mode, "shop", shop_id + " open")
 				return
 		await _close_any()
+	# While the owner has a request to talk about, the goods are on the shop's own counter.
+	var counters := {"bibi_workshop": ["workshop_chairs", "workshop"], "taeo_tailor": ["tailor_samples", "tailor"], "swap_shop": ["swap_stall", "market"]}
+	if counters.has(shop_id):
+		await _use(counters[shop_id][0], counters[shop_id][1])
+		await _read_to_choices()
+		await _choose_arg("open_shop", shop_id)
+		_check_eq(main.ui_mode, "shop", shop_id + " open at the counter")
+		return
 	_check(false, "%s never offered %s" % [npc, shop_id])
 
 
@@ -1364,6 +1386,7 @@ func _cc12() -> void:
 
 func _react() -> void:
 	await _new_game("반응")
+	Game.open_stories_max = 0  # this scenario is about reactions to poker and life; resident stories stay closed (playability pass 1)
 	Game.state.set_flag("tutorial_done")
 	main.tutorial.visible = false
 	for a in Game.data.abilities:
@@ -1499,6 +1522,7 @@ func _rolled_back(before: Array, label: String) -> void:
 
 func _savefail() -> void:
 	await _new_game("저장")
+	Game.open_stories_max = 0  # this scenario is about save rollback; resident stories stay closed (playability pass 1)
 	Game.state.set_flag("tutorial_done")
 	main.tutorial.visible = false
 	for a in Game.data.abilities:

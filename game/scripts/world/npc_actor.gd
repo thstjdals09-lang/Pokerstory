@@ -1,15 +1,19 @@
 extends Node2D
 ## A resident placed in a location. Placeholder look comes from data/npcs.json "look".
-## Shows a bouncing "!" when the resident has something new to say.
+## Signal over the head (playability pass 1): "main" story (bouncing "!"), "story" (a resident's own
+## story, speech bubble) or "request" (small "!"). A first greeting shows nothing.
 
 const BODY_RADIUS := 16.0
 
 var npc_id := ""
 var look := {}
-var show_marker := false:
+var marker_kind := "":
 	set(value):
-		show_marker = value
+		marker_kind = value
 		queue_redraw()
+var show_marker: bool:
+	get:
+		return marker_kind != ""
 var _t := 0.0
 var _activity: Label = null
 
@@ -134,9 +138,24 @@ func _draw() -> void:
 			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
 	draw_circle(Vector2(-5, -2), 2.2, dark)
 	draw_circle(Vector2(5, -2), 2.2, dark)
-	if show_marker:
-		var y := -80.0 + sin(_t * 5.0) * 4.0
-		draw_circle(Vector2(0, y), 11, Color("#ffd23f"))
-		draw_circle(Vector2(0, y), 11, dark, false, 2.0)
-		draw_rect(Rect2(-1.8, y - 7, 3.6, 8), dark)
-		draw_circle(Vector2(0, y + 5), 2, dark)
+	match marker_kind:
+		"main":
+			var y := -80.0 + sin(_t * 5.0) * 4.0
+			draw_circle(Vector2(0, y), 11, Color("#ffd23f"))
+			draw_circle(Vector2(0, y), 11, dark, false, 2.0)
+			draw_rect(Rect2(-1.8, y - 7, 3.6, 8), dark)
+			draw_circle(Vector2(0, y + 5), 2, dark)
+		"story":
+			var y := -76.0 + sin(_t * 2.0) * 2.0
+			draw_colored_polygon(PackedVector2Array([Vector2(-4, y + 7), Vector2(4, y + 7), Vector2(-6, y + 14)]), Color.WHITE)
+			draw_circle(Vector2(-6, y), 9, Color.WHITE)
+			draw_circle(Vector2(6, y), 9, Color.WHITE)
+			draw_rect(Rect2(-6, y - 9, 12, 18), Color.WHITE)
+			for i in 3:
+				draw_circle(Vector2(-6 + i * 6, y), 2, dark)
+		"request":
+			var y := -70.0
+			draw_circle(Vector2(0, y), 7, Color("#ffd23f"))
+			draw_circle(Vector2(0, y), 7, dark, false, 1.5)
+			draw_rect(Rect2(-1.2, y - 4.5, 2.4, 5), dark)
+			draw_circle(Vector2(0, y + 3), 1.3, dark)

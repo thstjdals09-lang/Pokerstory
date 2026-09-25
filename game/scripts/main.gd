@@ -516,52 +516,41 @@ func _change_time(time: String) -> void:
 	enter_location(world.location_id, "default", pos, "저녁이 되었어요" if time == "evening" else "아침이 밝았어요")
 
 
-## The square notice board: odd jobs, requests, village news, festival.
+## The square notice board (playability pass 1): today's odd job and the village news, nothing else.
+## Requests come from the residents themselves, the practice table is in the card room, and the
+## list of things to do is in the journal.
 func _open_job_board() -> void:
 	if Game.job != null:
 		_show_system_dialogue("마을 게시판", ["아르바이트 진행 중이에요. %s" % Game.current_goal()], [])
 		return
 	var plaza: Dictionary = Game.data.jobs["job.plaza_cleanup"]
-	var lines: Array = [
-		"[%s] %s" % [plaza["name"], plaza["description"]],
-		"몇 번이든 다시 할 수 있어요. 광장을 벗어나면 정리를 그만둔 것으로 처리돼요.",
-		"낮엔 일거리와 가게, 저녁엔 카드룸과 모임이 열려요. 집 침대에서 시간을 넘길 수 있어요.",
-	]
-	_show_system_dialogue("마을 게시판", lines, [
-		{"text": "광장 정리 아르바이트 시작하기", "action": "start_job", "arg": "job.plaza_cleanup"},
-		{"text": "다른 아르바이트 보기", "action": "board", "arg": "jobs"},
-		{"text": "주민들의 부탁 보기", "action": "board", "arg": "requests"},
+	var today := "오늘의 일거리 · [%s] %s (보수 %d칩, 몇 번이든 다시 할 수 있어요.)" % [plaza["name"], plaza["description"], int(plaza["reward"])]
+	var note := _board_job_note()
+	if note != "":
+		today += "\n" + note
+	_show_system_dialogue("마을 게시판", [today, "낮엔 일거리와 가게, 저녁엔 카드룸과 모임이 열려요. 집 침대에서 시간을 넘길 수 있어요."], [
+		{"text": "오늘의 일거리 시작하기 (광장 정리)", "action": "start_job", "arg": "job.plaza_cleanup"},
 		{"text": "마을 소식 보기", "action": "board", "arg": "news"},
-		{"text": "요즘 할 수 있는 일", "action": "board", "arg": "todo"},
-		{"text": "포커 연습 한 판 (칩 없이)", "action": "start_poker", "arg": "practice|"},
-		{"text": "다음에 하기", "action": "close"},
+		{"text": "닫기", "action": "close"},
 	])
+
+
+## One other odd job pinned on the board from the second day, a different one each day.
+func _board_job_note() -> String:
+	if Game.state.day_count < 2:
+		return ""
+	var others: Array = Game.data.jobs.keys().filter(func(j): return j != "job.plaza_cleanup")
+	if others.is_empty():
+		return ""
+	var j: Dictionary = Game.data.jobs[others[Game.state.day_count % others.size()]]
+	return "옆에 붙은 쪽지 · %s — %s에서 시작 (보수 %d칩)" % [j["name"], j.get("start_hint", ""), int(j["reward"])]
 
 
 func _open_board_page(page: String) -> void:
 	var lines: Array = []
 	match page:
-		"jobs":
-			for jid in Game.data.jobs:
-				var j: Dictionary = Game.data.jobs[jid]
-				lines.append("· %s — 보수 %d칩, 시작: %s" % [j["name"], int(j["reward"]), j.get("start_hint", "")])
-		"requests":
-			for qid in Game.data.quest_order:
-				if not Game.data.is_quest(qid):
-					continue
-				var q: Dictionary = Game.data.quests[qid]
-				var st := QuestBook.state_of(Game.state, qid)
-				if st == QuestBook.ACTIVE:
-					lines.append("▶ %s — 진행 중 (%s)" % [q["name"], Game.npc_where_text(str(q["target"]))])
-				elif Game.quest_available(qid):
-					lines.append("· %s — %s" % [q["name"], Game.npc_where_text(str(q["giver"]))])
-			if lines.is_empty():
-				lines.append("지금 새로 들어온 부탁은 없어요.")
 		"news":
 			lines.append(Game.story_news())
-		"todo":
-			for t in Game.things_to_do():
-				lines.append("· " + t)
 	_show_system_dialogue("마을 게시판", ["\n".join(lines)], [{"text": "닫기", "action": "close"}])
 
 

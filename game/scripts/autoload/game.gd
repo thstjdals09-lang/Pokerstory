@@ -46,6 +46,14 @@ var resumed_match: PokerMatch = null
 var _rng := RandomNumberGenerator.new()
 
 
+## Playability pass 1: resident stories open at the same time, and the world signals shown at once.
+const OPEN_STORIES_MAX := 3
+const STORY_SIGNALS_MAX := 2
+## Tests that exercise one system in a crowded town (poker, requests, a romance route) widen or close
+## the story openings here; the game itself always uses OPEN_STORIES_MAX.
+var open_stories_max := OPEN_STORIES_MAX
+
+
 func _ready() -> void:
 	_setup_input_map()
 	for arg in OS.get_cmdline_user_args():
@@ -476,9 +484,33 @@ func set_time(time: String) -> bool:
 # --- quests ------------------------------------------------------------------
 
 func quest_available(quest_id: String) -> bool:
+	if not _unlocked(quest_id):
+		return false
+	# Resident stories open a few at a time, in episodes.json order (playability pass 1).
+	return data.is_quest(quest_id) or open_stories().has(quest_id)
+
+
+func _unlocked(quest_id: String) -> bool:
 	var q: Dictionary = data.quests.get(quest_id, {})
 	return not q.is_empty() and QuestBook.state_of(state, quest_id) == QuestBook.NOT_STARTED \
 		and Conditions.check(q.get("unlock", {}), state)
+
+
+## Resident stories that are open right now: the ones in progress, then the next unlocked ones in
+## episodes.json order, up to OPEN_STORIES_MAX together.
+func open_stories() -> Array:
+	var out: Array = []
+	if state == null:
+		return out
+	for id in data.quest_order:
+		if not data.is_quest(id) and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+			out.append(id)
+	for id in data.quest_order:
+		if out.size() >= open_stories_max:
+			break
+		if not data.is_quest(id) and _unlocked(id) and state.has_met(str(data.quests[id]["giver"])):
+			out.append(id)
+	return out
 
 
 func accept_quest(quest_id: String) -> bool:
@@ -691,55 +723,102 @@ func resolve_entry(speaker: String, location: String) -> Dictionary:
 ## Choices shown for `entry`: its own (condition-filtered) plus what the world adds:
 ## handing over tasks to this resident, the current letter job, offers of this resident's tasks,
 ## and a poker invitation where residents play. The hand-over comes first (D4, 03_residents/04).
+## Choices for a dialogue entry: one topic per talk (playability pass 1). In order: a hand-over or
+## delivery ending here > the main story (the entry itself) > a resident story > a request > the
+## everyday line. At most one system choice is added; shops only in the shop, poker only in the
+## card room and only when nothing more important is on.
 func entry_choices(entry: Dictionary, speaker: String, location: String) -> Array:
+	var target := speaker.substr(4) if speaker.begins_with("obj:") else speaker
+	var resident := not speaker.begins_with("obj:")
 	var base: Array = []
 	for c in entry.get("choices", []):
-		if Conditions.check(c.get("conditions", {}), state, location):
+		if Conditions.check(c.get("conditions", {}), state, location) and (not resident or _fits_place(c, location)):
 			base.append(c)
-	var out: Array = []
-	var target := speaker.substr(4) if speaker.begins_with("obj:") else speaker
+	var handoff: Array = []
 	for id in data.quest_order:
 		var q: Dictionary = data.quests[id]
 		if str(q.get("target", "")) != target or QuestBook.state_of(state, id) != QuestBook.ACTIVE:
 			continue
 		if _has_choice(base, "complete_quest", id):
-			continue
+			handoff = [{}]
+			break
 		var options: Array = q.get("options", [])
 		if options.is_empty():
-			out.append({"text": str(q.get("handoff", "건네기")), "action": "complete_quest", "arg": id})
+			handoff = [{"text": str(q.get("handoff", "건네기")), "action": "complete_quest", "arg": id}]
 		else:
 			for i in options.size():
-				out.append({"text": str(options[i]["text"]), "action": "complete_quest", "arg": "%s|%d" % [id, i]})
-	if job != null and job.job_type == "deliver" and job.recipient == target:
-		out.append({"text": "편지 전해 주기 (아르바이트)", "action": "job_deliver"})
-	var offers: Array = []
-	var scene := str(entry.get("id", "")).begins_with("scn.")
-	if not speaker.begins_with("obj:") and not scene:
-		for id in data.quest_order:
-			var q: Dictionary = data.quests[id]
-			if str(q.get("giver", "")) == target and q.get("offer", "auto") == "auto" and quest_available(id) \
-					and not _has_choice(base, "quest_offer", id):
-				var prefix := "부탁 듣기: " if q.get("kind", "quest") == "quest" else "이야기 나누기: "
-				offers.append({"text": prefix + str(q["name"]), "action": "quest_offer", "arg": id})
-		# Shop owners can always show their goods, wherever their day takes them (content alpha).
-		for shop_id in data.shops:
-			if str(data.shops[shop_id].get("owner", "")) == target and state.has_met(target) 					and not _has_choice(base, "open_shop", shop_id):
-				offers.append({"text": "%s 물건 보기" % str(data.shops[shop_id]["name"]), "action": "open_shop", "arg": shop_id})
-		if location == "card_room" and data.opponents.has(target) and target != str(poker_rules().get("opponent", "")) \
-				and not _has_choice(base, "start_poker", ""):
-			offers.append({"text": "한 판 할래요? (참가금 %d칩)" % poker_stake(), "action": "start_poker", "arg": "homegame|" + target})
+				handoff.append({"text": str(options[i]["text"]), "action": "complete_quest", "arg": "%s|%d" % [id, i]})
+		break
+	if handoff.is_empty() and job != null and job.job_type == "deliver" and job.recipient == target:
+		handoff = [{"text": "편지 전해 주기 (아르바이트)", "action": "job_deliver"}]
+	var authored_handoff: bool = handoff.size() == 1 and handoff[0].is_empty()
+	if authored_handoff:
+		handoff.clear()
+	var main_scene: bool = str(entry.get("id", "")).begins_with("scn.") or (entry.get("marker", false) and str(entry.get("signal", "main")) == "main")
+	var offer := {}
+	if handoff.is_empty() and not authored_handoff and resident and not main_scene:
+		offer = _topic_offer(target)
+	var busy: bool = not handoff.is_empty() or authored_handoff or not offer.is_empty()
+	if busy and not main_scene:
+		# Something more important is on: no poker offer next to it (a shop stays open in its own shop).
+		base = base.filter(func(c): return str(c.get("action", "")) != "start_poker")
+	if offer.is_empty() and not busy and resident and not main_scene:
+		offer = _place_offer(target, location, base)
+	var out: Array = handoff.duplicate()
 	out.append_array(base)
-	# Offers go before a trailing "close" so the goodbye stays last.
-	var insert_at := out.size()
-	if insert_at > 0 and out[insert_at - 1].get("action", "") == "close":
-		insert_at -= 1
-	for o in offers:
-		out.insert(insert_at, o)
-		insert_at += 1
+	if not offer.is_empty():
+		# The offer goes before a trailing goodbye so the goodbye stays last.
+		var at := out.size()
+		if at > 0 and out[at - 1].get("action", "") == "close":
+			at -= 1
+		out.insert(at, offer)
 	# Anything added to an entry without its own goodbye still gets a way out.
 	if not out.is_empty() and base.size() < out.size() and not _has_choice(out, "close", ""):
 		out.append({"text": "그만두기", "action": "close"})
 	return out
+
+
+## A resident's story or request to offer in this talk, or {}: a request that is part of the main story
+## ("main" in quests.json) first, then the resident's own story, then an ordinary request.
+func _topic_offer(target: String) -> Dictionary:
+	for id in data.quest_order:
+		var q: Dictionary = data.quests[id]
+		if q.get("main", false) and str(q.get("giver", "")) == target and q.get("offer", "auto") == "auto" and quest_available(id):
+			return {"text": "부탁 듣기: " + str(q["name"]), "action": "quest_offer", "arg": id}
+	for id in open_stories():
+		var q: Dictionary = data.quests[id]
+		if str(q.get("giver", "")) == target and q.get("offer", "auto") == "auto" and _unlocked(id):
+			return {"text": "이야기 나누기: " + str(q["name"]), "action": "quest_offer", "arg": id}
+	for id in data.quest_order:
+		var q: Dictionary = data.quests[id]
+		if data.is_quest(id) and str(q.get("giver", "")) == target and q.get("offer", "auto") == "auto" and quest_available(id):
+			return {"text": "부탁 듣기: " + str(q["name"]), "action": "quest_offer", "arg": id}
+	return {}
+
+
+## Everyday system offer that belongs to the place: the owner's goods in the shop, a hand in the card room.
+func _place_offer(target: String, location: String, base: Array) -> Dictionary:
+	for shop_id in data.shops:
+		var shop: Dictionary = data.shops[shop_id]
+		if str(shop.get("owner", "")) == target and state.has_met(target) and str(shop.get("location", location)) == location \
+				and not _has_choice(base, "open_shop", ""):
+			return {"text": "%s 물건 보기" % str(shop["name"]), "action": "open_shop", "arg": shop_id}
+	if location == "card_room" and data.opponents.has(target) and target != str(poker_rules().get("opponent", "")) \
+			and not _has_choice(base, "start_poker", ""):
+		return {"text": "한 판 할래요? (참가금 %d칩)" % poker_stake(), "action": "start_poker", "arg": "homegame|" + target}
+	return {}
+
+
+## Resident-written shop and poker choices only where they belong.
+func _fits_place(c: Dictionary, location: String) -> bool:
+	match str(c.get("action", "")):
+		"open_shop":
+			var shop: Dictionary = data.shops.get(str(c.get("arg", "")), {})
+			return str(shop.get("location", location)) == location
+		"start_poker":
+			var mode := str(c.get("arg", "")).get_slice("|", 0)
+			return location == "card_room" or not (mode in ["", "homegame"])
+	return true
 
 
 func _has_choice(choices: Array, action: String, arg: String) -> bool:
@@ -749,19 +828,70 @@ func _has_choice(choices: Array, action: String, arg: String) -> bool:
 	return false
 
 
-## "!" over a resident: a marked entry, something to hand over, a task to offer, or the letter.
-func npc_has_news(npc_id: String, location: String) -> bool:
+## Whether a resident shows any signal right now.
+func npc_has_news(npc_id: String, _location: String = "") -> bool:
+	return world_signals().has(npc_id)
+
+
+## Signals over residents (playability pass 1): npc_id -> "main" | "story" | "request".
+## The main story shows on one resident at a time, resident stories on at most two, requests and
+## hand-overs get the small mark. A first greeting shows nothing.
+func world_signals() -> Dictionary:
+	var out := {}
 	if state == null:
-		return false
-	if resolve_entry(npc_id, location).get("marker", false):
-		return true
+		return out
+	var main_npc := ""
+	var main_priority := -1
+	var stories: Array = []
+	var open := open_stories()
+	for npc in data.npc_order:
+		var loc := str(npc_place(npc).get("loc", ""))
+		var entry: Dictionary = resolve_entry(npc, loc) if loc != "" else {}
+		var sig := str(entry.get("signal", "main")) if entry.get("marker", false) else ""
+		if sig == "main":
+			if int(entry.get("priority", 0)) > main_priority:
+				main_npc = npc
+				main_priority = int(entry.get("priority", 0))
+			continue
+		var hand := _handoff_signal(npc)
+		if hand != "":
+			out[npc] = hand
+			continue
+		if sig == "story":
+			stories.append([-1, npc])
+			continue
+		if not state.has_met(npc):
+			continue
+		var ranked := false
+		for i in open.size():
+			var q: Dictionary = data.quests[open[i]]
+			if str(q.get("giver", "")) == npc and q.get("offer", "auto") == "auto" and _unlocked(open[i]):
+				stories.append([i, npc])
+				ranked = true
+				break
+		if ranked:
+			continue
+		for id in data.quest_order:
+			var q: Dictionary = data.quests[id]
+			if data.is_quest(id) and str(q.get("giver", "")) == npc and q.get("offer", "auto") == "auto" and quest_available(id):
+				out[npc] = "request"
+				break
+	if main_npc != "":
+		out[main_npc] = "main"
+	stories.sort_custom(func(x, y): return x[0] < y[0])
+	for s in stories.slice(0, STORY_SIGNALS_MAX):
+		if not out.has(s[1]):
+			out[s[1]] = "story"
+	return out
+
+
+## A task ending with this resident: "story" for a resident story, "request" otherwise.
+func _handoff_signal(npc: String) -> String:
 	for id in data.quest_order:
 		var q: Dictionary = data.quests[id]
-		if str(q.get("target", "")) == npc_id and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
-			return true
-		if str(q.get("giver", "")) == npc_id and q.get("offer", "auto") == "auto" and quest_available(id):
-			return true
-	return job != null and job.job_type == "deliver" and job.recipient == npc_id
+		if str(q.get("target", "")) == npc and QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+			return "request" if data.is_quest(id) else "story"
+	return "request" if job != null and job.job_type == "deliver" and job.recipient == npc else ""
 
 
 # --- projects, home, shops --------------------------------------------------------
@@ -953,7 +1083,7 @@ func things_to_do() -> Array:
 		out.append("이야기를 들려줄 이웃: " + ", ".join(news.slice(0, 4)) + (" 외 %d명" % (news.size() - 4) if news.size() > 4 else ""))
 	var reqs := data.quest_order.filter(func(id): return data.is_quest(id) and quest_available(id)).size()
 	if reqs > 0:
-		out.append("게시판에 새 부탁이 %d개 있어요." % reqs)
+		out.append("부탁할 일이 있는 이웃이 있어요 (%d건). 작은 느낌표를 찾아보세요." % reqs)
 	var close := 0
 	for npc in data.npc_order:
 		if state.has_met(npc) and int(state.relation(npc)["friendship"]) < 30:
@@ -992,6 +1122,8 @@ func story_news() -> String:
 	elif not f.call("story.act1_complete"):
 		lines.append("[1막 · 사라진 초대장] 단서 — 주거 골목 우편함: %s · 숲길 안내판: %s" % [
 			"찾음" if f.call("story.clue_postbox") else "아직", "찾음" if f.call("story.clue_grove") else "아직"])
+	elif not f.call("story.act2_started"):
+		lines.append("[1막 끝] 모두 환영! 저녁엔 광장과 시장 찻집에서 교류 모임이 열려요. 하룻밤 지나면 새 소식이 있을 거예요.")
 	elif not f.call("story.act2_complete"):
 		lines.append("[2막 · 서로 다른 테이블] 루미 이야기: %s · 카일 이야기: %s · 모임 준비: %s" % [
 			"들음" if f.call("story.act2_heard_lumi") else "아직", "들음" if f.call("story.act2_heard_kyle") else "아직",

@@ -5,7 +5,6 @@
    "id": "kyle_greet",
    "npc": "npc_kyle",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_kyle"
    },
@@ -148,7 +147,6 @@
    "id": "nora_greet",
    "npc": "npc_nora",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_nora"
    },
@@ -291,7 +289,6 @@
    "id": "rira_greet",
    "npc": "npc_rira",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_rira"
    },
@@ -436,7 +433,6 @@
    "id": "taeo_greet",
    "npc": "npc_taeo",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_taeo"
    },
@@ -581,7 +577,6 @@
    "id": "bibi_greet",
    "npc": "npc_bibi",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_bibi"
    },
@@ -724,7 +719,6 @@
    "id": "ella_greet",
    "npc": "npc_ella",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_ella"
    },
@@ -867,7 +861,6 @@
    "id": "haru_greet",
    "npc": "npc_haru",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_haru"
    },
@@ -1010,7 +1003,6 @@
    "id": "juno_greet",
    "npc": "npc_juno",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_juno"
    },
@@ -1159,7 +1151,6 @@
    "id": "miri_greet",
    "npc": "npc_miri",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_miri"
    },
@@ -1302,7 +1293,6 @@
    "id": "ona_greet",
    "npc": "npc_ona",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_ona"
    },
@@ -1445,7 +1435,6 @@
    "id": "ren_greet",
    "npc": "npc_ren",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_ren"
    },
@@ -1588,7 +1577,6 @@
    "id": "yul_greet",
    "npc": "npc_yul",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_yul"
    },
@@ -1731,7 +1719,6 @@
    "id": "sia_greet",
    "npc": "npc_sia",
    "priority": 80,
-   "marker": true,
    "conditions": {
     "not_met": "npc_sia"
    },

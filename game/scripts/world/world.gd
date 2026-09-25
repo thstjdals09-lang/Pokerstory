@@ -255,8 +255,9 @@ func sync_job_pickups() -> void:
 func refresh_markers() -> void:
 	if Game.state == null:
 		return
+	var signals: Dictionary = Game.world_signals()
 	for npc_id in npc_nodes:
-		npc_nodes[npc_id].show_marker = Game.npc_has_news(npc_id, location_id)
+		npc_nodes[npc_id].marker_kind = str(signals.get(npc_id, ""))
 
 
 # --- home editing ------------------------------------------------------------

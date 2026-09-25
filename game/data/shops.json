@@ -110,7 +110,8 @@
       "project_complete": "board_restoration"
      }
     }
-   ]
+   ],
+   "location": "small_shop"
   },
   "bibi_workshop": {
    "name": "비비의 공방",
@@ -220,7 +221,8 @@
       ]
      }
     }
-   ]
+   ],
+   "location": "workshop"
   },
   "taeo_tailor": {
    "name": "테오의 수선 가게",
@@ -282,7 +284,8 @@
       ]
      }
     }
-   ]
+   ],
+   "location": "tailor"
   },
   "swap_shop": {
    "name": "작은 교환대",
@@ -376,7 +379,8 @@
       ]
      }
     }
-   ]
+   ],
+   "location": "market"
   }
  },
  "trades": [

@@ -1539,7 +1539,17 @@
    "lines": [
     "카드룸 게시판. 족보 안내 두 장이 붙어 있어요."
    ],
-   "choices": []
+   "choices": [
+    {
+     "text": "포커 연습 한 판 (칩 없이)",
+     "action": "start_poker",
+     "arg": "practice|"
+    },
+    {
+     "text": "닫기",
+     "action": "close"
+    }
+   ]
   },
   {
    "id": "card_room_notes_act2",
@@ -1566,7 +1576,8 @@
    "npc": "npc_taeo",
    "priority": 12,
    "conditions": {
-    "met": "npc_taeo"
+    "met": "npc_taeo",
+    "location": "tailor"
    },
    "lines": [
     "구경하고 가요. 사지 않아도 괜찮아요."
@@ -1588,7 +1599,8 @@
    "npc": "npc_bibi",
    "priority": 12,
    "conditions": {
-    "met": "npc_bibi"
+    "met": "npc_bibi",
+    "location": "workshop"
    },
    "lines": [
     "구경하고 가요. 사지 않아도 괜찮아요."
@@ -1610,7 +1622,8 @@
    "npc": "npc_ren",
    "priority": 12,
    "conditions": {
-    "met": "npc_ren"
+    "met": "npc_ren",
+    "location": "market"
    },
    "lines": [
     "구경하고 가요. 사지 않아도 괜찮아요."
