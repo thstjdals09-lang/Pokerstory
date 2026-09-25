@@ -1,8 +1,10 @@
 extends Node3D
 ## 3D diorama prototype of the village square, built only from primitive shapes (no image assets).
-## Layout comes from the same data as the 2D square (data/locations.json, 100 px = 1 m; x -> X,
-## y -> Z, fronts face +Z toward the camera). The 2D game is untouched; run with
-## run_diorama.bat (Forward+ renderer). Keys: WASD / arrows walk, T day <-> evening, Esc quit.
+## Composition pass: the square is re-laid out for the camera (fountain in the middle, buildings
+## around it, props filling the space, paths to every door, trees and fences framing the edges).
+## The same buildings, doors and gates as the game data (locations.json) keep their links; only the
+## 3D placement differs. Metres; the camera looks from +Z. Run with run_diorama.bat (Forward+).
+## Keys: WASD / arrows walk, T day <-> evening, Esc quit.
 ## Screenshot mode: -- --shot=<png> [--evening] quits after saving one frame.
 
 const PX := 0.01
@@ -31,14 +33,11 @@ func _ready() -> void:
 			_shot = a.get_slice("=", 1)
 		if a == "--evening":
 			_evening = true
-	var loc: Dictionary = Game.data.locations["village_square"]
 	_build_world_env()
-	_build_ground(loc)
-	for b in loc["buildings"]:
+	_build_ground()
+	for b in BUILDINGS:
 		_build_building(b)
-	for g in loc["gates"]:
-		_gate(_v(g["pos"]) + Vector3(0, 0, 0.1))
-	_build_decor(loc)
+	_build_decor()
 	_build_people()
 	_build_camera()
 	_build_hud()
@@ -167,7 +166,7 @@ func _build_world_env() -> void:
 	add_child(we)
 	_sun = DirectionalLight3D.new()
 	_sun.shadow_enabled = true
-	_sun.directional_shadow_max_distance = 40.0
+	_sun.directional_shadow_max_distance = 70.0
 	_sun.rotation_degrees = Vector3(-48, -35, 0)
 	add_child(_sun)
 
@@ -182,14 +181,16 @@ func _apply_time() -> void:
 		sm.ground_horizon_color = Color("#2a2a44")
 		_env.ambient_light_energy = 0.4
 		_env.glow_intensity = 0.7
+		_env.tonemap_exposure = 1.0
 	else:
 		_sun.light_color = Color("#ffe2b5")
 		_sun.light_energy = 1.05
 		sm.sky_top_color = Color("#8fb6e8")
 		sm.sky_horizon_color = Color("#f2dcb8")
 		sm.ground_horizon_color = Color("#b9a27a")
-		_env.ambient_light_energy = 0.55
+		_env.ambient_light_energy = 0.45
 		_env.glow_intensity = 0.3
+		_env.tonemap_exposure = 0.82
 	for l in _night_lights:
 		l.visible = _evening
 	for g in _glows:
@@ -200,88 +201,115 @@ func _apply_time() -> void:
 
 func _build_camera() -> void:
 	_cam = Camera3D.new()
-	_cam.fov = 30.0
+	# A long lens from far away: little size difference front to back, steady verticals.
+	_cam.fov = 15.5
 	var attrs := CameraAttributesPractical.new()
 	attrs.dof_blur_far_enabled = true
-	attrs.dof_blur_far_distance = 20.0
-	attrs.dof_blur_far_transition = 9.0
+	attrs.dof_blur_far_distance = CAM_DIST + 6.0
+	attrs.dof_blur_far_transition = 6.0
 	attrs.dof_blur_near_enabled = true
-	attrs.dof_blur_near_distance = 12.5
+	attrs.dof_blur_near_distance = CAM_DIST - 5.0
 	attrs.dof_blur_near_transition = 4.0
-	attrs.dof_blur_amount = 0.09
+	attrs.dof_blur_amount = 0.07
 	_cam.attributes = attrs
 	add_child(_cam)
 	_cam.current = true
 	_follow(1.0)
 
 
-## The camera looks down at about 40 degrees from the south, following the player softly.
+const CAM_DIST := 40.0
+const CAM_PITCH := deg_to_rad(42.0)
+## The frame stays on the square; it leans a little toward the player.
+const CAM_CENTRE := Vector3(0.3, 0, -1.5)
+
+
 func _follow(weight: float) -> void:
-	var focus := _player.position
-	focus.x = clampf(focus.x, 5.0, 11.0)
-	focus.z = clampf(focus.z, 3.8, 8.0)
-	var want := focus + Vector3(0, 11.0, 13.0)
-	_cam.position = _cam.position.lerp(want, weight)
-	_cam.look_at(_cam.position - Vector3(0, 11.0, 13.0), Vector3.UP)
+	var lean := (_player.position - CAM_CENTRE) * 0.3
+	lean.x = clampf(lean.x, -1.6, 1.6)
+	lean.z = clampf(lean.z, -1.0, 1.2)
+	lean.y = 0.0
+	var focus := CAM_CENTRE + lean
+	var back := Vector3(0, sin(CAM_PITCH), cos(CAM_PITCH)) * CAM_DIST
+	_cam.position = _cam.position.lerp(focus + back, weight)
+	_cam.look_at(_cam.position - back, Vector3.UP)
 
 
 # --- ground --------------------------------------------------------------------------------------
 
-func _build_ground(loc: Dictionary) -> void:
-	var size := _v(loc["size"])
+func _paved(c: Vector2) -> bool:
+	if c.length() < PLAZA_R:
+		return true
+	var ends: Array = [GATE_AT + Vector2(0, 4.0), Vector2(0.6, 9.0)]
+	for b in BUILDINGS:
+		ends.append(_door_world(b))
+	for e in ends:
+		if Geometry2D.get_closest_point_to_segment(c, Vector2.ZERO, e).distance_to(c) < 0.8:
+			return true
+	return false
+
+
+func _in_building(c: Vector2, pad: float = 0.0) -> bool:
+	for b in BUILDINGS:
+		var rot: float = b["rot"]
+		var rel: Vector2 = c - Vector2(b["at"])
+		var local := Vector2(rel.x * cos(rot) - rel.y * sin(rot), rel.x * sin(rot) + rel.y * cos(rot))
+		if absf(local.x) < float(b["w"]) / 2.0 + pad and absf(local.y) < float(b["d"]) / 2.0 + pad:
+			return true
+	return false
+
+
+func _build_ground() -> void:
 	var grass := StandardMaterial3D.new()
 	var noise := FastNoiseLite.new()
-	noise.frequency = 0.02
+	noise.frequency = 0.03
 	var nt := NoiseTexture2D.new()
 	nt.noise = noise
 	nt.seamless = true
 	var ramp := Gradient.new()
-	ramp.set_color(0, Color("#6f8f3e"))
-	ramp.set_color(1, Color("#9bbb55"))
+	ramp.set_color(0, Color("#5f8034"))
+	ramp.set_color(1, Color("#8aa94a"))
 	nt.color_ramp = ramp
 	grass.albedo_texture = nt
-	grass.uv1_scale = Vector3(6, 6, 6)
+	grass.uv1_scale = Vector3(8, 8, 8)
 	grass.roughness = 0.95
 	var g := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
-	pm.size = Vector2(size.x + 20.0, size.z + 20.0)
+	pm.size = Vector2(60, 50)
 	g.mesh = pm
 	g.material_override = grass
-	g.position = Vector3(size.x / 2.0, 0, size.z / 2.0)
 	add_child(g)
 	var floor_body := StaticBody3D.new()
 	var cs := CollisionShape3D.new()
 	cs.shape = WorldBoundaryShape3D.new()
 	floor_body.add_child(cs)
 	add_child(floor_body)
-	# Edges of the walkable square.
-	_solid_box(Vector3(size.x / 2.0, 1, -0.5), Vector3(size.x + 2, 2, 1))
-	_solid_box(Vector3(size.x / 2.0, 1, size.z + 0.5), Vector3(size.x + 2, 2, 1))
-	_solid_box(Vector3(-0.5, 1, size.z / 2.0), Vector3(1, 2, size.z + 2))
-	_solid_box(Vector3(size.x + 0.5, 1, size.z / 2.0), Vector3(1, 2, size.z + 2))
-	# Cobblestones: flat rounded stones on the paths, concentric rings on the plaza.
+	# Walkable area: the plaza between the buildings.
+	_solid_box(Vector3(0, 1, -8.6), Vector3(24, 2, 1))
+	_solid_box(Vector3(0, 1, 7.6), Vector3(24, 2, 1))
+	_solid_box(Vector3(-9.6, 1, 0), Vector3(1, 2, 20))
+	_solid_box(Vector3(9.6, 1, 0), Vector3(1, 2, 20))
+	# Paving: rings around the fountain, then laid stones out to the doors and the gate.
 	var rng := RandomNumberGenerator.new()
-	rng.seed = 7
+	rng.seed = 11
 	var stones: Array = []
-	for p in loc["paths"]:
-		var r := Rect2(float(p[0]) * PX, float(p[1]) * PX, float(p[2]) * PX, float(p[3]) * PX)
-		var y := r.position.y + 0.1
-		while y < r.end.y:
-			var x := r.position.x + 0.1 + (0.08 if int(y * 10) % 2 == 0 else 0.0)
-			while x < r.end.x:
-				var c := Vector2(x + rng.randf_range(-0.03, 0.03), y + rng.randf_range(-0.03, 0.03))
-				if c.distance_to(Vector2(8.0, 5.6)) > 1.72:
-					stones.append([c, rng.randf_range(0.075, 0.1)])
-				x += 0.18
-			y += 0.17
-	var plaza := Vector2(8.0, 5.6)
-	var ring := 0.35
-	while ring < 1.75:
-		var n := int(TAU * ring / 0.2)
+	var ring := 1.28
+	while ring < 2.9:
+		var n := int(TAU * ring / 0.24)
 		for i in n:
-			var a := TAU * (i + rng.randf() * 0.2) / n
-			stones.append([plaza + Vector2(cos(a), sin(a)) * ring, rng.randf_range(0.085, 0.11)])
-		ring += 0.2
+			var a := TAU * (i + rng.randf() * 0.25) / n
+			stones.append([Vector2(cos(a), sin(a)) * ring, rng.randf_range(0.1, 0.13)])
+		ring += 0.24
+	var z := -9.0
+	var row := 0
+	while z < 9.5:
+		var x := -11.0 + (0.12 if row % 2 == 0 else 0.0)
+		while x < 11.0:
+			var c := Vector2(x + rng.randf_range(-0.03, 0.03), z + rng.randf_range(-0.03, 0.03))
+			if c.length() >= 2.95 and _paved(c) and not _in_building(c):
+				stones.append([c, rng.randf_range(0.1, 0.13)])
+			x += 0.25
+		z += 0.23
+		row += 1
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.use_colors = true
@@ -295,40 +323,40 @@ func _build_ground(loc: Dictionary) -> void:
 	stone.material = smat
 	mm.mesh = stone
 	mm.instance_count = stones.size()
-	var sand := [Color("#d9c09a"), Color("#cdb088"), Color("#e4cfa8"), Color("#bfa37e"), Color("#d6bd97")]
+	var sand := [Color("#cbb08a"), Color("#bea07a"), Color("#d8c19c"), Color("#b39574"), Color("#c7ab86"), Color("#a9927a")]
 	for i in stones.size():
-		var s: Array = stones[i]
-		var c: Vector2 = s[0]
-		var rad: float = s[1]
-		var t := Transform3D(Basis().rotated(Vector3.UP, rng.randf() * TAU).scaled(Vector3(rad * rng.randf_range(1.0, 1.3), 0.15, rad)), Vector3(c.x, 0.02, c.y))
+		var st: Array = stones[i]
+		var c: Vector2 = st[0]
+		var rad: float = st[1]
+		var t := Transform3D(Basis().rotated(Vector3.UP, rng.randf() * TAU).scaled(Vector3(rad * rng.randf_range(1.0, 1.25), 0.15, rad)), Vector3(c.x, 0.02, c.y))
 		mm.set_instance_transform(i, t)
 		mm.set_instance_color(i, sand[rng.randi() % sand.size()])
 	var mmi := MultiMeshInstance3D.new()
 	mmi.multimesh = mm
 	add_child(mmi)
-	# Mortar under the stones so gaps read as paving, not grass.
-	var mortar := _mat(Color("#9c8a6e"))
-	for p in loc["paths"]:
-		_box(self, Vector3(float(p[2]) * PX, 0.01, float(p[3]) * PX), Vector3((float(p[0]) + float(p[2]) / 2.0) * PX, 0.005, (float(p[1]) + float(p[3]) / 2.0) * PX), mortar)
-	_cyl(self, 1.75, 1.75, 0.01, Vector3(8.0, 0.005, 5.6), mortar, 48)
-	# Grass tufts and wildflowers scattered on the lawn.
-	_scatter_grass(size, rng, loc)
+	# Mortar under the stones.
+	var mortar := MultiMesh.new()
+	mortar.transform_format = MultiMesh.TRANSFORM_3D
+	var tile := BoxMesh.new()
+	tile.size = Vector3(0.25, 0.01, 0.23)
+	tile.material = _mat(Color("#8c7a60"))
+	mortar.mesh = tile
+	var cells: Array = []
+	for i in 88:
+		for j in 80:
+			var c := Vector2(-11.0 + i * 0.25, -9.0 + j * 0.23)
+			if _paved(c) and not _in_building(c):
+				cells.append(c)
+	mortar.instance_count = cells.size()
+	for i in cells.size():
+		mortar.set_instance_transform(i, Transform3D(Basis(), Vector3(cells[i].x, 0.004, cells[i].y)))
+	var mo := MultiMeshInstance3D.new()
+	mo.multimesh = mortar
+	add_child(mo)
+	_scatter_grass(rng)
 
 
-func _scatter_grass(size: Vector3, rng: RandomNumberGenerator, loc: Dictionary) -> void:
-	var blocked: Array = []
-	for p in loc["paths"]:
-		blocked.append(Rect2(float(p[0]) * PX - 0.1, float(p[1]) * PX - 0.1, float(p[2]) * PX + 0.2, float(p[3]) * PX + 0.2))
-	for b in loc["buildings"]:
-		var r: Array = b["rect"]
-		blocked.append(Rect2(float(r[0]) * PX, float(r[1]) * PX, float(r[2]) * PX, float(r[3]) * PX))
-	var on_lawn := func(c: Vector2) -> bool:
-		if c.distance_to(Vector2(8.0, 5.6)) < 1.9:
-			return false
-		for r in blocked:
-			if r.has_point(c):
-				return false
-		return true
+func _scatter_grass(rng: RandomNumberGenerator) -> void:
 	var tuft := MultiMesh.new()
 	tuft.transform_format = MultiMesh.TRANSFORM_3D
 	tuft.use_colors = true
@@ -342,50 +370,34 @@ func _scatter_grass(size: Vector3, rng: RandomNumberGenerator, loc: Dictionary) 
 	cone.material = tm
 	tuft.mesh = cone
 	var pts: Array = []
-	for i in 2600:
-		var c := Vector2(rng.randf() * size.x, rng.randf() * size.z)
-		if on_lawn.call(c):
+	for i in 5200:
+		var c := Vector2(rng.randf_range(-14, 14), rng.randf_range(-12, 11))
+		if not _paved(c) and not _in_building(c, 0.1):
 			pts.append(c)
 	tuft.instance_count = pts.size()
 	for i in pts.size():
 		var c: Vector2 = pts[i]
-		tuft.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ONE * rng.randf_range(0.7, 1.4)), Vector3(c.x, 0.07, c.y)))
-		tuft.set_instance_color(i, Color("#5f8a34").lerp(Color("#a9c65a"), rng.randf()))
+		tuft.set_instance_transform(i, Transform3D(Basis().scaled(Vector3.ONE * rng.randf_range(0.7, 1.5)), Vector3(c.x, 0.07, c.y)))
+		tuft.set_instance_color(i, Color("#557a2e").lerp(Color("#9dba55"), rng.randf()))
 	var ti := MultiMeshInstance3D.new()
 	ti.multimesh = tuft
 	add_child(ti)
-	var flowers := MultiMesh.new()
-	flowers.transform_format = MultiMesh.TRANSFORM_3D
-	flowers.use_colors = true
-	var bud := SphereMesh.new()
-	bud.radius = 0.035
-	bud.height = 0.05
-	bud.radial_segments = 6
-	bud.rings = 3
-	var fm := _mat(Color.WHITE, 0.7)
-	fm.vertex_color_use_as_albedo = true
-	bud.material = fm
-	flowers.mesh = bud
-	var fpts: Array = []
-	for _cluster in 70:
-		var c := Vector2(rng.randf() * size.x, rng.randf() * size.z)
-		if not on_lawn.call(c):
-			continue
-		var col: Color = [Color("#fff4e0"), Color("#f7c6d9"), Color("#ffd75e"), Color("#b79be8")][rng.randi() % 4]
-		for i in 7:
-			fpts.append([c + Vector2(rng.randf_range(-0.18, 0.18), rng.randf_range(-0.18, 0.18)), col])
-	flowers.instance_count = fpts.size()
-	for i in fpts.size():
-		var f: Array = fpts[i]
-		var c: Vector2 = f[0]
-		flowers.set_instance_transform(i, Transform3D(Basis(), Vector3(c.x, 0.1, c.y)))
-		flowers.set_instance_color(i, f[1])
-	var fi := MultiMeshInstance3D.new()
-	fi.multimesh = flowers
-	add_child(fi)
 
 
 # --- buildings -----------------------------------------------------------------------------------
+
+## Buildings around the fountain: game id, centre (x, z), size (w, d), facing (radians; 0 faces the
+## camera, negative turns the front to the left), door offset along the front.
+const BUILDINGS := [
+	{"id": "home_building", "at": Vector2(0.3, -6.3), "w": 3.2, "d": 2.4, "rot": 0.0, "door": 0.0},
+	{"id": "shop_building", "at": Vector2(-4.7, -5.9), "w": 3.6, "d": 2.6, "rot": 0.14, "door": 0.8},
+	{"id": "card_room_building", "at": Vector2(7.1, -3.1), "w": 4.0, "d": 3.0, "rot": -0.62, "door": 0.0},
+	{"id": "community_hall_building", "at": Vector2(-7.3, -0.5), "w": 3.4, "d": 2.8, "rot": 0.68, "door": 0.0},
+]
+const PLAZA_R := 4.3
+## Where the gate out of the square stands (the path to the waterfront).
+const GATE_AT := Vector2(3.5, 5.7)
+
 
 const STYLES := {
 	"shop_building": {"wall": "#efe0c4", "roof": "#c9573f", "trim": "#6b4428", "h": 2.4, "floors": 2},
@@ -395,18 +407,28 @@ const STYLES := {
 }
 
 
+func _door_world(b: Dictionary) -> Vector2:
+	var rot: float = b["rot"]
+	var local := Vector2(float(b["door"]), float(b["d"]) / 2.0 + 0.4)
+	return Vector2(b["at"]) + Vector2(local.x * cos(rot) + local.y * sin(rot), -local.x * sin(rot) + local.y * cos(rot))
+
+
 func _build_building(b: Dictionary) -> void:
 	var st: Dictionary = STYLES.get(b["id"], STYLES["home_building"])
-	var r: Array = b["rect"]
-	var w := float(r[2]) * PX
-	var d := float(r[3]) * PX * 0.9
-	var front := (float(r[1]) + float(r[3])) * PX
-	var cx := (float(r[0]) + float(r[2]) / 2.0) * PX
-	var base := Vector3(cx, 0, front - d / 2.0)
+	var w: float = b["w"]
+	var d: float = b["d"]
 	var root := Node3D.new()
-	root.position = base
+	root.position = Vector3(b["at"].x, 0, b["at"].y)
+	root.rotation.y = b["rot"]
 	add_child(root)
-	_solid_box(base + Vector3(0, 1, 0), Vector3(w, 2, d))
+	var body := StaticBody3D.new()
+	var bcs := CollisionShape3D.new()
+	var bshape := BoxShape3D.new()
+	bshape.size = Vector3(w, 2, d)
+	bcs.shape = bshape
+	body.add_child(bcs)
+	body.position = Vector3(0, 1, 0)
+	root.add_child(body)
 	var h: float = st["h"]
 	var wall := _mat(Color(st["wall"]))
 	var trim := _mat(Color(st["trim"]))
@@ -425,7 +447,7 @@ func _build_building(b: Dictionary) -> void:
 	_prism(root, Vector3(d + 0.5, roof_h, w + 0.4), Vector3(0, 0.35 + h + roof_h / 2.0, 0), _mat(Color(st["roof"]), 0.75), PI / 2.0)
 	_box(root, Vector3(0.35, 0.9, 0.35), Vector3(w * 0.32, 0.35 + h + roof_h * 0.6, -d * 0.15), stone)
 	# Door on the front, where the data's door is.
-	var dx := float(b["door"][0]) * PX - cx
+	var dx: float = b["door"]
 	_box(root, Vector3(0.6, 1.15, 0.08), Vector3(dx, 0.35 + 0.575, d / 2.0 + 0.05), _mat(Color("#7a4b2a")))
 	_box(root, Vector3(0.8, 0.1, 0.12), Vector3(dx, 0.35 + 1.2, d / 2.0 + 0.06), trim)
 	_box(root, Vector3(0.9, 0.18, 0.35), Vector3(dx, 0.09, d / 2.0 + 0.2), stone)
@@ -448,8 +470,8 @@ func _build_building(b: Dictionary) -> void:
 	spill.light_color = Color("#ffb863")
 	spill.light_energy = 0.9
 	spill.omni_range = 3.2
-	spill.position = root.position + Vector3(0, 1.2, d / 2.0 + 0.9)
-	add_child(spill)
+	spill.position = Vector3(0, 1.2, d / 2.0 + 0.9)
+	root.add_child(spill)
 	_night_lights.append(spill)
 	match b["id"]:
 		"shop_building":
@@ -490,49 +512,86 @@ func _lantern(parent: Node3D, at: Vector3) -> void:
 	l.light_color = Color("#ffb863")
 	l.light_energy = 1.1
 	l.omni_range = 2.6
-	l.position = (parent.position if parent != self else Vector3.ZERO) + at
-	add_child(l)
+	l.position = at
+	parent.add_child(l)
 	_night_lights.append(l)
 
 
 # --- props ---------------------------------------------------------------------------------------
 
-func _build_decor(loc: Dictionary) -> void:
-	for d in loc["decor"]:
-		if d.has("conditions") and not Conditions.check(d["conditions"], Game.state if Game.state != null else GameState.new(), "village_square"):
-			continue
-		var at: Vector3 = _v(d.get("art_pos", d.get("pos", [0, 0])))
-		if d.has("rect") and not d.has("art_pos"):
-			var r: Array = d["rect"]
-			at = Vector3((float(r[0]) + float(r[2]) / 2.0) * PX, 0, (float(r[1]) + float(r[3])) * PX)
-		match str(d.get("art", d.get("type", ""))):
-			"sq.fountain":
-				_fountain(at)
-			"sq.tree":
-				_tree(at, Color("#6f9a45"))
-			"sq.tree_blossom":
-				_tree(at, Color("#f2b8c8"))
-			"sq.bush":
-				_bush(at)
-			"sq.planter":
-				_planter(at)
-			"sq.lamp":
-				_lamp(at)
-			"sq.bench":
-				_bench(at)
-			"sq.board":
-				_board(at)
-			"sq.booth":
-				_booth(at)
-			"sq.crates":
-				_crates(at)
-			"sq.pot":
-				_pot(at)
-	for it in loc["interactables"]:
-		if str(it.get("art", "")) == "sq.aframe":
-			_aframe(_v(it["pos"]))
-	for s in loc.get("signs", []):
-		_signpost(_v(s["pos"]))
+func _p(x: float, z: float) -> Vector3:
+	return Vector3(x, 0, z)
+
+
+## Props laid out for the camera: flower beds and lamps between the fountain and the buildings,
+## the notice board and a bench at the sides, trees and fences framing the edges.
+func _build_decor() -> void:
+	_fountain(Vector3.ZERO)
+	# flower beds (raised borders) ring the plaza without blocking the paths
+	for bed in [[-1.9, -3.6, 1.7, 0.9], [2.3, -3.8, 1.7, 0.9], [-3.4, -1.9, 1.3, 1.0], [3.6, -2.7, 1.2, 0.9],
+			[-2.4, 3.3, 1.8, 0.9], [2.1, 3.6, 1.5, 0.9], [-5.6, 2.4, 1.6, 1.0], [5.7, 1.2, 1.2, 1.4], [-5.8, -3.6, 1.2, 0.8]]:
+		_bed(_p(bed[0], bed[1]), bed[2], bed[3])
+	for at in [_p(-3.2, -3.0), _p(-2.1, 3.0), _p(4.3, -3.6), _p(4.7, 2.7), _p(2.8, 5.8), _p(4.2, 5.8), _p(-1.0, -4.6)]:
+		_lamp(at)
+	_board(_p(-3.6, 1.5), 0.35)
+	_bench(_p(5.0, 0.9), -1.25)
+	_bench(_p(-4.3, -0.4), 1.2)
+	_booth(_p(7.4, 2.5), -0.55)
+	_aframe(_p(5.1, -1.3))
+	_crates(_p(-6.9, -4.3))
+	_crates(_p(-2.6, -5.0))
+	_pot(_p(-0.5, -4.9))
+	_pot(_p(1.1, -4.9))
+	_pot(_p(5.4, -2.3))
+	_pot(_p(-5.6, 0.9))
+	_mailbox(_p(1.9, -4.8))
+	_gate(Vector3(GATE_AT.x, 0, GATE_AT.y))
+	# framing: trees behind and at the sides, fences, big bushes in the near corners
+	for t in [[-9.8, -8.4, false], [-2.4, -8.9, true], [3.4, -9.0, false], [9.9, -7.4, true], [-10.4, 3.9, false],
+			[10.5, 4.6, false], [-8.9, -5.6, true], [9.6, -1.2, false], [-6.0, -8.2, false], [6.2, -7.8, false]]:
+		_tree(_p(t[0], t[1]), Color("#f0b3c4") if t[2] else Color("#6a9440"), 1.25)
+	_fence(_p(-10, -8.0), _p(10, -8.0))
+	_fence(_p(-9.0, 6.4), _p(-1.4, 6.4))
+	_fence(_p(9.2, 0.5), _p(9.2, 6.4))
+	for b in [[-7.6, 5.4], [-6.2, 5.9], [-4.4, 6.0], [6.6, 5.2], [8.2, 4.8], [-9.3, 4.6], [9.2, 6.2]]:
+		_bush(_p(b[0], b[1]), 1.8)
+	# near corners: big trees that frame the view
+	_tree(_p(-8.8, 6.3), Color("#5f8a3a"), 1.5)
+	_tree(_p(8.9, 6.6), Color("#6a9440"), 1.4)
+	for b in [[-8.3, 2.1], [8.6, -4.8], [-1.4, -7.3], [2.4, -7.2]]:
+		_bush(_p(b[0], b[1]), 1.1)
+
+
+## A raised flower bed: low stone border, soil, and a mound of mixed flowers.
+func _bed(at: Vector3, w: float, d: float) -> void:
+	var stone := _mat(Color("#a89a86"))
+	_box(self, Vector3(w + 0.12, 0.2, d + 0.12), at + Vector3(0, 0.1, 0), stone)
+	_box(self, Vector3(w, 0.22, d), at + Vector3(0, 0.12, 0), _mat(Color("#5a4230")))
+	_ball(self, 0.5, at + Vector3(0, 0.22, 0), _mat(Color("#5e8a38")), Vector3(w * 0.95, 0.5, d * 0.95))
+	var cols := [Color("#f7a8c0"), Color("#fff1d6"), Color("#ffd75e"), Color("#b79be8"), Color("#e8894a"), Color("#c9a0f0")]
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(at.x * 100 + at.z * 7)
+	for i in int(w * d * 22):
+		var q := Vector3(rng.randf_range(-w / 2.0 + 0.1, w / 2.0 - 0.1), 0, rng.randf_range(-d / 2.0 + 0.1, d / 2.0 - 0.1))
+		_ball(self, rng.randf_range(0.05, 0.08), at + q + Vector3(0, 0.42 + rng.randf() * 0.1, 0), _mat(cols[rng.randi() % cols.size()]))
+	_solid_box(at + Vector3(0, 1, 0), Vector3(w, 2, d))
+
+
+func _fence(a: Vector3, b: Vector3) -> void:
+	var wood := _mat(Color("#8a6040"))
+	var n := int(a.distance_to(b) / 0.9)
+	var dir := (b - a).normalized()
+	var ang := atan2(dir.x, dir.z)
+	for i in n + 1:
+		_box(self, Vector3(0.1, 0.8, 0.1), a + dir * (i * 0.9) + Vector3(0, 0.4, 0), wood)
+	for y in [0.35, 0.65]:
+		var rail := _box(self, Vector3(0.06, 0.07, a.distance_to(b)), (a + b) / 2.0 + Vector3(0, y, 0), wood)
+		rail.rotation.y = ang
+
+
+func _mailbox(at: Vector3) -> void:
+	_box(self, Vector3(0.08, 0.8, 0.08), at + Vector3(0, 0.4, 0), _mat(Color("#6b4a30")))
+	_box(self, Vector3(0.3, 0.26, 0.22), at + Vector3(0, 0.9, 0), _mat(Color("#c9473f")))
 
 
 func _fountain(at: Vector3) -> void:
@@ -556,21 +615,21 @@ func _fountain(at: Vector3) -> void:
 	_solid_round(at, 1.0)
 
 
-func _tree(at: Vector3, leaf: Color) -> void:
-	_cyl(self, 0.1, 0.14, 1.0, at + Vector3(0, 0.5, 0), _mat(Color("#6b4a30")))
+func _tree(at: Vector3, leaf: Color, k: float = 1.0) -> void:
+	_cyl(self, 0.1 * k, 0.14 * k, 1.0 * k, at + Vector3(0, 0.5 * k, 0), _mat(Color("#6b4a30")))
 	var m := _mat(leaf)
 	var m2 := _mat(leaf.darkened(0.12))
-	_ball(self, 0.62, at + Vector3(0, 1.35, 0), m)
-	_ball(self, 0.45, at + Vector3(-0.38, 1.15, 0.12), m2)
-	_ball(self, 0.45, at + Vector3(0.38, 1.2, -0.05), m2)
-	_ball(self, 0.4, at + Vector3(0.05, 1.75, 0.05), m)
+	_ball(self, 0.62 * k, at + Vector3(0, 1.35 * k, 0), m)
+	_ball(self, 0.45 * k, at + Vector3(-0.38, 1.15, 0.12) * k, m2)
+	_ball(self, 0.45 * k, at + Vector3(0.38, 1.2, -0.05) * k, m2)
+	_ball(self, 0.4 * k, at + Vector3(0.05, 1.75, 0.05) * k, m)
 	_solid_round(at, 0.25)
 
 
-func _bush(at: Vector3) -> void:
+func _bush(at: Vector3, k: float = 1.0) -> void:
 	var m := _mat(Color("#5f8f3c"))
-	_ball(self, 0.26, at + Vector3(0, 0.2, 0), m, Vector3(1, 0.8, 1))
-	_ball(self, 0.2, at + Vector3(0.2, 0.16, 0.05), m, Vector3(1, 0.8, 1))
+	_ball(self, 0.26 * k, at + Vector3(0, 0.2 * k, 0), m, Vector3(1, 0.8, 1))
+	_ball(self, 0.2 * k, at + Vector3(0.2, 0.16, 0.05) * k, m, Vector3(1, 0.8, 1))
 	for i in 5:
 		_ball(self, 0.04, at + Vector3(-0.15 + i * 0.08, 0.36, 0.12), _mat([Color("#f7a8c0"), Color("#fff1d6"), Color("#b79be8")][i % 3]))
 	_solid_round(at, 0.28)
@@ -587,42 +646,65 @@ func _planter(at: Vector3) -> void:
 
 func _lamp(at: Vector3) -> void:
 	var iron := _mat(Color("#2a2522"), 0.5)
-	_cyl(self, 0.04, 0.06, 1.3, at + Vector3(0, 0.65, 0), iron, 8)
-	_cyl(self, 0.1, 0.12, 0.08, at + Vector3(0, 0.04, 0), iron, 8)
-	_lantern(self, at + Vector3(0, 1.42, 0))
-	_solid_round(at, 0.08)
+	_cyl(self, 0.05, 0.07, 1.9, at + Vector3(0, 0.95, 0), iron, 8)
+	_cyl(self, 0.12, 0.14, 0.1, at + Vector3(0, 0.05, 0), iron, 8)
+	_lantern(self, at + Vector3(0, 2.02, 0))
+	_solid_round(at, 0.12)
 
 
-func _bench(at: Vector3) -> void:
+func _bench(at: Vector3, rot: float = 0.0) -> void:
+	var n := Node3D.new()
+	n.position = at
+	n.rotation.y = rot
+	add_child(n)
 	var wood := _mat(Color("#8a5a36"))
-	_box(self, Vector3(0.8, 0.06, 0.28), at + Vector3(0, 0.32, 0), wood)
-	_box(self, Vector3(0.8, 0.22, 0.05), at + Vector3(0, 0.5, -0.14), wood)
-	for x in [-0.34, 0.34]:
-		_box(self, Vector3(0.05, 0.32, 0.26), at + Vector3(x, 0.16, 0), _mat(Color("#2a2522")))
+	_box(n, Vector3(1.1, 0.07, 0.36), Vector3(0, 0.36, 0), wood)
+	_box(n, Vector3(1.1, 0.26, 0.06), Vector3(0, 0.58, -0.17), wood)
+	for x in [-0.46, 0.46]:
+		_box(n, Vector3(0.06, 0.36, 0.32), Vector3(x, 0.18, 0), _mat(Color("#2a2522")))
+	_solid_round(at, 0.45)
 
 
-func _board(at: Vector3) -> void:
+func _board(at: Vector3, rot: float = 0.0) -> void:
+	var holder := Node3D.new()
+	holder.position = at
+	holder.rotation.y = rot
+	add_child(holder)
+	_board_parts(holder)
+	_solid_round(at, 0.5)
+
+
+func _board_parts(n: Node3D) -> void:
+	var at := Vector3.ZERO
 	var wood := _mat(Color("#7a5230"))
 	for x in [-0.36, 0.36]:
-		_box(self, Vector3(0.08, 1.3, 0.08), at + Vector3(x, 0.65, 0), wood)
-	_box(self, Vector3(0.9, 0.6, 0.06), at + Vector3(0, 0.95, 0), _mat(Color("#9c6b42")))
-	_prism(self, Vector3(1.05, 0.18, 0.25), at + Vector3(0, 1.36, 0), _mat(Color("#5f7a4a")))
+		_box(n, Vector3(0.1, 1.6, 0.1), at + Vector3(x, 0.65, 0), wood)
+	_box(n, Vector3(1.2, 0.8, 0.08), at + Vector3(0, 0.95, 0), _mat(Color("#9c6b42")))
+	_prism(n, Vector3(1.05, 0.18, 0.25), at + Vector3(0, 1.36, 0), _mat(Color("#5f7a4a")))
 	for i in 4:
-		_box(self, Vector3(0.16, 0.2, 0.01), at + Vector3(-0.3 + i * 0.2, 0.95 + (0.08 if i % 2 == 0 else -0.06), 0.04), _mat(Color("#fbf1dc")))
-	_solid_box(at + Vector3(0, 1, 0), Vector3(0.9, 2, 0.2))
+		_box(n, Vector3(0.16, 0.2, 0.01), at + Vector3(-0.3 + i * 0.2, 0.95 + (0.08 if i % 2 == 0 else -0.06), 0.04), _mat(Color("#fbf1dc")))
 
 
-func _booth(at: Vector3) -> void:
+func _booth(at: Vector3, rot: float = 0.0) -> void:
+	var holder := Node3D.new()
+	holder.position = at
+	holder.rotation.y = rot
+	add_child(holder)
+	_booth_parts(holder)
+	_solid_round(at, 0.8)
+
+
+func _booth_parts(n: Node3D) -> void:
+	var at := Vector3.ZERO
 	var wood := _mat(Color("#8a5a36"))
-	_box(self, Vector3(1.2, 0.7, 0.5), at + Vector3(0, 0.35, 0), wood)
+	_box(n, Vector3(1.2, 0.7, 0.5), at + Vector3(0, 0.35, 0), wood)
 	for x in [-0.55, 0.55]:
-		_box(self, Vector3(0.07, 1.5, 0.07), at + Vector3(x, 0.75, 0.2), wood)
+		_box(n, Vector3(0.07, 1.5, 0.07), at + Vector3(x, 0.75, 0.2), wood)
 	for i in 6:
-		var a := _box(self, Vector3(0.2, 0.05, 0.7), at + Vector3(-0.5 + i * 0.2, 1.45, 0.1), _mat(Color("#3f7f7a") if i % 2 == 0 else Color("#f3e6cc")))
+		var a := _box(n, Vector3(0.2, 0.05, 0.7), at + Vector3(-0.5 + i * 0.2, 1.45, 0.1), _mat(Color("#3f7f7a") if i % 2 == 0 else Color("#f3e6cc")))
 		a.rotation.x = 0.35
 	for i in 5:
-		_ball(self, 0.08, at + Vector3(-0.4 + i * 0.2, 0.76, 0.1), _mat([Color("#e8894a"), Color("#c9473f"), Color("#ffd75e")][i % 3]))
-	_solid_box(at + Vector3(0, 1, 0), Vector3(1.2, 2, 0.5))
+		_ball(n, 0.08, at + Vector3(-0.4 + i * 0.2, 0.76, 0.1), _mat([Color("#e8894a"), Color("#c9473f"), Color("#ffd75e")][i % 3]))
 
 
 func _crates(at: Vector3) -> void:
@@ -674,16 +756,18 @@ func _build_people() -> void:
 	cs.shape = cap
 	cs.position = Vector3(0, 0.45, 0)
 	_player.add_child(cs)
-	_player.position = Vector3(8.0, 0, 7.6)
+	_player.position = Vector3(0.1, 0, 2.7)
 	add_child(_player)
 	_player_body = _person(_player, Color("#d9a441"), Color("#6b3f24"), Color("#3f7f7a"))
+	# Who is in the square follows the game's schedule; where they stand follows the composition.
 	var places := {"npc_lumi": "fox", "npc_moa": "fairy", "npc_juno": "bird"}
+	var spots := {"npc_lumi": Vector3(1.3, 0, 2.2), "npc_moa": Vector3(-2.3, 0, -1.3), "npc_juno": Vector3(5.8, 0, 0.1)}
 	for id in places:
 		var place: Dictionary = Game.data.npc_place(id, "evening" if _evening else "day", Game.state if Game.state != null else GameState.new())
 		if str(place.get("loc", "")) != "village_square":
 			continue
 		var node := Node3D.new()
-		node.position = _v(place["pos"])
+		node.position = spots[id]
 		add_child(node)
 		match places[id]:
 			"fox":
