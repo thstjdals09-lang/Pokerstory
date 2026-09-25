@@ -5,7 +5,9 @@ extends Node3D
 ## around it, props filling the space, paths to every door, trees and fences framing the edges).
 ## The same buildings, doors and gates as the game data (locations.json) keep their links; only the
 ## 3D placement differs. Metres; the camera looks from +Z. Run with run_diorama.bat (Forward+).
-## Keys: WASD / arrows walk, T day <-> evening, F1 edit mode, Esc quit.
+## Keys: WASD / arrows walk, E talk (to Lumi, next to her), T day <-> evening, F1 edit mode, Esc quit.
+## Talking: the camera glides to a side view of the player and the resident (the side the camera is
+## already on), framed above the dialogue box, and glides back when the talk ends.
 ## Edit mode (F1): sliders for the camera and the selected building. Click a building to select it,
 ## drag it on the ground, Q / E turn it; mouse wheel zooms, right-drag orbits, middle-drag pans.
 ## "저장" writes the values into diorama.tscn itself.
@@ -114,6 +116,27 @@ var cam := CAM_DEFAULT.duplicate()
 		_evening = v
 		if _env != null:
 			_apply_time()
+@export_group("Talk camera")
+## Distance from the pair, in metres.
+@export_range(2.0, 15.0, 0.1) var talk_distance := 9.0
+## Field of view while talking.
+@export_range(10.0, 70.0, 0.5) var talk_fov := 30.0
+## How far above the ground it looks down (degrees).
+@export_range(5.0, 60.0, 0.5) var talk_pitch := 17.0
+## How much the view turns to the side of the pair (0 = straight on from the camera's side, 1 = full side).
+@export_range(0.0, 1.0, 0.05) var talk_side := 0.75
+## Raises the pair on screen, above the dialogue box (metres the camera aims below them).
+@export_range(0.0, 2.0, 0.05) var talk_lift := 0.85
+## Seconds to glide in and out.
+@export_range(0.1, 3.0, 0.05) var talk_glide := 0.8
+var _talking := false
+var _talk_t := 0.0
+var _talk_xf := Transform3D()
+var _follow_xf := Transform3D()
+var _follow_ready := false
+var _dialogue: Control
+var _talk_cooldown := 0.0
+var _talk_hidden: Array = []
 var _rebuild_in := 0.0
 var _start_cam := {}
 var _start_buildings: Array = []
@@ -143,6 +166,7 @@ func _ready() -> void:
 	_start_cam = cam.duplicate()
 	_start_buildings = _buildings.duplicate(true)
 	_build_hud()
+	_build_dialogue()
 	_build_editor()
 	_apply_time()
 	for a in OS.get_cmdline_user_args():
@@ -159,6 +183,10 @@ func _ready() -> void:
 		_save_layout()
 		print("[diorama] ", _sel_label.text)
 		get_tree().quit()
+	if "--talk" in OS.get_cmdline_user_args() and _lumi != null:
+		_start_talk.call_deferred(_lumi)
+	if "--talk-end" in OS.get_cmdline_user_args() and _lumi != null:
+		_talk_end_check.call_deferred()
 	if _shot != "":
 		_take_shot.call_deferred()
 
@@ -214,7 +242,7 @@ func _apply_blur() -> void:
 	if _cam == null or not (_cam.attributes is CameraAttributesPractical):
 		return
 	var a: CameraAttributesPractical = _cam.attributes
-	var d := float(cam["dist"])
+	var d := lerpf(float(cam["dist"]), talk_distance, smoothstep(0.0, 1.0, _talk_t))
 	a.dof_blur_far_enabled = blur_on
 	a.dof_blur_near_enabled = blur_on
 	a.dof_blur_amount = blur_amount
@@ -406,10 +434,15 @@ func _follow(weight: float) -> void:
 	var focus := centre + lean
 	var pitch := deg_to_rad(float(cam["pitch"]))
 	var back := Vector3(0, sin(pitch), cos(pitch)).rotated(Vector3.UP, deg_to_rad(float(cam["yaw"]))) * float(cam["dist"])
-	_cam.fov = cam["fov"]
+	var want := Transform3D(Basis(), focus + back).looking_at(focus, Vector3.UP)
+	if not _follow_ready:
+		_follow_xf = want
+		_follow_ready = true
+	_follow_xf = Transform3D(_follow_xf.basis.slerp(want.basis, weight), _follow_xf.origin.lerp(want.origin, weight))
+	var k := smoothstep(0.0, 1.0, _talk_t)
+	_cam.transform = _follow_xf.interpolate_with(_talk_xf, k) if k > 0.0 else _follow_xf
+	_cam.fov = lerpf(float(cam["fov"]), talk_fov, k)
 	_apply_blur()
-	_cam.position = _cam.position.lerp(focus + back, weight)
-	_cam.look_at(_cam.position - back, Vector3.UP)
 
 
 # --- ground --------------------------------------------------------------------------------------
@@ -1140,7 +1173,7 @@ func _build_hud() -> void:
 	_prompt.position = Vector2(640 - 90, 640)
 	_prompt.visible = false
 	layer.add_child(_prompt)
-	var hint := UiKit.label("3D 시안 · WASD 이동 · T 낮/저녁 · F1 편집 · Esc 종료", 14, Color(1, 1, 1, 0.85))
+	var hint := UiKit.label("3D 시안 · WASD 이동 · E 루미와 대화 · T 낮/저녁 · F1 편집 · Esc 종료", 14, Color(1, 1, 1, 0.85))
 	hint.position = Vector2(16, 690)
 	layer.add_child(hint)
 	_apply_time()
@@ -1152,7 +1185,9 @@ func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 	_t += delta
-	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	_talk_t = move_toward(_talk_t, 1.0 if _talking else 0.0, delta / talk_glide)
+	_talk_cooldown = maxf(0.0, _talk_cooldown - delta)
+	var dir := Vector2.ZERO if (_talking or _talk_t > 0.0) else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	_player.velocity = Vector3(dir.x, 0, dir.y) * WALK
 	_player.move_and_slide()
 	_player.position.y = 0.0
@@ -1169,11 +1204,21 @@ func _physics_process(delta: float) -> void:
 		if _pave_dirty <= 0.0:
 			_build_paving()
 	if _lumi != null:
-		_prompt.visible = _player.position.distance_to(_lumi.position) < 1.3
+		_prompt.visible = not _talking and _talk_t == 0.0 and _near_lumi()
+
+
+func _near_lumi() -> bool:
+	return _lumi != null and _player.position.distance_to(_lumi.position) < 1.9
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint():
+		return
+	if _talking:
+		return
+	if event.is_action_pressed("interact") and _near_lumi() and _talk_cooldown == 0.0 and _talk_t == 0.0:
+		_start_talk(_lumi)
+		get_viewport().set_input_as_handled()
 		return
 	if _edit:
 		_edit_input(event)
@@ -1187,8 +1232,125 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_tree().quit()
 
 
+## Side view of the player and the resident, from the left or the right of their line: the side
+## that looks into the square (buildings behind them), then the one with less in the way.
+func _talk_shot(npc: Node3D) -> Transform3D:
+	var p := _player.position
+	var n := npc.position
+	var mid := (p + n) / 2.0
+	var axis := Vector3(n.x - p.x, 0, n.z - p.z).normalized()
+	var perp := Vector3(-axis.z, 0, axis.x)
+	var to_cam := Vector3(_follow_xf.origin.x - mid.x, 0, _follow_xf.origin.z - mid.z).normalized()
+	if perp.dot(to_cam) < 0.0:
+		perp = -perp
+	var best := Transform3D()
+	var best_blocks := 1 << 30
+	for side in [perp, -perp]:
+		var flat: Vector3 = (to_cam * (1.0 - talk_side) + side * talk_side).normalized()
+		var pitch := deg_to_rad(talk_pitch)
+		var eye := mid + (flat * cos(pitch) + Vector3.UP * sin(pitch)) * talk_distance + Vector3(0, 0.6, 0)
+		var aim := mid + Vector3(0, 0.6 - talk_lift, 0)
+		var blocks := _blockers(eye, mid + Vector3(0, 0.6, 0), [npc]).size()
+		# looking into the square keeps buildings behind the pair, not the empty edge
+		var look := Vector3(mid.x - eye.x, 0, mid.z - eye.z).normalized()
+		if look.dot(Vector3(-mid.x, 0, -mid.z).normalized()) < -0.2:
+			blocks += 100
+		if blocks < best_blocks:
+			best_blocks = blocks
+			best = Transform3D(Basis(), eye).looking_at(aim, Vector3.UP)
+	return best
+
+
+## Meshes standing between the camera and the pair (props, trees, arches), not the pair themselves.
+func _blockers(eye: Vector3, target: Vector3, keep: Array) -> Array:
+	var out: Array = []
+	var seg := target - eye
+	var length := seg.length()
+	for mi in find_children("*", "MeshInstance3D", true, false):
+		if not mi.visible or mi.get_parent() == self and mi.mesh is PlaneMesh:
+			continue
+		var skip := false
+		for k in [_player] + keep:
+			if k.is_ancestor_of(mi):
+				skip = true
+		if skip:
+			continue
+		var c: Vector3 = mi.global_transform * mi.get_aabb().get_center()
+		var t := clampf((c - eye).dot(seg) / (length * length), 0.0, 1.0)
+		if t > 0.9:
+			continue
+		var r := maxf(mi.get_aabb().size.length() * 0.5, 0.2)
+		if c.distance_to(eye + seg * t) < 0.9 + r * 0.6:
+			# hide whole objects (a flower bed, a gate), not single pieces of them
+			var top: Node = mi
+			while top.get_parent() != self and top.get_parent() != null:
+				top = top.get_parent()
+			var whole: Node = top if top != mi and top is Node3D else mi
+			if not out.has(whole):
+				out.append(whole)
+	return out
+
+
+func _start_talk(npc: Node3D) -> void:
+	_talking = true
+	_talk_xf = _talk_shot(npc)
+	# hide what still stands between the camera and the pair (restored when the talk ends)
+	_talk_hidden = _blockers(_talk_xf.origin, (_player.position + npc.position) / 2.0 + Vector3(0, 0.6, 0), [npc])
+	for mi in _talk_hidden:
+		mi.visible = false
+	_prompt.visible = false
+	# face each other
+	var d := npc.position - _player.position
+	_player_body.rotation.y = atan2(d.x, d.z)
+	npc.rotation.y = atan2(-d.x, -d.z)
+	_dialogue.show_dialogue("루미", ["어서 와! 오늘 밤도 모임이 열렸어.", "새 이웃이 온다길래 자리 하나 비워 뒀지."],
+		[{"text": "한 판 할래", "action": "poker"}, {"text": "둘러볼게", "action": "close"}], "char.lumi")
+
+
+func _end_talk() -> void:
+	_talking = false
+	for mi in _talk_hidden:
+		if is_instance_valid(mi):
+			mi.visible = true
+	_talk_hidden = []
+	_talk_cooldown = 0.4
+	if _lumi != null:
+		_lumi.rotation.y = 0.0
+
+
+func _on_talk_choice(action: String, _arg: String) -> void:
+	if action == "poker":
+		_dialogue.show_dialogue("루미", ["좋아! 카드룸으로 가자.", "(3D 시안에서는 대화까지만 연결돼 있어요.)"], [], "char.lumi")
+	else:
+		_end_talk()
+
+
+func _build_dialogue() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 6
+	add_child(layer)
+	_dialogue = load("res://scripts/ui/dialogue_box.gd").new()
+	layer.add_child(_dialogue)
+	_dialogue.choice_made.connect(_on_talk_choice)
+	_dialogue.closed.connect(_end_talk)
+
+
+## Self-check: talk, close the box, and see the camera come back to the follow view.
+func _talk_end_check() -> void:
+	_start_talk(_lumi)
+	for i in 80:
+		await get_tree().physics_frame
+	var in_talk := _cam.global_position.distance_to(_talk_xf.origin)
+	_dialogue.close()
+	for i in 80:
+		await get_tree().physics_frame
+	print("[diorama] talk shot reached: %.2f m off, back after close: %.2f m off, talking=%s, box=%s" % [
+		in_talk, _cam.global_position.distance_to(_follow_xf.origin), _talking, _dialogue.visible])
+	get_tree().quit()
+
+
 func _take_shot() -> void:
-	for i in 30:
+	for i in (90 if "--talk" in OS.get_cmdline_user_args() else 30):
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(_shot)

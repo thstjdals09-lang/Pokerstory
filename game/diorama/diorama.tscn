@@ -1,11 +1,24 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://ts7646qf10hj"]
 
-[ext_resource type="Script" path="res://diorama/diorama.gd" id="1_82lga"]
-[ext_resource type="Script" path="res://diorama/building_marker.gd" id="2_xyjrw"]
-[ext_resource type="Script" path="res://diorama/prop_marker.gd" id="3_h7y3f"]
+[ext_resource type="Script" uid="uid://d0e87xwftrxm6" path="res://diorama/diorama.gd" id="1_82lga"]
+[ext_resource type="Script" uid="uid://bli3b27unrvcx" path="res://diorama/building_marker.gd" id="2_xyjrw"]
+[ext_resource type="Script" uid="uid://cakbjluecpwrl" path="res://diorama/prop_marker.gd" id="3_h7y3f"]
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_82lga"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 42.93
+dof_blur_near_enabled = true
+dof_blur_near_distance = 22.43
+dof_blur_near_transition = 5.0
+dof_blur_amount = 0.05
 
 [node name="Diorama" type="Node3D" unique_id=1801446233]
 script = ExtResource("1_82lga")
+cam_distance = 31.03
+cam_pitch = 20.5
+blur_amount = 0.05
+blur_near_start = 8.6
+blur_far_start = 11.9
 
 [node name="Buildings" type="Node3D" parent="." unique_id=1666265949]
 
@@ -39,10 +52,10 @@ door_offset = -0.76
 transform = Transform3D(0.9063078, 0, 0.4226183, 0, 1, 0, -0.4226183, 0, 0.9063078, -7.28, 0, 1.52)
 script = ExtResource("2_xyjrw")
 building_id = "community_hall_building"
-wall_height = 2.69
-door_offset = 1.38
 width = 3.4
 depth = 5.0
+wall_height = 2.69
+door_offset = 1.38
 
 [node name="Props" type="Node3D" parent="." unique_id=1206027217]
 
@@ -293,3 +306,7 @@ kind = "bush"
 size = Vector2(1.8, 1)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=558878491]
+transform = Transform3D(1, 0, 0, 0, 0.9366722, 0.3502074, 0, -0.3502074, 0.9366722, -0.08, 10.866936, 28.05494)
+attributes = SubResource("CameraAttributesPractical_82lga")
+current = true
+fov = 20.0
