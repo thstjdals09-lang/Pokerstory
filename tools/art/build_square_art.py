@@ -48,9 +48,11 @@ def lights(size, pts):
 
 S = {}
 
-# --- ground: one painted plate for the whole square (1600 x 1100)
-g = Image.open(os.path.join(SRC, 'raw', 'ground_plate.png')).convert('RGB')
-g.resize((2048, 1408), Image.LANCZOS).save(os.path.join(SQ, 'final', 'ground.png'), optimize=True)
+# --- ground: one painted plate for the whole square (1600 x 1100 in place units). It is painted
+# in the square's 3/4 view (ground_plate_34a: stones foreshortened, plaza in elliptical rings), so it
+# is stored at its painted ratio; the location's tilt (0.62) brings it back to that ratio on screen.
+g = Image.open(os.path.join(SRC, 'raw', 'ground_plate_34a.png')).convert('RGB')
+g.resize((2048, round(2048 * g.height / g.width)), Image.LANCZOS).save(os.path.join(SQ, 'final', 'ground.png'), optimize=True)
 S['sq.ground'] = {'path': RES + 'ground.png', 'size': [1600, 1100], 'anchor': [0, 0]}
 
 # --- grass beyond the square's edge: the grass swatch made seamless (half-shifted blend)
