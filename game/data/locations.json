@@ -1016,7 +1016,8 @@
      "target": "small_shop",
      "spawn": "from_village",
      "prompt": "잡화점 들어가기",
-     "art": "sq.bld_shop"
+     "art": "sq.bld_shop",
+     "angle3d": 18
     },
     {
      "id": "home_building",
@@ -1061,7 +1062,8 @@
      "closed_title": "카드룸",
      "closed_text": "문에 '저녁 모임' 팻말이 걸려 있어요. 포커 모임은 저녁에 열려요.",
      "wait_choice": "저녁까지 기다렸다가 들어가기 (시간이 저녁으로 바뀌어요)",
-     "art": "sq.bld_cardroom"
+     "art": "sq.bld_cardroom",
+     "angle3d": -18
     },
     {
      "id": "community_hall_building",
@@ -1081,7 +1083,8 @@
      "target": "community_hall",
      "spawn": "from_outside",
      "prompt": "마을 회관 들어가기",
-     "art": "sq.bld_hall"
+     "art": "sq.bld_hall",
+     "angle3d": 22
     }
    ],
    "signs": [
@@ -1297,6 +1300,9 @@
     "char_scale": 1.35,
     "view_margin_top": 150,
     "beyond": "sq.grass_tile"
+   },
+   "view3d": {
+    "concept": "분수를 중심으로 건물들이 대칭으로 각도를 달리해 분수를 바라본다"
    }
   },
   "player_home": {
@@ -1323,10 +1329,10 @@
     {
      "type": "rug",
      "rect": [
-      380,
-      300,
-      200,
-      130
+      540,
+      270,
+      260,
+      150
      ],
      "color": "#c97b63",
      "art": "int.rug_home"
@@ -1368,7 +1374,8 @@
      "color": "#7d5a3c",
      "label": "보관함",
      "solid": true,
-     "art": "int.chest"
+     "art": "int.chest",
+     "angle3d": -10
     },
     {
      "type": "rect",
@@ -1583,6 +1590,9 @@
     "wall_height": 120,
     "day_tint": "#d4ccc8",
     "evening_tint": "#6a6488"
+   },
+   "view3d": {
+    "concept": "창문 축에 러그와 탁자가 모이고, 침대는 구석에 비켜 아늑한 중심을 만든다"
    }
   },
   "card_room": {
@@ -1601,9 +1611,9 @@
      "type": "rug",
      "rect": [
       300,
-      120,
+      140,
       360,
-      320
+      280
      ],
      "color": "#5e3a33",
      "art": "int.rug_cardroom"
@@ -1656,7 +1666,8 @@
      "color": "#5a3d2e",
      "label": "칩 선반",
      "solid": true,
-     "art": "int.chip_shelf"
+     "art": "int.chip_shelf",
+     "angle3d": 10
     },
     {
      "type": "felt_table",
@@ -1836,6 +1847,9 @@
       0.7
      ]
     ]
+   },
+   "view3d": {
+    "concept": "조명 아래 한 테이블이 중심이고, 나머지는 벽을 따라 비켜선다"
    }
   },
   "small_shop": {
@@ -1859,7 +1873,8 @@
      ],
      "color": "#9c7a55",
      "label": "선반",
-     "solid": true
+     "solid": true,
+     "angle3d": 12
     },
     {
      "type": "rect",
@@ -1871,7 +1886,8 @@
      ],
      "color": "#9c7a55",
      "label": "선반",
-     "solid": true
+     "solid": true,
+     "angle3d": -12
     },
     {
      "type": "rect",
@@ -1929,7 +1945,10 @@
      "title": "잡화점 선반",
      "shape": "none"
     }
-   ]
+   ],
+   "view3d": {
+    "concept": "선반이 V자로 계산대를 향해 손님의 시선을 모은다"
+   }
   },
   "player_home_annex": {
    "name": "내 집 · 작은 방",
@@ -1945,10 +1964,10 @@
     {
      "type": "rug",
      "rect": [
-      330,
-      220,
       300,
-      180
+      200,
+      360,
+      220
      ],
      "color": "#8fa7c9"
     },
@@ -2131,7 +2150,10 @@
       "home_stage_min": 2
      }
     }
-   ]
+   ],
+   "view3d": {
+    "concept": "비워 둔 방: 가운데 러그를 두고 가구 자리가 대칭으로 둘러싼다"
+   }
   },
   "player_home_hall": {
    "name": "내 집 · 모임방",
@@ -2150,7 +2172,7 @@
       480,
       300
      ],
-     "r": 90,
+     "r": 96,
      "solid": true
     },
     {
@@ -2325,7 +2347,10 @@
       "home_stage_min": 3
      }
     }
-   ]
+   ],
+   "view3d": {
+    "concept": "원탁 하나를 중심으로 둥글게 모이는 모임방"
+   }
   },
   "community_hall": {
    "name": "마을 회관",
@@ -2360,7 +2385,8 @@
      ],
      "color": "#8c7a55",
      "label": "마을 전시",
-     "solid": true
+     "solid": true,
+     "angle3d": 14
     }
    ],
    "interactables": [
@@ -2416,6 +2442,9 @@
      480,
      560
     ]
+   },
+   "view3d": {
+    "concept": "긴 회의 탁자가 방의 축에 놓이고, 전시는 비스듬히 입구를 맞는다"
    }
   },
   "residential": {
@@ -2457,7 +2486,8 @@
       240,
       180
      ],
-     "label": "리라네 집"
+     "label": "리라네 집",
+     "angle3d": 6
     },
     {
      "type": "house",
@@ -2467,7 +2497,8 @@
       260,
       180
      ],
-     "label": "율의 작업 창고"
+     "label": "율의 작업 창고",
+     "angle3d": -5
     },
     {
      "type": "house",
@@ -2477,7 +2508,8 @@
       240,
       180
      ],
-     "label": "주민 주택"
+     "label": "주민 주택",
+     "angle3d": 4
     },
     {
      "type": "postbox",
@@ -2587,7 +2619,8 @@
      "unlock": {
       "project_complete": "guest_cottage"
      },
-     "locked_text": "아직 수선 중이에요. 마을 회관의 '손님 객실 수선' 사업이 끝나면 열려요."
+     "locked_text": "아직 수선 중이에요. 마을 회관의 '손님 객실 수선' 사업이 끝나면 열려요.",
+     "angle3d": -10
     }
    ],
    "gates": [
@@ -2694,6 +2727,9 @@
      1090,
      380
     ]
+   },
+   "view3d": {
+    "concept": "큰길을 따라 집들이 조금씩 어긋나게 줄지어 선 골목"
    }
   },
   "market": {
@@ -2741,7 +2777,8 @@
       240,
       90
      ],
-     "label": "작은 교환대"
+     "label": "작은 교환대",
+     "angle3d": -8
     },
     {
      "type": "awning",
@@ -2796,7 +2833,8 @@
      "unlock": {
       "quests_completed_min": 1
      },
-     "locked_text": "'준비 중' 팻말이 걸려 있어요. 마을 사람의 부탁을 하나 들어주면 문을 연대요."
+     "locked_text": "'준비 중' 팻말이 걸려 있어요. 마을 사람의 부탁을 하나 들어주면 문을 연대요.",
+     "angle3d": 12
     },
     {
      "id": "tea_house_building",
@@ -2838,7 +2876,8 @@
      "unlock": {
       "project_complete": "board_restoration"
      },
-     "locked_text": "공방 문이 잠겨 있어요. 마을 회관의 '행사 게시판 수선' 사업이 끝나면 열려요."
+     "locked_text": "공방 문이 잠겨 있어요. 마을 회관의 '행사 게시판 수선' 사업이 끝나면 열려요.",
+     "angle3d": -12
     }
    ],
    "gates": [
@@ -2920,6 +2959,9 @@
      1140,
      380
     ]
+   },
+   "view3d": {
+    "concept": "세 가게가 교환대를 향해 부채꼴로 열린 장터 거리"
    }
   },
   "grove": {
@@ -2961,7 +3003,8 @@
       260,
       110
      ],
-     "label": "숲길 독서 쉼터"
+     "label": "숲길 독서 쉼터",
+     "angle3d": 10
     },
     {
      "type": "lantern_row",
@@ -3166,6 +3209,9 @@
      700,
      820
     ]
+   },
+   "view3d": {
+    "concept": "오솔길이 숲을 가르고, 쉼터는 길 쪽으로 몸을 돌린다"
    }
   },
   "waterfront": {
@@ -3211,7 +3257,8 @@
       320,
       130
      ],
-     "label": "둔치 데크"
+     "label": "둔치 데크",
+     "angle3d": -8
     },
     {
      "type": "garden",
@@ -3226,7 +3273,8 @@
       "flags_true": [
        "story.act2_complete"
       ]
-     }
+     },
+     "angle3d": 8
     },
     {
      "type": "tree",
@@ -3320,6 +3368,9 @@
      700,
      90
     ]
+   },
+   "view3d": {
+    "concept": "데크와 정원이 물가를 향해 좌우 대칭으로 열린다"
    }
   },
   "tailor": {
@@ -3355,7 +3406,8 @@
      ],
      "color": "#9c7a55",
      "label": "옷감 선반",
-     "solid": true
+     "solid": true,
+     "angle3d": 10
     }
    ],
    "interactables": [
@@ -3393,6 +3445,9 @@
      480,
      560
     ]
+   },
+   "view3d": {
+    "concept": "재단대가 입구를 바라보고 옷감 선반은 벽을 따라 비스듬히 기댄다"
    }
   },
   "tea_house": {
@@ -3424,7 +3479,7 @@
       220,
       420
      ],
-     "r": 46,
+     "r": 52,
      "color": "#c9a37a",
      "label": "탁자",
      "solid": true
@@ -3435,7 +3490,7 @@
       740,
       420
      ],
-     "r": 46,
+     "r": 52,
      "color": "#c9a37a",
      "label": "탁자",
      "solid": true
@@ -3566,6 +3621,9 @@
      480,
      560
     ]
+   },
+   "view3d": {
+    "concept": "카운터 앞에 두 탁자가 좌우 대칭으로 놓인 찻집"
    }
   },
   "workshop": {
@@ -3601,7 +3659,8 @@
      ],
      "color": "#9c7a55",
      "label": "전시 선반",
-     "solid": true
+     "solid": true,
+     "angle3d": -12
     }
    ],
    "interactables": [
@@ -3639,6 +3698,9 @@
      480,
      560
     ]
+   },
+   "view3d": {
+    "concept": "작업대가 방 가운데에서 입구를 맞고, 전시 선반은 구석에서 비스듬히 선다"
    }
   },
   "guest_cottage": {
@@ -3674,7 +3736,8 @@
      ],
      "color": "#a9784f",
      "label": "탁자",
-     "solid": true
+     "solid": true,
+     "angle3d": -8
     }
    ],
    "interactables": [
@@ -3712,6 +3775,9 @@
      480,
      560
     ]
+   },
+   "view3d": {
+    "concept": "침대는 창가 구석, 탁자는 방명록 쪽으로 살짝 돌아 손님을 맞는다"
    }
   }
  }
