@@ -102,7 +102,9 @@ func test_story_runs_without_poker() -> void:
 	check(s.owned_count("item.memento.01_08") == 1, "clue memento granted once")
 	check_eq(_say(s, "obj:card_room_board", "village_square", ["포커를 몰라도"]), ["scn.board_reopening", "scn.board_reopening_answer"], "board reopening")
 	check(s.get_flag("story.act1_complete") and s.get_flag("story.act2_started"), "act 1 complete, act 2 started")
-	# Act 2: two tables.
+	# Act 2: two tables (the morning after act 1).
+	check(DialogueResolver.resolve(db.dialogue, "npc_lumi", "village_square", s).get("id", "") != "scn.lumi_view", "act 2 waits for the next morning")
+	s.day_count += 1
 	_say(s, "npc_lumi", "village_square")
 	_greet(s, "npc_kyle", "card_room")
 	_say(s, "npc_kyle", "card_room")
@@ -116,7 +118,8 @@ func test_story_runs_without_poker() -> void:
 	check_eq(_say(s, "npc_lumi", "waterfront", ["둘 다"])[0], "scn.two_tables_argument_lumi", "argument on the waterfront")
 	check(s.get_flag("story.act2_complete") and s.get_flag("story.act3_started") and s.get_flag("story.act2_choice_both"), "act 2 complete with the chosen answer")
 	check_eq(s.edge_phase("lumi_kyle"), "reconciled", "Lumi and Kyle reconcile")
-	# Act 3: festival contributions without poker.
+	# Act 3: festival contributions without poker (the morning after act 2).
+	s.day_count += 1
 	_greet(s, "npc_juno", "village_square")
 	_say(s, "npc_juno", "village_square", ["장식"])
 	_say(s, "npc_moa", "village_square", ["관전"])

@@ -220,6 +220,9 @@ func show_journal() -> void:
 			_book_list.add_child(row)
 	if not any:
 		_book_list.add_child(UiKit.wrap_label("진행 중인 부탁이나 이야기가 없어요. 머리 위에 ! 표시가 있는 주민에게 말을 걸어 보세요.", 16, UiKit.MUTED))
+	_book_list.add_child(UiKit.label("요즘 마을에서", 20, UiKit.ACCENT))
+	for t in Game.things_to_do():
+		_book_list.add_child(UiKit.wrap_label("· " + t, 15))
 	var done := 0
 	for id in Game.state.quests:
 		done += 1 if Game.state.quests[id] == QuestBook.COMPLETED else 0

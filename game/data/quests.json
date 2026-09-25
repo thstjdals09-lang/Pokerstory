@@ -30,7 +30,8 @@
    "target": "npc_moa",
    "unlock": {
     "flags_true": [
-     "story.act1_started"
+     "story.act1_started",
+     "story.prologue_complete"
     ]
    },
    "reward": 15,
@@ -56,7 +57,11 @@
    "name": "모임의 빈 찻잔",
    "giver": "npc_rira",
    "target": "npc_taeo",
-   "unlock": {},
+   "unlock": {
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
    "reward": 10,
    "item_name": "찻잎 견본",
    "offer_lines": [
@@ -80,7 +85,11 @@
    "name": "오래된 쿠션",
    "giver": "npc_taeo",
    "target": "npc_bibi",
-   "unlock": {},
+   "unlock": {
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
    "reward": 10,
    "item_name": "쿠션 안감",
    "offer_lines": [
@@ -104,7 +113,10 @@
    "giver": "npc_bibi",
    "target": "npc_sera",
    "unlock": {
-    "project_complete": "board_restoration"
+    "project_complete": "board_restoration",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "reward": 25,
    "item_name": "부품 목록",
@@ -131,7 +143,8 @@
    "target": "npc_nora",
    "unlock": {
     "flags_true": [
-     "story.act1_started"
+     "story.act1_started",
+     "story.prologue_complete"
     ]
    },
    "reward": 20,
@@ -157,7 +170,11 @@
    "name": "저녁길 표지",
    "giver": "npc_haru",
    "target": "npc_ona",
-   "unlock": {},
+   "unlock": {
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
    "reward": 10,
    "item_name": "어두운 길 지도",
    "offer_lines": [
@@ -181,7 +198,11 @@
    "name": "빛의 세기",
    "giver": "npc_ona",
    "target": "npc_haru",
-   "unlock": {},
+   "unlock": {
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
    "reward": 10,
    "item_name": "빛 세기 견본 버섯",
    "offer_lines": [
@@ -206,7 +227,8 @@
    "target": "npc_moa",
    "unlock": {
     "flags_true": [
-     "story.act1_complete"
+     "story.act1_complete",
+     "story.prologue_complete"
     ]
    },
    "reward": 25,
@@ -234,7 +256,8 @@
    "target": "npc_miri",
    "unlock": {
     "flags_true": [
-     "story.act2_started"
+     "story.act2_started",
+     "story.prologue_complete"
     ]
    },
    "reward": 25,
@@ -261,7 +284,8 @@
    "target": "npc_rira",
    "unlock": {
     "flags_true": [
-     "story.act2_started"
+     "story.act2_started",
+     "story.prologue_complete"
     ]
    },
    "reward": 25,
@@ -287,7 +311,11 @@
    "name": "한 장의 출처",
    "giver": "npc_ren",
    "target": "npc_kyle",
-   "unlock": {},
+   "unlock": {
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
    "reward": 10,
    "item_name": "카드 케이스",
    "offer_lines": [
@@ -313,7 +341,8 @@
    "target": "npc_bibi",
    "unlock": {
     "flags_true": [
-     "story.act1_complete"
+     "story.act1_complete",
+     "story.prologue_complete"
     ]
    },
    "reward": 25,
@@ -339,7 +368,10 @@
    "giver": "npc_sia",
    "target": "npc_lumi",
    "unlock": {
-    "project_complete": "guest_cottage"
+    "project_complete": "guest_cottage",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "reward": 30,
    "item_name": "방문객 질문 쪽지",
@@ -365,6 +397,9 @@
    "giver": "npc_nora",
    "target": "npc_juno",
    "unlock": {
+    "days_since": {
+     "story.act2_complete": 1
+    },
     "flags_true": [
      "story.act3_started"
     ]
@@ -392,6 +427,9 @@
    "giver": "npc_sera",
    "target": "npc_ona",
    "unlock": {
+    "days_since": {
+     "story.act2_complete": 1
+    },
     "flags_true": [
      "story.act3_started"
     ]

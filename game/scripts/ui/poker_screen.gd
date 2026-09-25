@@ -11,6 +11,8 @@ const CardView := preload("res://scripts/ui/card_view.gd")
 var match_ref: PokerMatch = null
 var last_result := {}
 var ability_button: Button
+## Swaps the carried ability before it is used (no separate loadout step before each hand).
+var switch_button: Button
 var draw_button: Button
 var stand_button: Button
 var help_button: Button
@@ -122,6 +124,8 @@ func _ready() -> void:
 	col.add_child(buttons)
 	ability_button = UiKit.button("", 190)
 	ability_button.pressed.connect(use_ability)
+	switch_button = UiKit.button("능력 바꾸기", 130)
+	switch_button.pressed.connect(cycle_ability)
 	draw_button = UiKit.button("", 170)
 	draw_button.pressed.connect(do_draw)
 	stand_button = UiKit.button("그대로 승부", 150)
@@ -130,7 +134,7 @@ func _ready() -> void:
 	help_button.pressed.connect(func(): _help_panel.visible = not _help_panel.visible)
 	leave_button = UiKit.button("나가기 (Esc)", 130)
 	leave_button.pressed.connect(request_leave)
-	for b in [ability_button, draw_button, stand_button, help_button, leave_button]:
+	for b in [ability_button, switch_button, draw_button, stand_button, help_button, leave_button]:
 		buttons.add_child(b)
 
 	_build_help_panel()
@@ -258,6 +262,8 @@ func refresh() -> void:
 	ability_button.text = "%s (%s)" % [_ability.get("name", "능력"), ("카드를 고르세요" if _marking else "1회") if uses_left else "사용함"]
 	ability_button.tooltip_text = str(_ability.get("description", ""))
 	ability_button.disabled = not uses_left
+	switch_button.visible = Game.state.abilities_unlocked.size() > 1
+	switch_button.disabled = showdown or not match_ref.ability_results.is_empty() or _marking
 	draw_button.text = "교체하기 (%d장)" % _selected.size()
 	draw_button.disabled = showdown or _selected.is_empty()
 	stand_button.disabled = showdown
@@ -305,6 +311,19 @@ func toggle_card(i: int) -> void:
 		_selected.append(i)
 	else:
 		_notice = "최대 %d장까지 바꿀 수 있어요." % match_ref.max_discards
+	refresh()
+
+
+func cycle_ability() -> void:
+	var list: Array = Game.state.abilities_unlocked
+	var i := list.find(match_ref.ability_id)
+	select_ability(str(list[(i + 1) % list.size()]))
+
+
+func select_ability(ability_id: String) -> void:
+	if Game.switch_ability(match_ref, ability_id):
+		_ability = Game.match_ability(match_ref)
+		_notice = "가져간 능력: %s — %s" % [_ability.get("name", ""), _ability.get("description", "")]
 	refresh()
 
 

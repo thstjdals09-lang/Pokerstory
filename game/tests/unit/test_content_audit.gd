@@ -163,6 +163,7 @@ func test_story_completes_on_every_branch_without_poker() -> void:
 		for c in clues:
 			talk(db, s, c[0], c[1])
 		talk(db, s, "obj:card_room_board", "village_square", [pick.call(["친구와", "포커를 몰라도"])])
+		s.day_count += 1  # act 2 opens the morning after act 1
 		var views: Array = [["npc_lumi", "village_square"], ["npc_kyle", "card_room"]]
 		if rng.randi() % 2 == 0:
 			views.reverse()
@@ -182,6 +183,7 @@ func test_story_completes_on_every_branch_without_poker() -> void:
 		var who: String = pick.call(["npc_lumi", "npc_kyle"])
 		talk(db, s, who, "waterfront", [pick.call(["친목", "규칙 설명", "둘 다"])])
 		check(s.get_flag("story.act3_started"), "run %d: act 3 reached" % run)
+		s.day_count += 1  # the festival preparations start the next morning
 		var sources: Array = ["juno", "moa", "letters", "lights"]
 		for i in sources.size():
 			var j := rng.randi_range(i, sources.size() - 1)

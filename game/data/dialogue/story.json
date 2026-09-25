@@ -343,10 +343,6 @@
        "phase": "strained"
       },
       {
-       "type": "toast",
-       "text": "1막 완료! 새 이야기: 서로 다른 테이블"
-      },
-      {
        "type": "chips",
        "amount": 30,
        "reason": "story:act1",
@@ -354,7 +350,7 @@
       },
       {
        "type": "toast",
-       "text": "모아가 모임 기금에서 사례를 보탰어요. 칩 +30"
+       "text": "1막 완료! 모임 사례 칩 +30 · 저녁엔 광장과 찻집에 교류 모임이 열려요 · 하룻밤 지나면 새 이야기가 시작돼요"
       }
      ]
     }
@@ -397,7 +393,10 @@
     "flags_false": [
      "story.act2_heard_lumi",
      "story.act2_complete"
-    ]
+    ],
+    "days_since": {
+     "story.act1_complete": 1
+    }
    },
    "lines": [
     "게시판에 쪽지 붙인 거 봤어? 친목 모임을 늘려 달라고 쓴 게 나야.",
@@ -428,7 +427,10 @@
     "flags_false": [
      "story.act2_heard_kyle",
      "story.act2_complete"
-    ]
+    ],
+    "days_since": {
+     "story.act1_complete": 1
+    }
    },
    "lines": [
     "규칙을 미리 알려 달라고 쓴 건 나다.",
@@ -912,18 +914,10 @@
        "item": "item.memento.03_08"
       },
       {
-       "type": "toast",
-       "text": "2막 완료! 새 이야기: 네잎 저녁제 — 게시판에서 기여 현황을 확인하세요"
-      },
-      {
        "type": "chips",
        "amount": 40,
        "reason": "story:act2",
        "once": "story_reward:act2"
-      },
-      {
-       "type": "toast",
-       "text": "루미와 카일이 모임 기금을 나눠 줬어요. 칩 +40"
       },
       {
        "type": "memory",
@@ -934,6 +928,10 @@
        "type": "memory",
        "npc": "npc_kyle",
        "id": "act2_mediation"
+      },
+      {
+       "type": "toast",
+       "text": "2막 완료! 모임 사례 칩 +40 · 둔치 카드 정원에서 친선 도전 · 하룻밤 지나면 축제 준비가 시작돼요"
       }
      ]
     }
@@ -952,6 +950,9 @@
     ],
     "not": {
      "contributed": "prep:juno"
+    },
+    "days_since": {
+     "story.act2_complete": 1
     }
    },
    "lines": [
@@ -992,6 +993,9 @@
     ],
     "not": {
      "contributed": "prep:spectate"
+    },
+    "days_since": {
+     "story.act2_complete": 1
     }
    },
    "lines": [
@@ -1244,10 +1248,6 @@
        "item": "item.memento.06_08"
       },
       {
-       "type": "toast",
-       "text": "3막 완료! 집에서 자고 아침을 맞아 보세요"
-      },
-      {
        "type": "chips",
        "amount": 50,
        "reason": "story:act3",
@@ -1255,7 +1255,7 @@
       },
       {
        "type": "toast",
-       "text": "마을 회관이 축제 도우미에게 사례했어요. 칩 +50"
+       "text": "3막 완료! 축제 사례 칩 +50 · 집에서 자고 축제 다음 날 아침을 맞아 보세요"
       }
      ]
     }
@@ -1322,7 +1322,8 @@
    },
    "lines": [
     "누가 이겼는지는 잘 모르겠어. 다들 다시 오겠다고 했거든.",
-    "좋은 아침이야, {player}. 네잎골에 와 줘서 고마워."
+    "좋은 아침이야, {player}. 네잎골에 와 줘서 고마워.",
+    "축제는 끝났지만 마을 일은 안 끝났어. 게시판 좀 봐, 벌써 새 쪽지가 붙었더라!"
    ],
    "effects": [
     {
@@ -1540,7 +1541,10 @@
     ],
     "flags_false": [
      "story.act2_complete"
-    ]
+    ],
+    "days_since": {
+     "story.act1_complete": 1
+    }
    },
    "lines": [
     "쪽지 두 장: '친목 모임을 늘려 주세요 — 루미', '규칙을 미리 알려 주세요 — 카일'"

@@ -31,6 +31,8 @@ var state: GameState = null
 var save_path := DEFAULT_SAVE_PATH
 ## Test hook: card-code lists used (in order) as stacked decks before falling back to random decks.
 var debug_deck_queue: Array = []
+## The ability taken to the last hand this session: the next hand starts with it (no extra step).
+var last_ability := ""
 ## Test hook: the next N saves fail (save-failure rollback tests).
 var debug_fail_saves := 0
 ## True when the last persistent change was rolled back because its save failed.
@@ -276,6 +278,21 @@ func tournament_opponent() -> String:
 
 
 ## The ability a hand uses: the one picked for it, else the first ability (Star Sense).
+## Swaps the ability a hand carries, allowed only before any ability was used in it.
+func switch_ability(m: PokerMatch, ability_id: String) -> bool:
+	if m.phase != PokerMatch.Phase.DRAW or not m.ability_results.is_empty() or not state.abilities_unlocked.has(ability_id):
+		return false
+	var before := m.ability_id
+	var change := func() -> Dictionary:
+		m.ability_id = ability_id
+		state.poker_in_progress = m.to_dict()
+		return {"ok": true}
+	var ok: bool = _commit(change, func(): m.ability_id = before)["ok"]
+	if ok:
+		last_ability = ability_id
+	return ok
+
+
 func match_ability(m: PokerMatch) -> Dictionary:
 	var id := data.ability_aliases.get(m.ability_id, m.ability_id) as String
 	return data.abilities.get(id, player_ability())
@@ -302,6 +319,8 @@ func create_poker_match(mode: String = "homegame", opponent: String = "", abilit
 		m.opponent_id = opponent
 		m.persona = str(data.opponents.get(opponent, {}).get("persona", "steady"))
 		var aid := str(data.ability_aliases.get(ability_id, ability_id))
+		if aid == "":
+			aid = last_ability
 		m.ability_id = aid if state.abilities_unlocked.has(aid) else str(poker_rules().get("player_ability", data.poker.get("player_ability", "")))
 		m.stake = stake
 		m.place = state.current_scene
@@ -309,6 +328,8 @@ func create_poker_match(mode: String = "homegame", opponent: String = "", abilit
 		box["m"] = m
 		return {"ok": true}
 	var r := _commit(change)
+	if r["ok"]:
+		last_ability = box["m"].ability_id
 	return box["m"] if r["ok"] else null
 
 
@@ -692,7 +713,8 @@ func entry_choices(entry: Dictionary, speaker: String, location: String) -> Arra
 	if job != null and job.job_type == "deliver" and job.recipient == target:
 		out.append({"text": "편지 전해 주기 (아르바이트)", "action": "job_deliver"})
 	var offers: Array = []
-	if not speaker.begins_with("obj:"):
+	var scene := str(entry.get("id", "")).begins_with("scn.")
+	if not speaker.begins_with("obj:") and not scene:
 		for id in data.quest_order:
 			var q: Dictionary = data.quests[id]
 			if str(q.get("giver", "")) == target and q.get("offer", "auto") == "auto" and quest_available(id) \
@@ -921,7 +943,8 @@ func things_to_do() -> Array:
 		for id in data.quest_order:
 			var q: Dictionary = data.quests[id]
 			if q.get("kind", "") == "episode" and str(q["giver"]) == npc and quest_available(id):
-				news.append(data.npc_name(npc))
+				var here := npc_place(npc)
+				news.append("%s(%s)" % [data.npc_name(npc), location_name(str(here.get("loc", ""))) if here.has("loc") else "?"])
 				break
 	var unmet := data.npc_order.filter(func(n): return not state.has_met(n)).size()
 	if unmet > 0:

@@ -50,5 +50,6 @@ static func complete(state: GameState, quest: Dictionary, option: int = -1) -> D
 	if option >= 0 and option < options.size():
 		chosen = options[option]
 		effects.append_array(chosen.get("effects", []))
+	effects.append({"type": "flag", "flag": "done:" + quest_id})
 	var applied := Effects.apply(state, effects)
 	return {"ok": true, "reward": reward, "messages": applied.get("messages", []), "option": chosen}

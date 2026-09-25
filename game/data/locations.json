@@ -515,6 +515,24 @@
      "prompt": "카드룸 게시판 보기",
      "title": "카드룸 게시판",
      "shape": "sign"
+    },
+    {
+     "id": "square_mix_table_day",
+     "kind": "object",
+     "pos": [
+      1000,
+      470
+     ],
+     "radius": 56,
+     "prompt": "교류 모임 테이블 보기",
+     "title": "교류 모임 테이블",
+     "shape": "table",
+     "conditions": {
+      "flags_true": [
+       "story.act1_complete"
+      ],
+      "time": "day"
+     }
     }
    ],
    "spawns": {
@@ -2700,6 +2718,24 @@
      "prompt": "손님 자리 살펴보기",
      "title": "찻집 손님 자리",
      "shape": "none"
+    },
+    {
+     "id": "tea_social_table_day",
+     "kind": "object",
+     "pos": [
+      480,
+      300
+     ],
+     "radius": 56,
+     "prompt": "교류 모임 테이블 보기",
+     "title": "교류 모임 테이블",
+     "shape": "table",
+     "conditions": {
+      "flags_true": [
+       "story.act1_complete"
+      ],
+      "time": "day"
+     }
     }
    ],
    "exits": [

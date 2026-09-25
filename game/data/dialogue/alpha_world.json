@@ -311,7 +311,7 @@
     }
    ],
    "lines": [
-    "문틀 봐 주러 왔다. 튼튼하군. 간식 있나?"
+    "초대해 줘서 왔어요! 문틀 봐 주러 왔다. 튼튼하군. 간식 있나?"
    ],
    "choices": [
     {
@@ -360,7 +360,7 @@
     }
    ],
    "lines": [
-    "집 구경 와도 된다고 해서 왔어요! 방문객 객실보다 훨씬 아늑해요!"
+    "초대해 줘서 왔어요! 집 구경 와도 된다고 해서 왔어요! 방문객 객실보다 훨씬 아늑해요!"
    ],
    "choices": [
     {
@@ -409,7 +409,7 @@
     }
    ],
    "lines": [
-    "차 배달 왔어요! 집에서 마시는 차는 찻집이랑 또 다르죠?"
+    "초대해 줘서 왔어요! 차 배달 왔어요! 집에서 마시는 차는 찻집이랑 또 다르죠?"
    ],
    "choices": [
     {
@@ -458,7 +458,7 @@
     }
    ],
    "lines": [
-    "저, 저기… 놀러 와도 된다고 해서… 왔어요. 조용하고 좋아요."
+    "초대해 줘서 왔어요! 저, 저기… 놀러 와도 된다고 해서… 왔어요. 조용하고 좋아요."
    ],
    "choices": [
     {
@@ -507,7 +507,7 @@
     }
    ],
    "lines": [
-    "집 안에 문양 장식 있나 보러 왔어요! 없으면 제가 그려 드릴게요."
+    "초대해 줘서 왔어요! 집 안에 문양 장식 있나 보러 왔어요! 없으면 제가 그려 드릴게요."
    ],
    "choices": [
     {
@@ -639,7 +639,11 @@
    "conditions": {
     "met": "npc_lumi",
     "project_complete": "square_seating",
-    "location": "village_square"
+    "location": "village_square",
+    "day_mod3": [
+     2
+    ],
+    "time": "day"
    },
    "lines": [
     "벤치에 앉아 있으면 모임에 올 사람이 먼저 말을 걸어 줘. 이 자리 최고야."
@@ -658,7 +662,11 @@
    "conditions": {
     "met": "npc_yul",
     "project_complete": "square_seating",
-    "location": "village_square"
+    "location": "village_square",
+    "day_mod3": [
+     0
+    ],
+    "time": "day"
    },
    "lines": [
     "벤치 점검 중이다. 삐걱거리면 바로 고친다. 앉아 봐라."
@@ -677,7 +685,11 @@
    "conditions": {
     "met": "npc_haru",
     "project_complete": "lantern_path",
-    "location": "grove"
+    "location": "grove",
+    "day_mod3": [
+     2
+    ],
+    "time": "evening"
    },
    "lines": [
     "등불 켜진 숲길을 걷는 중이에요. 이젠 밤이 무섭지 않아요."
@@ -696,7 +708,11 @@
    "conditions": {
     "met": "npc_bibi",
     "project_complete": "market_awning",
-    "location": "market"
+    "location": "market",
+    "day_mod3": [
+     1
+    ],
+    "time": "day"
    },
    "lines": [
     "가림막 아래 노점이에요… 비가 와도 가구를 내놓을 수 있어요."
@@ -715,7 +731,11 @@
    "conditions": {
     "met": "npc_moa",
     "project_complete": "card_room_extension",
-    "location": "card_room"
+    "location": "card_room",
+    "day_mod3": [
+     1
+    ],
+    "time": "evening"
    },
    "lines": [
     "연습 테이블 안내 중이에요! 칩 없이 쳐 보고 싶은 분은 이쪽으로요!"
@@ -734,7 +754,11 @@
    "conditions": {
     "met": "npc_juno",
     "project_complete": "festival_decor",
-    "location": "village_square"
+    "location": "village_square",
+    "day_mod3": [
+     0
+    ],
+    "time": "day"
    },
    "lines": [
     "장식 아래서 개막 멘트 리허설 중! 들어 볼래?"
@@ -895,6 +919,46 @@
    "choices": [
     {
      "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "note.square_mix_table_day",
+   "npc": "obj:square_mix_table_day",
+   "priority": 10,
+   "conditions": {},
+   "lines": [
+    "교류 모임은 저녁에 열려요. 그때 오면 주민 한 명을 골라 1:1로 치고, 주변 사람들이 구경해요."
+   ],
+   "choices": [
+    {
+     "text": "저녁까지 기다리기",
+     "action": "set_time",
+     "arg": "evening"
+    },
+    {
+     "text": "나중에",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "note.tea_social_table_day",
+   "npc": "obj:tea_social_table_day",
+   "priority": 10,
+   "conditions": {},
+   "lines": [
+    "교류 모임은 저녁에 열려요. 그때 오면 주민 한 명을 골라 1:1로 치고, 주변 사람들이 구경해요."
+   ],
+   "choices": [
+    {
+     "text": "저녁까지 기다리기",
+     "action": "set_time",
+     "arg": "evening"
+    },
+    {
+     "text": "나중에",
      "action": "close"
     }
    ]

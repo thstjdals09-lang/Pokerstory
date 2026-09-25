@@ -2,7 +2,7 @@ class_name GameState
 extends RefCounted
 ## All persistent progress of one save slot. SaveSystem writes it as JSON via to_dict().
 
-const SAVE_VERSION := 5
+const SAVE_VERSION := 6
 
 var player_name := "여행자"
 ## Single in-game currency. Never negative; every change is recorded in chips_ledger.
@@ -56,6 +56,8 @@ var tournament := {"stage": 0, "rewarded": false}
 var tracked_quest := ""
 ## Mornings since the start (content alpha): varies where residents spend their time.
 var day_count := 0
+## flag -> day_count when it first turned on (greybox feature complete): "a day later" gates.
+var flag_days := {}
 
 
 # --- chips -------------------------------------------------------------------
@@ -95,6 +97,8 @@ func get_flag(flag_name: String) -> bool:
 
 
 func set_flag(flag_name: String, value: bool = true) -> void:
+	if value and not flag_days.has(flag_name) and not bool(flags.get(flag_name, false)):
+		flag_days[flag_name] = day_count
 	flags[flag_name] = value
 
 
@@ -222,6 +226,7 @@ func to_dict() -> Dictionary:
 		"tournament": tournament.duplicate(),
 		"tracked_quest": tracked_quest,
 		"day_count": day_count,
+		"flag_days": flag_days.duplicate(),
 	}
 
 
@@ -323,4 +328,7 @@ static func from_dict(d: Dictionary) -> GameState:
 	s.tournament = {"stage": clampi(int(t.get("stage", 0)), 0, 3), "rewarded": bool(t.get("rewarded", false))}
 	s.tracked_quest = str(d.get("tracked_quest", ""))
 	s.day_count = maxi(0, int(d.get("day_count", 0)))
+	var fd: Dictionary = d.get("flag_days", {})
+	for k in fd:
+		s.flag_days[str(k)] = int(fd[k])
 	return s

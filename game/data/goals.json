@@ -1,187 +1,227 @@
 {
-  "_comment": "The first matching goal is shown in the HUD. An active odd job overrides this list (see Game.current_goal). Goals suggest every chip source equally; poker is never required (Design Review 03).",
-  "goals": [
-    {
-      "text": "루미에게 인사하기 (낮: 광장 · 저녁: 카드룸)",
-      "conditions": {
-        "flags_false": [
-          "intro_met_lumi"
-        ]
-      }
-    },
-    {
-      "text": "루미에게 마법 불씨 꾸러미 전해 주기 (낮: 광장 · 저녁: 카드룸)",
-      "conditions": {
-        "quest_active": "quest.sera_delivery"
-      }
-    },
-    {
-      "text": "칩을 모아 작은 등불({price_furniture.lamp_small}칩) 사기 — 광장 아르바이트 · 세라의 부탁 · 저녁 포커 모임",
-      "conditions": {
-        "not_owned_or_placed": "furniture.lamp_small",
-        "max_chips": 49
-      }
-    },
-    {
-      "text": "세라의 잡화점에서 작은 등불 사기 ({price_furniture.lamp_small}칩)",
-      "conditions": {
-        "not_owned_or_placed": "furniture.lamp_small"
-      }
-    },
-    {
-      "text": "집 보관함에서 등불 배치하기",
-      "conditions": {
-        "not_placed_item": "furniture.lamp_small"
-      }
-    },
-    {
-      "text": "루미에게 다시 말 걸기",
-      "conditions": {
-        "flags_false": [
-          "lumi_lamp_reaction_seen"
-        ]
-      }
-    },
-    {
-      "text": "모아에게 사라진 초대장 이야기 듣기",
-      "conditions": {
-        "flags_true": [
-          "story.prologue_complete"
-        ],
-        "flags_false": [
-          "story.act1_started"
-        ]
-      }
-    },
-    {
-      "text": "사라진 초대장: 우편함(주거 골목)과 숲길 안내판에서 단서 찾기",
-      "conditions": {
-        "flags_true": [
-          "story.act1_started"
-        ],
-        "flags_false": [
-          "story.act1_complete"
-        ],
-        "not": {
-          "flags_true": [
-            "story.clue_postbox",
-            "story.clue_grove"
-          ]
-        }
-      }
-    },
-    {
-      "text": "광장 카드룸 게시판에서 '모두 환영' 적기",
-      "conditions": {
-        "flags_true": [
-          "story.clue_postbox",
-          "story.clue_grove"
-        ],
-        "flags_false": [
-          "story.act1_complete"
-        ]
-      }
-    },
-    {
-      "text": "서로 다른 테이블: 루미와 카일의 이야기 듣기",
-      "conditions": {
-        "flags_true": [
-          "story.act2_started"
-        ],
-        "flags_false": [
-          "story.act2_complete"
-        ],
-        "not": {
-          "flags_true": [
-            "story.act2_heard_lumi",
-            "story.act2_heard_kyle"
-          ]
-        }
-      }
-    },
-    {
-      "text": "모임 준비: 리라(찻집 의자) 또는 카일(숲길 규칙판) 돕기",
-      "conditions": {
-        "flags_true": [
-          "story.act2_started"
-        ],
-        "flags_false": [
-          "story.act2_prep_done",
-          "story.act2_complete"
-        ]
-      }
-    },
-    {
-      "text": "낮에 물안개 둔치 데크에서 루미·카일 만나기",
-      "conditions": {
-        "flags_true": [
-          "story.act2_prep_done"
-        ],
-        "flags_false": [
-          "story.act2_complete"
-        ]
-      }
-    },
-    {
-      "text": "네잎 저녁제 준비: 기여 모으기 (게시판에서 현황 확인)",
-      "conditions": {
-        "flags_true": [
-          "story.act3_started"
-        ],
-        "flags_false": [
-          "story.festival_ready"
-        ],
-        "not": {
-          "contributions_min": 3
-        }
-      }
-    },
-    {
-      "text": "마을 회관 주민 회의에 가기",
-      "conditions": {
-        "contributions_min": 3,
-        "flags_false": [
-          "story.festival_ready"
-        ]
-      }
-    },
-    {
-      "text": "광장 축제 부스에서 네잎 저녁제 시작하기",
-      "conditions": {
-        "flags_true": [
-          "story.festival_ready"
-        ],
-        "flags_false": [
-          "story.act3_complete"
-        ]
-      }
-    },
-    {
-      "text": "집에서 자고 축제 다음 날 아침 맞기",
-      "conditions": {
-        "flags_true": [
-          "story.act3_complete"
-        ],
-        "flags_false": [
-          "story.postgame"
-        ]
-      }
-    },
-    {
-      "text": "세라에게 부탁할 일이 없는지 물어보기",
-      "conditions": {
-        "quest_not_started": "quest.sera_delivery"
-      }
-    },
-    {
-      "text": "광장 게시판 아르바이트로 칩 모으기 (포커 참가금 {stake}칩)",
-      "conditions": {
-        "max_chips": 19
-      }
-    },
-    {
-      "text": "자유롭게 지내기 — 포커, 아르바이트, 집 꾸미기",
-      "conditions": {}
+ "_comment": "The first matching goal is shown in the HUD. An active odd job overrides this list (see Game.current_goal). Goals suggest every chip source equally; poker is never required (Design Review 03).",
+ "goals": [
+  {
+   "text": "루미에게 인사하기 (낮: 광장 · 저녁: 카드룸)",
+   "conditions": {
+    "flags_false": [
+     "intro_met_lumi"
+    ]
+   }
+  },
+  {
+   "text": "루미에게 마법 불씨 꾸러미 전해 주기 (낮: 광장 · 저녁: 카드룸)",
+   "conditions": {
+    "quest_active": "quest.sera_delivery"
+   }
+  },
+  {
+   "text": "칩을 모아 작은 등불({price_furniture.lamp_small}칩) 사기 — 광장 아르바이트 · 세라의 부탁 · 저녁 포커 모임",
+   "conditions": {
+    "not_owned_or_placed": "furniture.lamp_small",
+    "max_chips": 49
+   }
+  },
+  {
+   "text": "세라의 잡화점에서 작은 등불 사기 ({price_furniture.lamp_small}칩)",
+   "conditions": {
+    "not_owned_or_placed": "furniture.lamp_small"
+   }
+  },
+  {
+   "text": "집 보관함에서 등불 배치하기",
+   "conditions": {
+    "not_placed_item": "furniture.lamp_small"
+   }
+  },
+  {
+   "text": "루미에게 다시 말 걸기",
+   "conditions": {
+    "flags_false": [
+     "lumi_lamp_reaction_seen"
+    ]
+   }
+  },
+  {
+   "text": "모아에게 사라진 초대장 이야기 듣기",
+   "conditions": {
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "flags_false": [
+     "story.act1_started"
+    ]
+   }
+  },
+  {
+   "text": "사라진 초대장: 우편함(주거 골목)과 숲길 안내판에서 단서 찾기",
+   "conditions": {
+    "flags_true": [
+     "story.act1_started"
+    ],
+    "flags_false": [
+     "story.act1_complete"
+    ],
+    "not": {
+     "flags_true": [
+      "story.clue_postbox",
+      "story.clue_grove"
+     ]
     }
-  ]
+   }
+  },
+  {
+   "text": "광장 카드룸 게시판에서 '모두 환영' 적기",
+   "conditions": {
+    "flags_true": [
+     "story.clue_postbox",
+     "story.clue_grove"
+    ],
+    "flags_false": [
+     "story.act1_complete"
+    ]
+   }
+  },
+  {
+   "text": "하루를 보내며 달라진 마을 둘러보기 — 자고 나면 루미와 카일 소식이 들려와요",
+   "conditions": {
+    "flags_true": [
+     "story.act1_complete"
+    ],
+    "flags_false": [
+     "story.act2_complete"
+    ],
+    "not": {
+     "days_since": {
+      "story.act1_complete": 1
+     }
+    }
+   }
+  },
+  {
+   "text": "서로 다른 테이블: 루미와 카일의 이야기 듣기",
+   "conditions": {
+    "flags_true": [
+     "story.act2_started"
+    ],
+    "flags_false": [
+     "story.act2_complete"
+    ],
+    "not": {
+     "flags_true": [
+      "story.act2_heard_lumi",
+      "story.act2_heard_kyle"
+     ]
+    }
+   }
+  },
+  {
+   "text": "모임 준비: 리라(찻집 의자) 또는 카일(숲길 규칙판) 돕기",
+   "conditions": {
+    "flags_true": [
+     "story.act2_started"
+    ],
+    "flags_false": [
+     "story.act2_prep_done",
+     "story.act2_complete"
+    ]
+   }
+  },
+  {
+   "text": "낮에 물안개 둔치 데크에서 루미·카일 만나기",
+   "conditions": {
+    "flags_true": [
+     "story.act2_prep_done"
+    ],
+    "flags_false": [
+     "story.act2_complete"
+    ]
+   }
+  },
+  {
+   "text": "하루를 보내며 축제 소식 기다리기 — 자고 나면 광장이 바빠질 거예요",
+   "conditions": {
+    "flags_true": [
+     "story.act2_complete"
+    ],
+    "flags_false": [
+     "story.act3_complete"
+    ],
+    "not": {
+     "days_since": {
+      "story.act2_complete": 1
+     }
+    }
+   }
+  },
+  {
+   "text": "네잎 저녁제 준비: 기여 모으기 (게시판에서 현황 확인)",
+   "conditions": {
+    "flags_true": [
+     "story.act3_started"
+    ],
+    "flags_false": [
+     "story.festival_ready"
+    ],
+    "not": {
+     "contributions_min": 3
+    }
+   }
+  },
+  {
+   "text": "마을 회관 주민 회의에 가기",
+   "conditions": {
+    "contributions_min": 3,
+    "flags_false": [
+     "story.festival_ready"
+    ]
+   }
+  },
+  {
+   "text": "광장 축제 부스에서 네잎 저녁제 시작하기",
+   "conditions": {
+    "flags_true": [
+     "story.festival_ready"
+    ],
+    "flags_false": [
+     "story.act3_complete"
+    ]
+   }
+  },
+  {
+   "text": "집에서 자고 축제 다음 날 아침 맞기",
+   "conditions": {
+    "flags_true": [
+     "story.act3_complete"
+    ],
+    "flags_false": [
+     "story.postgame"
+    ]
+   }
+  },
+  {
+   "text": "네잎골의 일상 — 게시판 '요즘 할 수 있는 일'과 메뉴 > 일지에서 할 거리를 찾아보세요",
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ]
+   }
+  },
+  {
+   "text": "세라에게 부탁할 일이 없는지 물어보기",
+   "conditions": {
+    "quest_not_started": "quest.sera_delivery"
+   }
+  },
+  {
+   "text": "광장 게시판 아르바이트로 칩 모으기 (포커 참가금 {stake}칩)",
+   "conditions": {
+    "max_chips": 19
+   }
+  },
+  {
+   "text": "자유롭게 지내기 — 포커, 아르바이트, 집 꾸미기",
+   "conditions": {}
+  }
+ ]
 }

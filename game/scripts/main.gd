@@ -405,7 +405,9 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 			var hr: Dictionary = Game.upgrade_home()
 			if hr["ok"]:
 				hud.show_toast("집을 넓혔어요!")
-				enter_location(world.location_id, "default", world.player.position, "집이 넓어졌어요")
+				await enter_location(world.location_id, "default", world.player.position, "집이 넓어졌어요")
+				var st: Dictionary = Game.home_stage_def(Game.state.home_stage)
+				_show_system_dialogue(str(st.get("name", "집")), [str(st.get("desc", "")), str(st.get("changed", ""))].filter(func(l): return l != ""), [])
 				return
 			if hr.get("reason", "") != "save_failed":
 				hud.show_toast("칩이 %d개 부족해요." % int(hr.get("need", 0)) if hr.get("reason", "") == "not_enough_chips" else "아직 조건이 맞지 않아요.")
@@ -494,12 +496,12 @@ func _complete_quest(arg: String) -> void:
 
 func _open_rest() -> void:
 	if Game.state.time_of_day == "day":
-		_show_system_dialogue("침대", ["포근한 침대예요. 저녁까지 푹 쉴까요?"], [
+		_show_system_dialogue("침대", ["포근한 침대예요. 저녁까지 푹 쉴까요?", "저녁엔 카드룸 모임과 교류 모임이 열리고, 이웃들이 놀러 오기도 해요."], [
 			{"text": "저녁까지 쉬기 (시간이 저녁으로 바뀌어요)", "action": "set_time", "arg": "evening"},
 			{"text": "그만두기", "action": "close"},
 		])
 	else:
-		_show_system_dialogue("침대", ["하루를 마무리할 시간이에요. 아침까지 잘까요?"], [
+		_show_system_dialogue("침대", ["하루를 마무리할 시간이에요. 아침까지 잘까요?", "낮엔 가게와 아르바이트, 주민들의 일상이 기다려요. 자고 나면 마을 사람들의 하루도 조금씩 달라져요."], [
 			{"text": "아침까지 자기 (시간이 낮으로 바뀌어요)", "action": "set_time", "arg": "day"},
 			{"text": "그만두기", "action": "close"},
 		])
@@ -523,6 +525,7 @@ func _open_job_board() -> void:
 	var lines: Array = [
 		"[%s] %s" % [plaza["name"], plaza["description"]],
 		"몇 번이든 다시 할 수 있어요. 광장을 벗어나면 정리를 그만둔 것으로 처리돼요.",
+		"낮엔 일거리와 가게, 저녁엔 카드룸과 모임이 열려요. 집 침대에서 시간을 넘길 수 있어요.",
 	]
 	_show_system_dialogue("마을 게시판", lines, [
 		{"text": "광장 정리 아르바이트 시작하기", "action": "start_job", "arg": "job.plaza_cleanup"},
@@ -617,7 +620,9 @@ func _open_project_board() -> void:
 			"complete":
 				lines.append("✔ %s — 완료" % p["name"])
 			"available":
-				choices.append({"text": "%s 후원 (%d칩)" % [p["name"], int(p["cost"])], "action": "fund_project", "arg": pid})
+				var need := int(p["cost"]) - Game.state.chips_balance
+				lines.append("· %s — %s" % [p["name"], p.get("need", "")])
+				choices.append({"text": "%s 후원 (%d칩)%s" % [p["name"], int(p["cost"]), " — %d칩 부족" % need if need > 0 else ""], "action": "fund_project", "arg": pid})
 			_:
 				lines.append("· %s — %s" % [p["name"], p.get("locked_hint", "아직 준비 중")])
 	choices.append({"text": "닫기", "action": "close"})
@@ -685,21 +690,13 @@ func open_poker_setup(mode: String, opponent: String = "", pick_opponent: bool =
 	_start_poker_with("%s|%s|" % [mode, opponent])
 
 
-## arg "mode|opponent|ability": asks for the ability when several are unlocked, then deals.
+## arg "mode|opponent|ability": deals with that ability, or the one carried last time.
 func _start_poker_with(arg: String) -> void:
 	var parts := arg.split("|")
 	var mode := parts[0]
 	var opponent := parts[1] if parts.size() > 1 else ""
 	var ability := parts[2] if parts.size() > 2 else ""
-	if ability == "" and Game.state.abilities_unlocked.size() > 1:
-		var choices: Array = []
-		for aid in Game.state.abilities_unlocked:
-			var a: Dictionary = Game.data.abilities.get(aid, {})
-			if not a.is_empty():
-				choices.append({"text": "%s — %s" % [a["name"], a.get("description", "")], "action": "poker_loadout", "arg": "%s|%s|%s" % [mode, opponent, aid]})
-		choices.append({"text": "그만두기", "action": "close"})
-		_show_system_dialogue("가져갈 능력 고르기", ["한 판에 능력 하나를 가져갈 수 있어요. 능력은 승패를 정하지 않아요."], choices)
-		return
+	# The last ability carried comes along; it can be swapped at the table before it is used.
 	var m: PokerMatch = Game.create_poker_match(mode, opponent, ability)
 	if m == null:
 		if not Game.last_commit_failed:

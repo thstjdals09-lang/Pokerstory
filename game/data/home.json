@@ -24,7 +24,8 @@
      }
     ]
    },
-   "unlock_hint": "주민의 이야기 1개를 마치거나 공공사업 1개를 완료하기"
+   "unlock_hint": "주민의 이야기 1개를 마치거나 공공사업 1개를 완료하기",
+   "changed": "창가와 벽에 장식 자리가 늘었어요. 친한 이웃을 집에 초대할 수도 있어요."
   },
   {
    "id": "home_roomy",
@@ -36,7 +37,8 @@
    "unlock": {
     "home_stage_min": 1
    },
-   "unlock_hint": "아늑한 방 단계"
+   "unlock_hint": "아늑한 방 단계",
+   "changed": "안쪽 문 너머로 작은 방이 생겼어요. 가구를 더 놓을 수 있어요."
   },
   {
    "id": "home_gathering",
@@ -51,7 +53,8 @@
      "story.act2_complete"
     ]
    },
-   "unlock_hint": "넓은 집 단계 + 2막 완료"
+   "unlock_hint": "넓은 집 단계 + 2막 완료",
+   "changed": "모임방이 생겼어요. 친구를 불러 홈게임을 열거나, 저녁에 이웃들이 놀러 와요."
   }
  ]
 }

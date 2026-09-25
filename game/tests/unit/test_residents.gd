@@ -18,7 +18,7 @@ func _met_state() -> GameState:
 	var s := GameState.new()
 	for npc in db.npc_order:
 		s.relation(npc)["met"] = true
-	for f in ["intro_met_lumi", "moa_met", "sera_met", "sera_quest_thanked", "lumi_lamp_reaction_seen", "sera_lamp_reaction_seen"]:
+	for f in ["intro_met_lumi", "moa_met", "sera_met", "sera_quest_thanked", "lumi_lamp_reaction_seen", "sera_lamp_reaction_seen", "story.prologue_complete"]:
 		s.set_flag(f)
 	s.quests["quest.sera_delivery"] = QuestBook.COMPLETED
 	return s
@@ -55,6 +55,7 @@ func test_greetings_daily_lines_and_reactions() -> void:
 		var first := DialogueResolver.resolve(db.dialogue, npc, place["loc"], fresh)
 		check_eq(first.get("id", ""), _greeting_id(npc), npc + " greets first")
 		var s := _met_state()
+		s.set_flag("story.prologue_complete", false)  # daily lines, not the story's next scene
 		for e in db.dialogue:
 			if e.get("once", false):
 				s.events_done[DialogueResolver.once_key(e)] = true
@@ -142,6 +143,10 @@ func test_romance_is_opt_in_for_four_adults_and_can_end() -> void:
 	# Accept -> two dates -> decide together -> later end it kindly.
 	var s := _met_state()
 	s.quests["npc_rira.bond_02"] = QuestBook.COMPLETED
+	# Romance is offered only to a close friend, and not on the same day as the second episode.
+	s.relation("npc_rira")["friendship"] = 30
+	s.set_flag("done:npc_rira.bond_02")
+	s.day_count += 1
 	s.time_of_day = "day"
 	check_eq(talk(db, s, "npc_rira", "tea_house", ["더 알아가고"])[0], "rira.romance_offer", "offer after the second episode")
 	check(s.relation("npc_rira")["romance"]["consent"], "consent given by choice")
@@ -149,6 +154,7 @@ func test_romance_is_opt_in_for_four_adults_and_can_end() -> void:
 	check_eq(talk(db, s, "npc_rira", "tea_house")[0], "rira.date2", "second date")
 	check_eq(talk(db, s, "npc_rira", "tea_house", ["함께"])[0], "rira.decide", "decision scene")
 	check_eq(s.relation("npc_rira")["romance"]["stage"], "committed", "together")
+	check_eq(talk(db, s, "npc_rira", "tea_house")[0], "rira_friend_gift", "a close friend's gift comes on another talk")
 	check_eq(talk(db, s, "npc_rira", "tea_house")[0], "rira_memory", "the episode memory is still mentioned once")
 	var f_before: int = s.relation("npc_rira")["friendship"]
 	var shown := talk(db, s, "npc_rira", "tea_house", ["정리"])
@@ -159,6 +165,9 @@ func test_romance_is_opt_in_for_four_adults_and_can_end() -> void:
 	# Declining keeps the friendship and never asks again.
 	var d := _met_state()
 	d.quests["npc_taeo.bond_02"] = QuestBook.COMPLETED
+	d.relation("npc_taeo")["friendship"] = 30
+	d.set_flag("done:npc_taeo.bond_02")
+	d.day_count += 1
 	var f0: int = d.relation("npc_taeo")["friendship"]
 	check_eq(talk(db, d, "npc_taeo", "tailor", ["친구로"])[0], "taeo.romance_offer", "offer shown once")
 	check_eq(d.relation("npc_taeo")["romance"]["stage"], "closed", "declined stays closed")

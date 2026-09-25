@@ -25,7 +25,7 @@ const KNOWN_KEYS := [
 	"jobs_completed_min",
 	"item_discovered",
 	"act", "day_mod3", "has_memory", "not_memory", "memories_min", "friendship_below",
-	"poker_unmentioned", "poker_last",
+	"poker_unmentioned", "poker_last", "days_since",
 ]
 const ITEM_KEYS := ["placed_item", "not_placed_item", "owns_or_placed_item", "not_owned_or_placed", "item_discovered"]
 const QUEST_KEYS := ["quest_not_started", "quest_active", "quest_completed"]
@@ -202,6 +202,14 @@ static func _check_key(key: String, v, state: GameState, location: String) -> bo
 		"friendship_below":
 			for npc in v:
 				if int(state.relation(npc)["friendship"]) >= int(v[npc]):
+					return false
+			return true
+		"days_since":
+			# {flag: n}: the flag is on and at least n mornings have passed since it turned on.
+			for f in v:
+				if not state.get_flag(f):
+					return false
+				if state.flag_days.has(f) and state.day_count - int(state.flag_days[f]) < int(v[f]):
 					return false
 			return true
 		"poker_unmentioned":

@@ -249,7 +249,9 @@ func _story() -> void:
 	_check(Game.state.get_flag("story.act1_complete"), "act 1 complete")
 	await _shot("story_act1")
 
-	# Act 2: two tables.
+	# Act 2: two tables, the morning after.
+	_check(main.hud._goal_label.text.contains("하루"), "the goal says a day will pass (%s)" % main.hud._goal_label.text)
+	await _next_day()
 	await _talk_npc("npc_lumi")
 	_check_eq(main.last_entry_id, "scn.lumi_view", "Lumi's view")
 	await _close_any()
@@ -290,7 +292,8 @@ func _story() -> void:
 	await _upgrade_home(1)
 	_check_eq(Game.state.home_stage, 1, "house expanded without poker")
 
-	# Act 3: the festival, prepared without poker.
+	# Act 3: the festival, prepared without poker (the morning after act 2).
+	await _next_day()
 	await _talk_npc("npc_juno")
 	await _close_any()
 	await _talk_npc("npc_juno")
@@ -515,6 +518,8 @@ func _grant_test_chips(n: int) -> void:
 
 func _choose_arg(action: String, arg: String) -> void:
 	await _read_to_choices()
+	if action == "start_poker" and Game.debug_deck_queue.is_empty():
+		Game.debug_deck_queue = [DECKS["win"]]
 	var choices: Array = main.dialogue._choices
 	for i in choices.size():
 		if choices[i].get("action", "") == action and str(choices[i].get("arg", "")) == arg:
@@ -539,7 +544,13 @@ func _upgrade_home(stage: int) -> void:
 		await _close_any()
 		return
 	await _choose("upgrade_home")
-	await _wait_world("player_home")
+	# The house reloads, then says what changed.
+	for i in 240:
+		if main.ui_mode == "dialogue" and main.world != null and main.world.location_id == "player_home":
+			break
+		await _frames(1)
+	_check(main.dialogue._lines.size() > 0 and main.dialogue.visible, "upgrade explains what changed")
+	await _close_any()
 	_check_eq(Game.state.home_stage, stage, "house stage %d" % stage)
 
 
@@ -721,17 +732,23 @@ func _life() -> void:
 # --- cc08: poker opponents, abilities, modes and the tournament ----------------------------------
 
 ## After a table or invitation opened the setup: picks the opponent (when asked) and the ability.
+## After a table or invitation: picks the opponent when the table asks, then carries `ability`
+## (swapped at the table; there is no separate loadout step). Hands started straight from a
+## dialogue choice get their stacked deck from _choose_arg.
 func _pick_loadout(mode: String, opponent: String, ability: String, deck: String = "win", expect_table: bool = true) -> void:
-	Game.debug_deck_queue = [DECKS[deck]]
-	await _read_to_choices()
-	var first := "%s|%s|" % [mode, opponent]
-	for c in main.dialogue._choices:
-		if str(c.get("arg", "")) == first:
-			await _choose_arg("poker_loadout", first)
-			break
-	await _choose_arg("poker_loadout", "%s|%s|%s" % [mode, opponent, ability])
+	if main.ui_mode != "poker":
+		Game.debug_deck_queue = [DECKS[deck]]
+		await _read_to_choices()
+		var first := "%s|%s|" % [mode, opponent]
+		for c in main.dialogue._choices:
+			if str(c.get("arg", "")) == first:
+				await _choose_arg("poker_loadout", first)
+				break
 	if expect_table:
 		_check_eq(main.ui_mode, "poker", "%s hand against %s started" % [mode, opponent])
+	if main.ui_mode == "poker" and ability != "" and main.poker.match_ref.ability_id != ability:
+		main.poker.select_ability(ability)
+		_check_eq(main.poker.match_ref.ability_id, ability, "carrying " + ability)
 
 
 ## Plays the dealt hand by standing and checks the per-hand bookkeeping.
@@ -820,8 +837,7 @@ func _cc08() -> void:
 	# Card-room home game by invitation, twice more against Kyle -> his poker rivalry scene.
 	await _rest_until("evening")
 	for i in 2:
-		await _talk_npc("npc_kyle")
-		await _read_to_choices()
+		await _talk_until_choice("npc_kyle", "start_poker")
 		await _choose_arg("start_poker", "homegame|npc_kyle")
 		await _pick_loadout("homegame", "npc_kyle", "ability.star_sense")
 		await _stand_and_check("npc_kyle", "win")
@@ -1372,13 +1388,15 @@ func _react() -> void:
 			if main.dialogue._choices.any(func(c): return c.get("action", "") == "start_poker" and str(c.get("arg", "")) == ""):
 				break
 			await _close_any()
+		Game.debug_deck_queue = [DECKS["lose" if i == 1 else "win"]]
 		await _choose_arg("start_poker", "")
-		await _pick_loadout("homegame", "", "ability.star_sense", "lose" if i == 1 else "win")
+		await _pick_loadout("homegame", "", "ability.star_sense")
 		main.poker.stand_button.pressed.emit()
 		await _frames(2)
 		await _leave_table()
 	await _talk_until("npc_lumi", "lumi_rivalry")
 	await _close_any()
+	await _next_day()  # act 2 opens the morning after act 1
 	# 5. Talking with Kyle changes how Lumi wants to run the gathering.
 	await _talk_npc("npc_kyle")
 	await _close_any()
@@ -1925,6 +1943,11 @@ func _econ_story() -> void:
 			_api_say("obj:grove_sign_west")
 			_api_say("obj:grove_sign_east")
 		_api_say_until("obj:card_room_board", "scn.board_reopening", ["포커를 몰라도", "좋아요"])
+	# Acts open the morning after the previous one: sleep through the waiting day.
+	for f in ["story.act1_complete", "story.act2_complete"]:
+		if s.get_flag(f) and not Conditions.check({"days_since": {f: 1}}, s):
+			_econ_set_time("evening")
+			_econ_set_time("day")
 	if s.get_flag("story.act2_started") and not s.get_flag("story.act2_complete"):
 		_econ_set_time("day")
 		if not s.get_flag("story.act2_heard_lumi"):
@@ -2014,6 +2037,12 @@ func _through_door(door_id: String, target: String) -> bool:
 		await _choose("wait_and_enter")
 	await _wait_world(target)
 	return true
+
+
+## Sleeps through to the next morning (acts open a day after the previous one).
+func _next_day() -> void:
+	await _rest_until("evening")
+	await _rest_until("day")
 
 
 ## Sleeps or rests in the player's bed until `time`.

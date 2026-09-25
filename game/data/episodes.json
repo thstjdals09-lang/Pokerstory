@@ -102,7 +102,10 @@
    "giver": "npc_moa",
    "target": "card_room_notes",
    "unlock": {
-    "met": "npc_moa"
+    "met": "npc_moa",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "카드룸 게시판에 족보 안내가 두 장 붙어 있는데, 어느 쪽이 더 쉬운지 모르겠어요.",
@@ -199,7 +202,10 @@
    "target": "npc_lumi",
    "unlock": {
     "met": "npc_sera",
-    "owns_or_placed_item": "furniture.lamp_small"
+    "owns_or_placed_item": "furniture.lamp_small",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "그 등불, 집에 잘 어울렸는지 궁금해요.",
@@ -292,7 +298,10 @@
    "giver": "npc_kyle",
    "target": "rules_board",
    "unlock": {
-    "met": "npc_kyle"
+    "met": "npc_kyle",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "쉼터 규칙판에 애매하게 쓰인 곳이 두 군데 있다.",
@@ -376,7 +385,10 @@
    "giver": "npc_nora",
    "target": "postbox",
    "unlock": {
-    "met": "npc_nora"
+    "met": "npc_nora",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "우편함 안에 젖은 봉투가 두 통 있어요.",
@@ -462,7 +474,10 @@
    "giver": "npc_rira",
    "target": "tea_seats",
    "unlock": {
-    "met": "npc_rira"
+    "met": "npc_rira",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "찻집 손님 자리 두 곳 중 어디가 더 인기인지 궁금해요.",
@@ -550,7 +565,10 @@
    "giver": "npc_taeo",
    "target": "tailor_samples",
    "unlock": {
-    "met": "npc_taeo"
+    "met": "npc_taeo",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "쿠션 헝겊 견본이 두 개 있어. 네가 보기엔 어느 쪽이 나아?"
@@ -640,7 +658,10 @@
    "giver": "npc_bibi",
    "target": "workshop_chairs",
    "unlock": {
-    "met": "npc_bibi"
+    "met": "npc_bibi",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "전시 선반에 낡은 의자와 새 의자가 있어요.",
@@ -727,7 +748,10 @@
    "giver": "npc_ella",
    "target": "reading_nook",
    "unlock": {
-    "met": "npc_ella"
+    "met": "npc_ella",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "쉼터 책장에 문양 안내 책 두 권이 있어요.",
@@ -819,7 +843,10 @@
    "giver": "npc_haru",
    "target": "waterside_deck",
    "unlock": {
-    "met": "npc_haru"
+    "met": "npc_haru",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "둔치 데크 쪽에 어두운 구간이 있는 것 같아요.",
@@ -906,7 +933,10 @@
    "giver": "npc_juno",
    "target": "festival_booth",
    "unlock": {
-    "met": "npc_juno"
+    "met": "npc_juno",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "행사 부스에 붙인 안내문이 너무 어렵대!",
@@ -993,7 +1023,10 @@
    "giver": "npc_miri",
    "target": "project_board",
    "unlock": {
-    "met": "npc_miri"
+    "met": "npc_miri",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "공공사업 게시판의 예산표가 너무 숫자뿐이에요.",
@@ -1074,7 +1107,10 @@
    "giver": "npc_ona",
    "target": "lantern_path_marker",
    "unlock": {
-    "met": "npc_ona"
+    "met": "npc_ona",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "산책로에 너무 밝은 등불이 두 개 있어.",
@@ -1155,7 +1191,10 @@
    "giver": "npc_ren",
    "target": "ren_card_box",
    "unlock": {
-    "met": "npc_ren"
+    "met": "npc_ren",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "내 카드 상자에 똑같은 카드가 두 장 있어.",
@@ -1247,7 +1286,10 @@
    "giver": "npc_yul",
    "target": "broken_bench",
    "unlock": {
-    "met": "npc_yul"
+    "met": "npc_yul",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "골목 끝 벤치가 부서졌다. 어디가 문제인지 봐 줄래."
@@ -1332,7 +1374,10 @@
    "giver": "npc_sia",
    "target": "npc_moa",
    "unlock": {
-    "met": "npc_sia"
+    "met": "npc_sia",
+    "flags_true": [
+     "story.prologue_complete"
+    ]
    },
    "offer_lines": [
     "첫 손님이 '포커를 몰라도 모임에 가도 되나요?'래요.",

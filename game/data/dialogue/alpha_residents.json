@@ -22,27 +22,6 @@
    ]
   },
   {
-   "id": "lumi_now_act1",
-   "npc": "npc_lumi",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_lumi",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장이 사라졌다니, 모아 표정 봤어? 나까지 조마조마해."
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
    "id": "lumi_now_act2",
    "npc": "npc_lumi",
    "priority": 11,
@@ -381,27 +360,6 @@
    },
    "lines": [
     "불씨 병은 하루에 한 번씩 닦아요. 안 그러면 빛이 흐려지거든요."
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
-   "id": "sera_now_act1",
-   "npc": "npc_sera",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_sera",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장 봉투, 우리 가게에서 판 거예요. 누가 샀는지는… 기억이 안 나네요."
    ],
    "choices": [
     {
@@ -942,27 +900,6 @@
    ]
   },
   {
-   "id": "rira_now_act1",
-   "npc": "npc_rira",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_rira",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장이 없으니 찻집 손님이 반으로 줄었어요. 어서 찾아야 해요!"
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
    "id": "rira_now_act2",
    "npc": "npc_rira",
    "priority": 11,
@@ -1042,6 +979,25 @@
     "당신 차 취향은 이제 안 물어봐도 알아요. 오늘도 그걸로 드릴게요."
    ],
    "choices": [
+    {
+     "text": "언제 우리 집에 놀러 와요",
+     "action": "close",
+     "conditions": {
+      "flags_false": [
+       "invited:npc_rira"
+      ]
+     },
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "invited:npc_rira"
+      },
+      {
+       "type": "toast",
+       "text": "리라을(를) 집에 초대했어요. 집이 넓어지면 들를 거예요."
+      }
+     ]
+    },
     {
      "text": "또 봐요",
      "action": "close"
@@ -1226,6 +1182,25 @@
     "네 소매는 내가 책임질게. 다른 사람한테 맡기지 마."
    ],
    "choices": [
+    {
+     "text": "언제 우리 집에 놀러 와요",
+     "action": "close",
+     "conditions": {
+      "flags_false": [
+       "invited:npc_taeo"
+      ]
+     },
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "invited:npc_taeo"
+      },
+      {
+       "type": "toast",
+       "text": "테오을(를) 집에 초대했어요. 집이 넓어지면 들를 거예요."
+      }
+     ]
+    },
     {
      "text": "또 봐요",
      "action": "close"
@@ -1595,6 +1570,25 @@
    ],
    "choices": [
     {
+     "text": "언제 우리 집에 놀러 와요",
+     "action": "close",
+     "conditions": {
+      "flags_false": [
+       "invited:npc_ella"
+      ]
+     },
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "invited:npc_ella"
+      },
+      {
+       "type": "toast",
+       "text": "엘라을(를) 집에 초대했어요. 집이 넓어지면 들를 거예요."
+      }
+     ]
+    },
+    {
      "text": "또 봐요",
      "action": "close"
     }
@@ -1779,6 +1773,25 @@
    ],
    "choices": [
     {
+     "text": "언제 우리 집에 놀러 와요",
+     "action": "close",
+     "conditions": {
+      "flags_false": [
+       "invited:npc_haru"
+      ]
+     },
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "invited:npc_haru"
+      },
+      {
+       "type": "toast",
+       "text": "하루을(를) 집에 초대했어요. 집이 넓어지면 들를 거예요."
+      }
+     ]
+    },
+    {
      "text": "또 봐요",
      "action": "close"
     }
@@ -1853,27 +1866,6 @@
    },
    "lines": [
     "오늘의 광장 공지! 분수 물고기가 한 마리 늘었다! …아무도 안 궁금해?"
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
-   "id": "juno_now_act1",
-   "npc": "npc_juno",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_juno",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장 실종 사건! 사회자로서 가만있을 수 없지!"
    ],
    "choices": [
     {
@@ -1963,6 +1955,25 @@
    ],
    "choices": [
     {
+     "text": "언제 우리 집에 놀러 와요",
+     "action": "close",
+     "conditions": {
+      "flags_false": [
+       "invited:npc_juno"
+      ]
+     },
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "invited:npc_juno"
+      },
+      {
+       "type": "toast",
+       "text": "주노을(를) 집에 초대했어요. 집이 넓어지면 들를 거예요."
+      }
+     ]
+    },
+    {
      "text": "또 봐요",
      "action": "close"
     }
@@ -2037,27 +2048,6 @@
    },
    "lines": [
     "오늘 회관 장부는 오차 0칩이에요. 이런 날은 기분이 좋아요."
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
-   "id": "miri_now_act1",
-   "npc": "npc_miri",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_miri",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장 인쇄비는 이미 냈는데… 다시 찍으면 두 번 내는 거예요. 찾아야죠."
    ],
    "choices": [
     {
@@ -2414,27 +2404,6 @@
    ]
   },
   {
-   "id": "ren_now_act1",
-   "npc": "npc_ren",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_ren",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장도 수집품이야? 찾으면 복사본 하나만 줘!"
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
    "id": "ren_now_act2",
    "npc": "npc_ren",
    "priority": 11,
@@ -2598,27 +2567,6 @@
    ]
   },
   {
-   "id": "yul_now_act1",
-   "npc": "npc_yul",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_yul",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장보다 앉을 자리가 먼저다. …아니, 둘 다 필요하군."
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
    "id": "yul_now_act2",
    "npc": "npc_yul",
    "priority": 11,
@@ -2699,6 +2647,25 @@
    ],
    "choices": [
     {
+     "text": "언제 우리 집에 놀러 와요",
+     "action": "close",
+     "conditions": {
+      "flags_false": [
+       "invited:npc_yul"
+      ]
+     },
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "invited:npc_yul"
+      },
+      {
+       "type": "toast",
+       "text": "율을(를) 집에 초대했어요. 집이 넓어지면 들를 거예요."
+      }
+     ]
+    },
+    {
      "text": "또 봐요",
      "action": "close"
     }
@@ -2773,27 +2740,6 @@
    },
    "lines": [
     "오늘은 길을 물어본 사람이 세 명이었어요. 셋 다 찻집으로 안내했어요!"
-   ],
-   "choices": [
-    {
-     "text": "또 봐요",
-     "action": "close"
-    }
-   ]
-  },
-  {
-   "id": "sia_now_act1",
-   "npc": "npc_sia",
-   "priority": 11,
-   "conditions": {
-    "met": "npc_sia",
-    "day_mod3": [
-     2
-    ],
-    "act": "act1"
-   },
-   "lines": [
-    "초대장이 사라졌다고요? 저 같은 방문객은 그런 거 없으면 못 와요!"
    ],
    "choices": [
     {
@@ -2882,6 +2828,25 @@
     "당신은 처음부터 이 마을 사람 같았어요. 저도 그렇게 되고 싶어요."
    ],
    "choices": [
+    {
+     "text": "언제 우리 집에 놀러 와요",
+     "action": "close",
+     "conditions": {
+      "flags_false": [
+       "invited:npc_sia"
+      ]
+     },
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "invited:npc_sia"
+      },
+      {
+       "type": "toast",
+       "text": "시아을(를) 집에 초대했어요. 집이 넓어지면 들를 거예요."
+      }
+     ]
+    },
     {
      "text": "또 봐요",
      "action": "close"

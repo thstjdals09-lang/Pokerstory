@@ -133,8 +133,9 @@ func test_four_jobs_repeatable_and_paid_on_completion() -> void:
 func test_sixteen_requests_once_each() -> void:
 	check_eq(_requests().size(), 16, "16 requests")
 	var s := GameState.new()
-	for f in ["story.act1_started", "story.act1_complete", "story.act2_started", "story.act3_started"]:
+	for f in ["story.prologue_complete", "story.act1_started", "story.act1_complete", "story.act2_started", "story.act2_complete", "story.act3_started"]:
 		s.set_flag(f)
+	s.day_count += 1  # festival requests open the morning after act 2
 	s.projects["board_restoration"] = "complete"
 	s.projects["guest_cottage"] = "complete"
 	var total := 0

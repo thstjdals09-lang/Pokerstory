@@ -78,6 +78,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_kyle"
+    }
    ]
   },
   {
@@ -215,6 +221,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_nora"
+    }
    ]
   },
   {
@@ -351,6 +363,12 @@
     {
      "text": "또 봐요",
      "action": "close"
+    }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_rira"
     }
    ]
   },
@@ -491,6 +509,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_taeo"
+    }
    ]
   },
   {
@@ -630,6 +654,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_bibi"
+    }
    ]
   },
   {
@@ -766,6 +796,12 @@
     {
      "text": "또 봐요",
      "action": "close"
+    }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ella"
     }
    ]
   },
@@ -904,6 +940,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_haru"
+    }
    ]
   },
   {
@@ -1012,7 +1054,13 @@
    "npc": "npc_juno",
    "priority": 10,
    "conditions": {
-    "time": "evening"
+    "time": "evening",
+    "act": [
+     "prologue",
+     "act1",
+     "act2",
+     "act3"
+    ]
    },
    "lines": [
     "저녁엔 축제 부스에 있어. 준비할 게 많거든!"
@@ -1040,6 +1088,12 @@
     {
      "text": "또 봐요",
      "action": "close"
+    }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_juno"
     }
    ]
   },
@@ -1178,6 +1232,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_miri"
+    }
    ]
   },
   {
@@ -1314,6 +1374,12 @@
     {
      "text": "또 봐요",
      "action": "close"
+    }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ona"
     }
    ]
   },
@@ -1452,6 +1518,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ren"
+    }
    ]
   },
   {
@@ -1589,6 +1661,12 @@
      "text": "또 봐요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_yul"
+    }
    ]
   },
   {
@@ -1725,6 +1803,12 @@
     {
      "text": "또 봐요",
      "action": "close"
+    }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_sia"
     }
    ]
   },
@@ -2331,6 +2415,12 @@
     "quest_completed": "npc_lumi.bond_02",
     "romance_stage": {
      "npc_lumi": "closed"
+    },
+    "friendship_min": {
+     "npc_lumi": 30
+    },
+    "days_since": {
+     "done:npc_lumi.bond_02": 1
     }
    },
    "lines": [
@@ -2546,6 +2636,12 @@
     "quest_completed": "npc_kyle.bond_02",
     "romance_stage": {
      "npc_kyle": "closed"
+    },
+    "friendship_min": {
+     "npc_kyle": 30
+    },
+    "days_since": {
+     "done:npc_kyle.bond_02": 1
     }
    },
    "lines": [
@@ -2761,6 +2857,12 @@
     "quest_completed": "npc_rira.bond_02",
     "romance_stage": {
      "npc_rira": "closed"
+    },
+    "friendship_min": {
+     "npc_rira": 30
+    },
+    "days_since": {
+     "done:npc_rira.bond_02": 1
     }
    },
    "lines": [
@@ -2976,6 +3078,12 @@
     "quest_completed": "npc_taeo.bond_02",
     "romance_stage": {
      "npc_taeo": "closed"
+    },
+    "friendship_min": {
+     "npc_taeo": 30
+    },
+    "days_since": {
+     "done:npc_taeo.bond_02": 1
     }
    },
    "lines": [
@@ -3291,6 +3399,12 @@
      "text": "또 하자!",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_lumi"
+    }
    ]
   },
   {
@@ -3311,6 +3425,12 @@
      "text": "고마워요",
      "action": "close"
     }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_moa"
+    }
    ]
   },
   {
@@ -3329,6 +3449,12 @@
     {
      "text": "네, 고마워요",
      "action": "close"
+    }
+   ],
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_sera"
     }
    ]
   },
@@ -3402,6 +3528,24 @@
    "choices": [
     {
      "text": "잘됐네요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_evening_post",
+   "npc": "npc_juno",
+   "priority": 10,
+   "conditions": {
+    "time": "evening",
+    "act": "postgame"
+   },
+   "lines": [
+    "저녁엔 부스 앞이 내 무대야. 축제는 끝났어도 무대는 남았거든!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
      "action": "close"
     }
    ]

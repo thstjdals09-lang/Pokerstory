@@ -116,6 +116,13 @@ static func _migrate(data: Dictionary, from_version: int) -> Dictionary:
 			d["save_version"] = 5
 			d["day_count"] = 0
 			return d
+		5:
+			# v5 -> v6 (greybox feature complete): when flags turned on. Unknown for old saves,
+			# which counts as "long ago", so nothing already open closes again.
+			var d := data.duplicate(true)
+			d["save_version"] = 6
+			d["flag_days"] = {}
+			return d
 	return {}
 
 
