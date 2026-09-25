@@ -17,7 +17,10 @@ var _conditional_labels: Array = []
 
 func setup(p_loc: Dictionary) -> void:
 	loc = p_loc
+	texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	for b in loc.get("buildings", []):
+		if ArtLib.has(str(b.get("art", ""))):
+			continue  # the art carries its own signboard; the name shows when focused
 		var r := Geo.rect(b["rect"])
 		var title := WorldLabel.make(b.get("label", ""), 18, Color.WHITE)
 		title.position = r.position + Vector2(0, 14)
@@ -30,7 +33,7 @@ func setup(p_loc: Dictionary) -> void:
 			marker.size = Vector2(160, 22)
 			add_child(marker)
 	for d in loc.get("decor", []):
-		if not d.has("label"):
+		if not d.has("label") or ArtLib.has(str(d.get("art", ""))):
 			continue
 		var l := WorldLabel.make(d["label"], 14, Color("#fff3d6") if d.has("pos") else Color.WHITE)
 		if d.has("rect"):
@@ -81,35 +84,111 @@ func _visible(d: Dictionary) -> bool:
 	return not d.has("conditions") or (Game.state != null and Conditions.check(d["conditions"], Game.state))
 
 
+## Visual slice: a location with an "art" block is painted from data/art.json; any key without a
+## file falls back to the greybox drawing below, element by element.
+func _art() -> Dictionary:
+	return loc.get("art", {})
+
+
+## Art drawn by this view (not depth-sorted). Sorted art is spawned by World as its own node.
+func _flat_art(key: String) -> bool:
+	return ArtLib.has(key) and not ArtLib.sorts(key)
+
+
 func _draw() -> void:
 	for pair in _conditional_labels:
 		pair[0].visible = Game.state != null and Conditions.check(pair[1], Game.state)
 	var size := Geo.vec(loc["size"])
+	var art := _art()
 	if loc.get("interior", false):
-		_draw_interior_shell(size)
+		if ArtLib.has(str(art.get("floor", ""))):
+			_draw_art_interior(size, art)
+		else:
+			_draw_interior_shell(size)
+	elif ArtLib.has(str(art.get("ground", ""))):
+		ArtLib.draw_tiled(self, art["ground"], Rect2(Vector2.ZERO, size))
 	else:
 		draw_rect(Rect2(Vector2.ZERO, size), _c(loc.get("ground", "#a3c982")))
 		var inset := float(loc.get("bounds_inset", 20))
 		draw_rect(Rect2(Vector2(inset, inset) * 0.5, size - Vector2(inset, inset)), Color("#8a6a48"), false, 4.0)
 	for p in loc.get("paths", []):
-		draw_rect(Geo.rect(p), _c(loc.get("path_color", "#e6d3a3")))
+		if ArtLib.has(str(art.get("path", ""))):
+			var pr := Geo.rect(p)
+			draw_rect(pr.grow(3), Color(0.45, 0.55, 0.3, 0.35))
+			ArtLib.draw_tiled(self, art["path"], pr)
+		else:
+			draw_rect(Geo.rect(p), _c(loc.get("path_color", "#e6d3a3")))
 	for pl in loc.get("plazas", []):
-		draw_circle(Geo.vec(pl["center"]), float(pl["radius"]), _c(pl["color"]))
+		if ArtLib.has(str(art.get("plaza", ""))):
+			draw_circle(Geo.vec(pl["center"]), float(pl["radius"]) + 6, Color("#b8a47f"))
+			ArtLib.draw_tiled_circle(self, art["plaza"], Geo.vec(pl["center"]), float(pl["radius"]))
+		else:
+			draw_circle(Geo.vec(pl["center"]), float(pl["radius"]), _c(pl["color"]))
 	for d in loc.get("decor", []):
-		if _visible(d):
+		if not _visible(d) or (d.get("hide_with_art", false) and not art.is_empty()):
+			continue
+		var key := str(d.get("art", ""))
+		if ArtLib.has(key):
+			if not ArtLib.sorts(key):
+				_draw_art_decor(d, key)
+		elif d.get("type", "") != "art":
 			_draw_decor(d)
 	for b in loc.get("buildings", []):
-		_draw_building(b)
+		if _flat_art(str(b.get("art", ""))):
+			ArtLib.draw(self, b["art"], Vector2(Geo.vec(b["door"]).x, Geo.rect(b["rect"]).end.y))
+		else:
+			_draw_building(b)
 	for g in loc.get("gates", []):
-		_draw_gate(Geo.vec(g["pos"]))
+		if _flat_art(str(g.get("art", ""))):
+			ArtLib.draw(self, g["art"], Geo.vec(g["pos"]) + Vector2(0, 16))
+		else:
+			_draw_gate(Geo.vec(g["pos"]))
 	for it in loc.get("interactables", []):
 		if it.get("kind", "") == "object" and _visible(it):
-			_draw_object(Geo.vec(it["pos"]), str(it.get("shape", "sign")))
+			var ik := str(it.get("art", ""))
+			if ArtLib.has(ik):
+				if not ArtLib.sorts(ik):
+					ArtLib.draw(self, ik, Geo.vec(it["pos"]))
+			else:
+				_draw_object(Geo.vec(it["pos"]), str(it.get("shape", "sign")))
 	for s in loc.get("signs", []):
-		_draw_sign(Geo.vec(s["pos"]))
+		if not ArtLib.has(str(s.get("art", ""))):
+			_draw_sign(Geo.vec(s["pos"]))
 	for e in loc.get("exits", []):
-		_draw_exit(Geo.vec(e["pos"]))
+		if art.is_empty():
+			_draw_exit(Geo.vec(e["pos"]))
+		else:
+			_draw_doormat(Geo.vec(e["pos"]))
 	_draw_slots()
+
+
+func _draw_art_interior(size: Vector2, art: Dictionary) -> void:
+	var inset := float(loc.get("bounds_inset", 28))
+	draw_rect(Rect2(Vector2.ZERO, size), Color("#2e211b"))
+	ArtLib.draw_tiled(self, art["floor"], Rect2(Vector2(inset, inset), size - Vector2(inset, inset) * 2))
+	var wall_h := float(art.get("wall_height", 120))
+	if ArtLib.has(str(art.get("wall", ""))):
+		ArtLib.draw_fit(self, art["wall"], Rect2(Vector2(inset, inset), Vector2(size.x - inset * 2, wall_h)))
+	# a soft shadow where the wall meets the floor
+	draw_rect(Rect2(Vector2(inset, inset + wall_h), Vector2(size.x - inset * 2, 14)), Color(0, 0, 0, 0.12))
+
+
+func _draw_art_decor(d: Dictionary, key: String) -> void:
+	if ArtLib.anchor(key) == Vector2.ZERO and d.has("rect"):
+		ArtLib.draw_fit(self, key, Geo.rect(d["rect"]))
+		return
+	var pos := Geo.vec(d.get("art_pos", d.get("pos", [0, 0])))
+	if d.has("rect") and not d.has("art_pos") and not d.has("pos"):
+		pos = Geo.rect(d["rect"]).get_center()
+	ArtLib.draw(self, key, pos, float(d.get("art_scale", 1.0)))
+
+
+## Interior exit: a doormat with a small arrow instead of a text box.
+func _draw_doormat(pos: Vector2) -> void:
+	var mat := Rect2(pos.x - 44, pos.y - 20, 88, 22)
+	draw_rect(mat, Color("#9c6b4a"))
+	draw_rect(mat.grow(-4), Color("#b88457"), false, 2.0)
+	draw_colored_polygon(PackedVector2Array([pos + Vector2(-8, -14), pos + Vector2(8, -14), pos + Vector2(0, -4)]), Color("#fff3d6"))
 
 
 func _draw_interior_shell(size: Vector2) -> void:
@@ -344,8 +423,11 @@ func _draw_slots() -> void:
 			for i in 4:
 				draw_dashed_line(corners[i], corners[(i + 1) % 4], col, w, 8.0)
 		if placed != "":
-			var item: Dictionary = Game.data.items.get(placed, {})
-			ItemArt.draw_item(self, item.get("placeholder", {}), r.get_center() + Vector2(0, 8), 1.0)
+			if ArtLib.has("item." + placed) or ArtLib.has(placed if placed.begins_with("item.") else "item." + placed):
+				ArtLib.draw(self, "item." + placed if not placed.begins_with("item.") else placed, r.get_center() + Vector2(0, 16))
+			else:
+				var item: Dictionary = Game.data.items.get(placed, {})
+				ItemArt.draw_item(self, item.get("placeholder", {}), r.get_center() + Vector2(0, 8), 1.0)
 		elif edit_mode and s["id"] == selected_slot and preview_item != "":
 			var item: Dictionary = Game.data.items.get(preview_item, {})
 			ItemArt.draw_item(self, item.get("placeholder", {}), r.get_center() + Vector2(0, 8), 1.0, 0.5)

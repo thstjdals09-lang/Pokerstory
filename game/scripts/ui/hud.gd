@@ -13,6 +13,10 @@ var _quest_label: Label
 var _goal_toggle: Button
 var _goal_collapsed := false
 var _location_label: Label
+## Visual slice: chip and sun/moon icons from art.json (null when the art is missing).
+var _chip_icon: TextureRect
+var _sun_icon: TextureRect
+var _moon_icon: TextureRect
 var _prompt_button: Button
 var _toast_panel: PanelContainer
 var _toast_label: Label
@@ -34,11 +38,19 @@ func _ready() -> void:
 	col.add_child(row)
 	chip_dot = UiKit.label("●", 22, UiKit.TEXT)
 	row.add_child(chip_dot)
+	_chip_icon = UiKit.icon("ui.chip", 26)
+	if _chip_icon != null:
+		chip_dot.visible = false
+		row.add_child(_chip_icon)
 	_chips_label = UiKit.label("칩 0", 22, UiKit.TEXT)
 	row.add_child(_chips_label)
-	_goal_toggle = UiKit.button("목표 접기 (Tab)", 130, false)
-	_goal_toggle.custom_minimum_size = Vector2(130, 30)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(spacer)
+	_goal_toggle = UiKit.button("▴", 34, false)
+	_goal_toggle.custom_minimum_size = Vector2(34, 28)
 	_goal_toggle.add_theme_font_size_override("font_size", 14)
+	_goal_toggle.tooltip_text = "목표 접기 (Tab)"
 	_goal_toggle.pressed.connect(toggle_goal)
 	row.add_child(_goal_toggle)
 	_goal_label = UiKit.label("", 17, UiKit.ACCENT)
@@ -55,15 +67,28 @@ func _ready() -> void:
 	top_right.add_theme_constant_override("separation", 10)
 	add_child(top_right)
 	var loc_panel := UiKit.panel(Color(1, 0.97, 0.91, 0.94), 8)
+	var loc_row := HBoxContainer.new()
+	loc_row.add_theme_constant_override("separation", 6)
+	loc_panel.add_child(loc_row)
+	_sun_icon = UiKit.icon("ui.sun", 22)
+	_moon_icon = UiKit.icon("ui.moon", 22)
+	for ic in [_sun_icon, _moon_icon]:
+		if ic != null:
+			loc_row.add_child(ic)
 	_location_label = UiKit.label("", 17)
-	loc_panel.add_child(_location_label)
+	loc_row.add_child(_location_label)
 	top_right.add_child(loc_panel)
 	var menu_button := UiKit.button("메뉴 (Esc)", 120, false)
 	menu_button.pressed.connect(func(): menu_pressed.emit())
 	top_right.add_child(menu_button)
 
 	_prompt_button = UiKit.button("", 260, false)
-	_prompt_button.add_theme_font_size_override("font_size", 20)
+	_prompt_button.add_theme_font_size_override("font_size", 19)
+	# In-world prompt: a small dark pill rather than a big menu button.
+	for st in ["normal", "hover", "pressed", "focus"]:
+		_prompt_button.add_theme_stylebox_override(st, UiKit.dark_style(22, 8))
+	for key in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		_prompt_button.add_theme_color_override(key, UiKit.CREAM)
 	_prompt_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_prompt_button.offset_left = -170
 	_prompt_button.offset_right = 170
@@ -91,6 +116,8 @@ func refresh() -> void:
 	# Equipped chip style colours the chip mark (placeholder art).
 	var style := str(Game.state.equipped.get("chip_style", ""))
 	chip_dot.add_theme_color_override("font_color", Game.item_color(style, UiKit.TEXT) if style != "" else UiKit.TEXT)
+	if _chip_icon != null:
+		_chip_icon.modulate = Game.item_color(style, Color.WHITE).lightened(0.35) if style != "" else Color.WHITE
 	_goal_label.text = "목표 · " + Game.current_goal()
 	_goal_label.visible = not _goal_collapsed
 	# Quests in progress stay visible even when the goal line is collapsed.
@@ -105,12 +132,26 @@ func quest_text() -> String:
 
 func toggle_goal() -> void:
 	_goal_collapsed = not _goal_collapsed
-	_goal_toggle.text = "목표 보기 (Tab)" if _goal_collapsed else "목표 접기 (Tab)"
+	_goal_toggle.text = "▾" if _goal_collapsed else "▴"
+	_goal_toggle.tooltip_text = "목표 보기 (Tab)" if _goal_collapsed else "목표 접기 (Tab)"
 	refresh()
 
 
+## "낮 · 마을 광장" / "저녁 · 카드룸": with the sun/moon art the time word becomes the icon.
 func set_location_name(text: String) -> void:
-	_location_label.text = text
+	var evening := text.begins_with("저녁 · ")
+	var day := text.begins_with("낮 · ")
+	if _sun_icon != null and _moon_icon != null and (evening or day):
+		_sun_icon.visible = day
+		_moon_icon.visible = evening
+		_location_label.text = text.get_slice(" · ", 1) if text.get_slice_count(" · ") == 2 else text.substr(text.find(" · ") + 3)
+		_location_label.tooltip_text = text
+	else:
+		if _sun_icon != null:
+			_sun_icon.visible = false
+		if _moon_icon != null:
+			_moon_icon.visible = false
+		_location_label.text = text
 
 
 func set_prompt(target: Dictionary) -> void:

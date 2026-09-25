@@ -35,9 +35,13 @@ var _pickup_view: Node2D
 func build(p_location_id: String, spawn_key: String, spawn_position = null) -> void:
 	location_id = p_location_id
 	loc = Game.data.locations[location_id]
+	# Characters and tall props depth-sort by their feet; the painted ground stays underneath.
+	y_sort_enabled = true
 	view = LocationView.new()
+	view.z_index = -10
 	add_child(view)
 	view.setup(loc)
+	_build_art_sprites()
 	_build_bounds()
 	_build_obstacles()
 	_build_interactables()
@@ -58,11 +62,19 @@ func build(p_location_id: String, spawn_key: String, spawn_position = null) -> v
 	camera.make_current()
 	_update_camera()
 
-	if Game.state.time_of_day == "evening":
+	var art: Dictionary = loc.get("art", {})
+	var evening: bool = Game.state.time_of_day == "evening"
+	var tint := str(art.get("evening_tint" if evening else "day_tint", ""))
+	if tint != "" or evening:
 		canvas_modulate = CanvasModulate.new()
-		canvas_modulate.color = EVENING_TINT
+		canvas_modulate.color = Color(tint) if tint != "" else EVENING_TINT
 		add_child(canvas_modulate)
+	_build_lights(evening)
+	_focus_marker = FocusMarker.new()
+	_focus_marker.z_index = 40
+	add_child(_focus_marker)
 	_pickup_view = PickupView.new()
+	_pickup_view.z_index = -5
 	add_child(_pickup_view)
 	sync_job_pickups()
 	refresh_markers()
@@ -71,7 +83,126 @@ func build(p_location_id: String, spawn_key: String, spawn_position = null) -> v
 
 
 func is_evening() -> bool:
-	return canvas_modulate != null
+	return Game.state != null and Game.state.time_of_day == "evening"
+
+
+## Depth-sorted art (trees, lamp posts, chairs, signs): one small node each, placed at its anchor.
+func _build_art_sprites() -> void:
+	var items: Array = []
+	for d in loc.get("decor", []):
+		var key := str(d.get("art", ""))
+		if ArtLib.has(key) and ArtLib.sorts(key) and (not d.has("conditions") or Conditions.check(d["conditions"], Game.state, location_id)):
+			items.append([key, Geo.vec(d.get("art_pos", d.get("pos", [0, 0]))), float(d.get("art_scale", 1.0))])
+	for s in loc.get("signs", []):
+		if ArtLib.has(str(s.get("art", ""))) and ArtLib.sorts(s["art"]):
+			items.append([s["art"], Geo.vec(s["pos"]) + Vector2(0, 20), 1.0])
+	for it in loc.get("interactables", []):
+		var ik := str(it.get("art", ""))
+		if ArtLib.has(ik) and ArtLib.sorts(ik) and (not it.has("conditions") or Conditions.check(it["conditions"], Game.state, location_id)):
+			items.append([ik, Geo.vec(it["pos"]), 1.0])
+	for b in loc.get("buildings", []):
+		if ArtLib.has(str(b.get("art", ""))) and ArtLib.sorts(b["art"]):
+			items.append([b["art"], Vector2(Geo.vec(b["door"]).x, Geo.rect(b["rect"]).end.y), 1.0])
+	for entry in items:
+		var sprite := ArtSprite.new()
+		sprite.key = entry[0]
+		sprite.position = entry[1]
+		sprite.art_scale = entry[2]
+		add_child(sprite)
+
+
+## Evening: windows, lamp posts and lanterns glow. Interiors carry their own lamps. A placed lamp
+## lights the room at any time (the first-play lamp is the home's first light).
+func _build_lights(evening: bool) -> void:
+	var art: Dictionary = loc.get("art", {})
+	for l in art.get("lights", []):
+		ArtLib.add_light(self, Vector2(l[0], l[1]), float(l[2]), float(l[3]))
+	if evening:
+		for b in loc.get("buildings", []):
+			_lights_for(str(b.get("art", "")), Vector2(Geo.vec(b["door"]).x, Geo.rect(b["rect"]).end.y))
+		for g in loc.get("gates", []):
+			_lights_for(str(g.get("art", "")), Geo.vec(g["pos"]) + Vector2(0, 16))
+		for d in loc.get("decor", []):
+			if not d.has("conditions") or Conditions.check(d["conditions"], Game.state, location_id):
+				_lights_for(str(d.get("art", "")), Geo.vec(d.get("art_pos", d.get("pos", [0, 0]))))
+	_item_lights = []
+	_refresh_item_lights()
+	if not Game.state_changed.is_connected(_refresh_item_lights):
+		Game.state_changed.connect(_refresh_item_lights)
+
+
+func _lights_for(key: String, at: Vector2) -> void:
+	if not ArtLib.has(key):
+		return
+	for l in ArtLib.def(key).get("lights", []):
+		ArtLib.add_light(self, at + Vector2(l[0], l[1]), float(l[2]), float(l[3]))
+
+
+var _item_lights: Array = []
+var _focus_marker: Node2D = null
+
+
+## Subtle "you can use this" cue: a ground ring and a small badge whose symbol says what kind of
+## thing it is (talk, door, poker table, object). No permanent labels needed.
+class FocusMarker extends Node2D:
+	var target := {}
+	var _t := 0.0
+	var _top := -60.0
+
+	func set_target(t: Dictionary, npcs: Dictionary) -> void:
+		target = t
+		_top = -60.0
+		if t.get("kind", "") == "npc" and npcs.has(t.get("id", "")):
+			var n = npcs[t["id"]]
+			_top = (n._sprite_top() - 14.0) if n.art_key != "" else -70.0
+		elif t.get("kind", "") == "door":
+			_top = -84.0
+		queue_redraw()
+
+	func _process(delta: float) -> void:
+		if not target.is_empty():
+			_t += delta
+			queue_redraw()
+
+	func _draw() -> void:
+		if target.is_empty():
+			return
+		var p: Vector2 = target["pos"]
+		var ring := Color(1.0, 0.93, 0.62, 0.55 + 0.2 * sin(_t * 4.0))
+		draw_set_transform(p + Vector2(0, 16 if target.get("kind", "") == "npc" else 6), 0.0, Vector2(1.0, 0.4))
+		draw_arc(Vector2.ZERO, 26.0, 0.0, TAU, 32, ring, 3.0)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		var glyph: String = {"npc": "…", "door": "↑", "poker_table": "♣", "home_edit": "+", "rest": "z", "job_board": "!", "job_pickup": "✓"}.get(str(target.get("kind", "")), "!")
+		var b := p + Vector2(0, _top + sin(_t * 3.0) * 2.0)
+		draw_circle(b, 13.0, Color("#fff8ec"))
+		draw_circle(b, 13.0, Color("#6b4226"), false, 2.0)
+		draw_string(preload("res://assets/fonts/ui_font.tres"), b + Vector2(-13, 6), glyph, HORIZONTAL_ALIGNMENT_CENTER, 26, 16, Color("#3b2a20"))
+
+
+func _refresh_item_lights() -> void:
+	if Game.state == null or not is_inside_tree():
+		return
+	for l in _item_lights:
+		if is_instance_valid(l):
+			l.queue_free()
+	_item_lights = []
+	for s in loc.get("slots", []):
+		var placed := Game.state.placement_at(s["id"])
+		var key := placed if placed.begins_with("item.") else "item." + placed
+		if placed == "" or not ArtLib.has(key):
+			continue
+		var at := Geo.rect(s["rect"]).get_center() + Vector2(0, 16)
+		for l in ArtLib.def(key).get("lights", []):
+			_item_lights.append(ArtLib.add_light(self, at + Vector2(l[0], l[1]), float(l[2]), float(l[3]) * (1.0 if is_evening() else 0.6)))
+
+
+## A depth-sorted piece of art drawn with its anchor on this node's position.
+class ArtSprite extends Node2D:
+	var key := ""
+	var art_scale := 1.0
+
+	func _draw() -> void:
+		ArtLib.draw(self, key, Vector2.ZERO, art_scale)
 
 
 func _build_bounds() -> void:
@@ -190,6 +321,11 @@ func _physics_process(_delta: float) -> void:
 	if best.get("uid", -1) != focused.get("uid", -1):
 		focused = best
 		focus_changed.emit(focused)
+		if _focus_marker != null:
+			_focus_marker.set_target(focused, npc_nodes)
+	if loc.has("art"):
+		for npc_id in npc_nodes:
+			npc_nodes[npc_id].set_name_visible(player.position.distance_to(npc_nodes[npc_id].position) < 220.0)
 
 
 func _process(_delta: float) -> void:

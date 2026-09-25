@@ -16,6 +16,9 @@ var show_marker: bool:
 		return marker_kind != ""
 var _t := 0.0
 var _activity: Label = null
+## Visual slice: sprite key from look.art (data/art.json); empty -> greybox shapes.
+var art_key := ""
+var _name_label: Label = null
 
 
 func setup(def: Dictionary) -> void:
@@ -32,7 +35,24 @@ func setup(def: Dictionary) -> void:
 	label.position = Vector2(-90, -58)
 	label.size = Vector2(180, 20)
 	add_child(label)
+	_name_label = label
+	art_key = str(look.get("art", ""))
+	if not ArtLib.has(art_key):
+		art_key = ""
+	else:
+		label.text = str(def["name"])
+		label.position = Vector2(-90, _sprite_top() - 24)
 	queue_redraw()
+
+
+## In art locations name tags appear only near the player (no permanent labels everywhere).
+func set_name_visible(v: bool) -> void:
+	if _name_label != null:
+		_name_label.visible = v
+
+
+func _sprite_top() -> float:
+	return 16.0 - ArtLib.anchor(art_key).y
 
 
 ## What the resident is doing right now ("책 읽는 중"), shown under the name. Empty hides it.
@@ -46,12 +66,15 @@ func set_activity(text: String) -> void:
 
 
 func _process(delta: float) -> void:
-	if show_marker:
+	if show_marker or (art_key != "" and ArtLib.def(art_key).get("hover", false)):
 		_t += delta
 		queue_redraw()
 
 
 func _draw() -> void:
+	if art_key != "":
+		_draw_art()
+		return
 	var body := Color(str(look.get("color", "#cccccc")))
 	var accent := Color(str(look.get("accent", "#ffffff")))
 	var dark := Color(0.18, 0.12, 0.1)
@@ -138,15 +161,32 @@ func _draw() -> void:
 			draw_circle(Vector2.ZERO, BODY_RADIUS, body)
 	draw_circle(Vector2(-5, -2), 2.2, dark)
 	draw_circle(Vector2(5, -2), 2.2, dark)
+	_draw_marker(-80.0)
+
+
+func _draw_art() -> void:
+	var hover: bool = bool(ArtLib.def(art_key).get("hover", false))
+	var lift := (-10.0 + sin(_t * 3.0) * 3.0) if hover else 0.0
+	draw_set_transform(Vector2(0, 16), 0.0, Vector2(1.0, 0.35))
+	draw_circle(Vector2.ZERO, 17.0 if not hover else 12.0, Color(0, 0, 0, 0.22))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	ArtLib.draw(self, art_key, Vector2(0, 16 + lift))
+	_draw_marker(_sprite_top() - 40.0)
+
+
+## The signal over the head, centred at `top`: main story (bouncing "!"), a resident's own story
+## (speech bubble) or a request (small "!").
+func _draw_marker(top: float) -> void:
+	var dark := Color(0.18, 0.12, 0.1)
 	match marker_kind:
 		"main":
-			var y := -80.0 + sin(_t * 5.0) * 4.0
+			var y := top + sin(_t * 5.0) * 4.0
 			draw_circle(Vector2(0, y), 11, Color("#ffd23f"))
 			draw_circle(Vector2(0, y), 11, dark, false, 2.0)
 			draw_rect(Rect2(-1.8, y - 7, 3.6, 8), dark)
 			draw_circle(Vector2(0, y + 5), 2, dark)
 		"story":
-			var y := -76.0 + sin(_t * 2.0) * 2.0
+			var y := top + 4.0 + sin(_t * 2.0) * 2.0
 			draw_colored_polygon(PackedVector2Array([Vector2(-4, y + 7), Vector2(4, y + 7), Vector2(-6, y + 14)]), Color.WHITE)
 			draw_circle(Vector2(-6, y), 9, Color.WHITE)
 			draw_circle(Vector2(6, y), 9, Color.WHITE)
@@ -154,7 +194,7 @@ func _draw() -> void:
 			for i in 3:
 				draw_circle(Vector2(-6 + i * 6, y), 2, dark)
 		"request":
-			var y := -70.0
+			var y := top + 10.0
 			draw_circle(Vector2(0, y), 7, Color("#ffd23f"))
 			draw_circle(Vector2(0, y), 7, dark, false, 1.5)
 			draw_rect(Rect2(-1.2, y - 4.5, 2.4, 5), dark)

@@ -331,11 +331,17 @@ func _show_entry(entry: Dictionary) -> void:
 	for c in choices:
 		c["text"] = DialogueResolver.format_line(str(c["text"]), vars)
 	set_mode("dialogue")
-	dialogue.show_dialogue(Game.speaker_name(_dialogue_npc) if _dialogue_npc != "" else "", lines, choices)
+	dialogue.show_dialogue(Game.speaker_name(_dialogue_npc) if _dialogue_npc != "" else "", lines, choices, _portrait_key(_dialogue_npc))
+
+
+## The art key of a resident's portrait (visual slice residents only); "" for everyone else.
+func _portrait_key(npc_id: String) -> String:
+	var look: Dictionary = Game.data.npcs.get(npc_id, {}).get("look", {})
+	return str(look.get("art", ""))
 
 
 ## Dialogue box for objects (signs, doors, bed, board) rather than residents.
-func _show_system_dialogue(title_text: String, lines: Array, choices: Array) -> void:
+func _show_system_dialogue(title_text: String, lines: Array, choices: Array, portrait: String = "") -> void:
 	_dialogue_npc = ""
 	last_entry_id = ""
 	var vars := Game.text_vars()
@@ -343,13 +349,13 @@ func _show_system_dialogue(title_text: String, lines: Array, choices: Array) -> 
 	for l in lines:
 		formatted.append(DialogueResolver.format_line(str(l), vars))
 	set_mode("dialogue")
-	dialogue.show_dialogue(title_text, formatted, choices)
+	dialogue.show_dialogue(title_text, formatted, choices, portrait)
 
 
 ## Lines spoken by a specific resident without a data entry (quest offers, thanks).
 func _show_lines(speaker: String, lines: Array, choices: Array) -> void:
 	var title_text := Game.speaker_name(speaker)
-	_show_system_dialogue(title_text, lines, choices)
+	_show_system_dialogue(title_text, lines, choices, _portrait_key(speaker))
 	_dialogue_npc = speaker
 
 

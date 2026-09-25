@@ -44,15 +44,21 @@ var _result_line: Label
 var _help_panel: PanelContainer
 var _confirm_panel: PanelContainer
 var _confirm_label: Label
+## Visual slice: felt table drawing, name plates with portraits, the pot on the felt.
+var _table: TableBg
+var _opp_face: TextureRect
+var _opp_plate_name: Label
+var _me_plate_name: Label
 
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
-	var bg := ColorRect.new()
-	bg.color = Color(0.13, 0.09, 0.08, 0.93)
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
+	_table = TableBg.new()
+	_table.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_table.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_table)
+	_build_plates()
 
 	var col := VBoxContainer.new()
 	col.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -61,10 +67,16 @@ func _ready() -> void:
 	col.add_theme_constant_override("separation", 8)
 	add_child(col)
 
-	_header = UiKit.label("", 22, Color("#f3dfc1"))
-	var header := _header
-	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(header)
+	_header = UiKit.label("", 19, UiKit.CREAM)
+	_header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var header_pill := PanelContainer.new()
+	var pill_style := UiKit.dark_style(16, 6)
+	pill_style.content_margin_left = 20
+	pill_style.content_margin_right = 20
+	header_pill.add_theme_stylebox_override("panel", pill_style)
+	header_pill.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	header_pill.add_child(_header)
+	col.add_child(header_pill)
 
 	_opp_hand_label = UiKit.label("", 18, Color("#f3dfc1"))
 	_opp_hand_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -78,9 +90,13 @@ func _ready() -> void:
 	col.add_child(middle)
 	_message_label = UiKit.wrap_label("", 19, Color("#fff3d6"))
 	_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_message_label.custom_minimum_size.x = 640
+	_message_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	middle.add_child(_message_label)
 	_ability_label = UiKit.wrap_label("", 18, Color("#ffd27a"))
 	_ability_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_ability_label.custom_minimum_size.x = 640
+	_ability_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	middle.add_child(_ability_label)
 
 	# Result: compact two-column panel so both hands stay fully visible.
@@ -140,6 +156,43 @@ func _ready() -> void:
 	_build_help_panel()
 	_build_confirm_panel()
 	visible = false
+
+
+## Name plates at the table's left: the opponent (with a portrait when they have art) and you.
+func _build_plates() -> void:
+	var opp := _plate(Vector2(56, 106))
+	_opp_face = opp[0]
+	_opp_plate_name = opp[1]
+	var me := _plate(Vector2(56, 524))
+	me[0].texture = ArtLib.portrait("char.player")
+	me[0].visible = me[0].texture != null
+	_me_plate_name = me[1]
+	me[2].text = "내 자리"
+
+
+## [portrait, name label, sub label] of a new plate at `at`.
+func _plate(at: Vector2) -> Array:
+	var plate := PanelContainer.new()
+	plate.add_theme_stylebox_override("panel", UiKit.dark_style(14, 8))
+	plate.position = at
+	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(plate)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	plate.add_child(row)
+	var face := TextureRect.new()
+	face.custom_minimum_size = Vector2(68, 72)
+	face.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	face.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	row.add_child(face)
+	var col := VBoxContainer.new()
+	col.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_child(col)
+	var name_label := UiKit.label("", 21, UiKit.CREAM)
+	col.add_child(name_label)
+	var sub := UiKit.label("맞은편", 14, Color("#d9bf9a"))
+	col.add_child(sub)
+	return [face, name_label, sub]
 
 
 func _card_row(views: Array, interactive: bool) -> HBoxContainer:
@@ -232,6 +285,14 @@ func refresh() -> void:
 		var names: Array = Game.poker_mode("tournament").get("stage_names", [])
 		var st := int(Game.state.tournament.get("stage", 0))
 		mode_name += " · %s" % (names[st] if st < names.size() else "")
+	var opp_look: Dictionary = Game.data.npcs.get(Game.match_opponent(match_ref), {}).get("look", {})
+	var face := ArtLib.portrait(str(opp_look.get("art", "")))
+	_opp_face.texture = face
+	_opp_face.visible = face != null
+	_opp_plate_name.text = opp_name
+	_me_plate_name.text = Game.state.player_name
+	_table.pot = 0 if showdown else stake * 2
+	_table.queue_redraw()
 	if stake == 0:
 		_header.text = "%s · 5장 원드로 · 칩 없이 연습    보유 칩 %d" % [mode_name, Game.state.chips_balance]
 	else:
@@ -501,3 +562,60 @@ func _unhandled_input(event: InputEvent) -> void:
 			toggle_card(i)
 			get_viewport().set_input_as_handled()
 			return
+
+
+## The table itself: a warm room, a wooden rim and green felt, the pot as chip stacks.
+class TableBg extends Control:
+	const UI_FONT := preload("res://assets/fonts/ui_font.tres")
+	var pot := 0
+
+	func _ellipse(c: Vector2, r: Vector2, n: int = 72) -> PackedVector2Array:
+		var pts := PackedVector2Array()
+		for i in n:
+			var a := TAU * i / float(n)
+			pts.append(c + Vector2(cos(a) * r.x, sin(a) * r.y))
+		return pts
+
+	func _ring(c: Vector2, r: Vector2, col: Color, w: float) -> void:
+		var pts := _ellipse(c, r, 96)
+		pts.append(pts[0])
+		draw_polyline(pts, col, w, true)
+
+	func _draw() -> void:
+		var s := size
+		draw_rect(Rect2(Vector2.ZERO, s), Color("#241713"))
+		# warm lamp glow over the table
+		for i in 12:
+			var k := 1.0 - i / 12.0
+			draw_colored_polygon(_ellipse(s / 2.0, Vector2(s.x * 0.55, s.y * 0.52) * (0.7 + 0.3 * k)), Color(1.0, 0.75, 0.45, 0.014))
+		var c := Vector2(s.x / 2.0, s.y / 2.0 + 8)
+		var r := Vector2(s.x * 0.44, s.y * 0.36)
+		draw_colored_polygon(_ellipse(c + Vector2(0, 12), r + Vector2(36, 36)), Color(0, 0, 0, 0.35))
+		draw_colored_polygon(_ellipse(c, r + Vector2(30, 30)), Color("#6b3f24"))
+		_ring(c, r + Vector2(30, 30), Color("#3e2314"), 3.0)
+		_ring(c, r + Vector2(16, 16), Color("#8a5634"), 2.0)
+		draw_colored_polygon(_ellipse(c, r), Color("#2d6a4c"))
+		draw_colored_polygon(_ellipse(c + Vector2(0, -r.y * 0.08), r * 0.84), Color("#337655"))
+		_ring(c, r - Vector2(14, 14), Color(0.95, 0.82, 0.5, 0.35), 2.0)
+		# suit motifs on the felt, faint
+		var suits := ["♠", "♥", "♦", "♣"]
+		for i in 4:
+			var at := c + Vector2((-1 if i < 2 else 1) * r.x * 0.8, (-1 if i % 2 == 0 else 1) * r.y * 0.3)
+			draw_string(UI_FONT, at + Vector2(-16, 12), suits[i], HORIZONTAL_ALIGNMENT_CENTER, 32, 30, Color(1, 1, 1, 0.12))
+		if pot > 0:
+			_draw_pot(c + Vector2(r.x * 0.7, 6))
+
+	func _draw_pot(at: Vector2) -> void:
+		var colors := [Color("#c8553d"), Color("#f3dfc1"), Color("#35507a")]
+		var stacks := clampi(ceili(pot / 20.0), 1, 3)
+		var chips := clampi(2 + pot / 20, 3, 7)
+		for sidx in stacks:
+			var base := at + Vector2((sidx - (stacks - 1) / 2.0) * 34, 0)
+			for i in chips:
+				var p := base + Vector2(0, -i * 5)
+				draw_colored_polygon(_ellipse(p + Vector2(0, 3), Vector2(15, 6), 24), Color(0, 0, 0, 0.3))
+				draw_colored_polygon(_ellipse(p, Vector2(15, 6), 24), colors[sidx % 3])
+				var edge := _ellipse(p, Vector2(15, 6), 24)
+				edge.append(edge[0])
+				draw_polyline(edge, Color(1, 1, 1, 0.5), 1.0, true)
+		draw_string(UI_FONT, at + Vector2(-60, 36), "판돈 %d" % pot, HORIZONTAL_ALIGNMENT_CENTER, 120, 18, Color("#fff3d6"))

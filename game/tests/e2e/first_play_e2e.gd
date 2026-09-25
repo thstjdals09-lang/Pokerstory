@@ -14,6 +14,8 @@ extends Node
 ##   broke           fold, lose everything, blocked, recover with odd jobs, draw, win
 ##   migrate         version-1 save keeps chips; version-2 save with a paid stake but no cards
 ##   reject          unreadable saves
+## Visual slice 01 (screenshots with --shots, windowed):
+##   slice           the first-play path through square, card room and home, one shot per beat
 
 const DECKS := {
 	# Deal order is player, opponent, player, ... then draws. See tests/unit/test_poker_match.gd.
@@ -57,6 +59,8 @@ func run(scenario: String) -> void:
 			await _migrate()
 		"reject":
 			await _reject()
+		"slice":
+			await _slice()
 		_:
 			_check(false, "unknown scenario " + scenario)
 	_finish()
@@ -547,6 +551,87 @@ func _ledger_count(reason: String) -> int:
 		if e["reason"] == reason:
 			n += 1
 	return n
+
+
+# --- VISUAL SLICE 01: first-play path with a screenshot per beat --------------------
+
+func _slice() -> void:
+	await _new_game("단비")
+	main.world.player.position = Vector2(820, 600)
+	await _physics(3)
+	await _shot("01_square_day")
+	await _talk("npc_lumi")
+	await _shot("02_dialogue_lumi")
+	await _close_dialogue()
+	var shop: Dictionary = main.world.find_interactable("door", "shop_building")
+	main.world.player.position = shop["pos"] + Vector2(0, 70)
+	await _physics(3)
+	await _shot("03_shop_exterior_day")
+	await _enter("door", "home_building", "player_home")
+	await _shot("04_home_day_before")
+	await _enter("door", "exit_home", "village_square")
+	var card: Dictionary = main.world.find_interactable("door", "card_room_building")
+	main.world.player.position = card["pos"] + Vector2(0, 90)
+	await _physics(3)
+	await _shot("05_card_room_exterior_day")
+	await _wait_evening_at_card_room()
+	await _shot("06_card_room_evening")
+	await _talk("npc_moa")
+	await _read_to_choices()
+	Game.debug_deck_queue = [DECKS["win"]]
+	await _choose("start_poker")
+	await _shot("07_poker")
+	main.poker.ability_button.pressed.emit()
+	await _frames(1)
+	main.poker.player_views[4].pressed.emit(4)
+	await _frames(1)
+	await _shot("08_poker_discard")
+	main.poker.draw_button.pressed.emit()
+	await _frames(2)
+	_check_eq(main.poker.match_ref.outcome, 1, "slice hand won")
+	await _shot("09_poker_result")
+	main.poker.result_leave_button.pressed.emit()
+	await _frames(2)
+	await _enter("door", "exit_card_room", "village_square")
+	main.world.player.position = Vector2(820, 600)
+	await _physics(3)
+	await _shot("10_square_evening")
+	main.world.player.position = card["pos"] + Vector2(0, 90)
+	await _physics(3)
+	await _shot("11_card_room_exterior_evening")
+	await _enter("door", "shop_building", "small_shop")
+	await _talk("npc_sera")
+	await _read_to_choices()
+	await _choose("open_shop")
+	await _shot("12_shop")
+	main.shop.buy_buttons[LAMP].pressed.emit()
+	await _frames(2)
+	main.shop.close_button.pressed.emit()
+	await _frames(2)
+	await _enter("door", "exit_shop", "village_square")
+	await _enter("door", "home_building", "player_home")
+	await _shot("13_home_evening_before")
+	await _go_to("home_edit", "home_decorate")
+	await _press("interact")
+	main.home_edit.item_buttons[LAMP].pressed.emit()
+	await _frames(1)
+	main.home_edit.slot_buttons["slot_window"].pressed.emit()
+	await _frames(1)
+	await _shot("14_home_edit")
+	main.home_edit.confirm_button.pressed.emit()
+	await _frames(2)
+	main.home_edit.close_button.pressed.emit()
+	await _frames(2)
+	_check_eq(Game.state.placement_at("slot_window"), LAMP, "slice lamp placed")
+	await _shot("15_home_evening_lamp")
+	await _sleep_until_morning()
+	await _shot("16_home_morning_lamp")
+	await _enter("door", "exit_home", "village_square")
+	await _talk("npc_lumi")
+	_check_eq(main.last_entry_id, "lumi_lamp_reaction", "slice: Lumi reacts to the lamp")
+	await _press("interact")
+	await _shot("17_lumi_reaction")
+	await _close_dialogue()
 
 
 # --- helpers ---------------------------------------------------------------------
