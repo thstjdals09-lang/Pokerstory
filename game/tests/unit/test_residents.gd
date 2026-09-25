@@ -155,6 +155,7 @@ func test_romance_is_opt_in_for_four_adults_and_can_end() -> void:
 	check_eq(talk(db, s, "npc_rira", "tea_house", ["함께"])[0], "rira.decide", "decision scene")
 	check_eq(s.relation("npc_rira")["romance"]["stage"], "committed", "together")
 	check_eq(talk(db, s, "npc_rira", "tea_house")[0], "rira_friend_gift", "a close friend's gift comes on another talk")
+	check_eq(talk(db, s, "npc_rira", "tea_house")[0], "rira_trust", "then she opens up once")
 	check_eq(talk(db, s, "npc_rira", "tea_house")[0], "rira_memory", "the episode memory is still mentioned once")
 	var f_before: int = s.relation("npc_rira")["friendship"]
 	var shown := talk(db, s, "npc_rira", "tea_house", ["정리"])

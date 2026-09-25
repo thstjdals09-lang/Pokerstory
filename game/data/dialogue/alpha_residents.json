@@ -97,7 +97,7 @@
      1
     ],
     "friendship_min": {
-     "npc_lumi": 25
+     "npc_lumi": 20
     }
    },
    "lines": [
@@ -139,7 +139,7 @@
    "conditions": {
     "met": "npc_lumi",
     "friendship_min": {
-     "npc_lumi": 30
+     "npc_lumi": 25
     }
    },
    "effects": [
@@ -285,7 +285,7 @@
      1
     ],
     "friendship_min": {
-     "npc_moa": 25
+     "npc_moa": 20
     }
    },
    "lines": [
@@ -327,7 +327,7 @@
    "conditions": {
     "met": "npc_moa",
     "friendship_min": {
-     "npc_moa": 30
+     "npc_moa": 25
     }
    },
    "effects": [
@@ -451,7 +451,7 @@
      1
     ],
     "friendship_min": {
-     "npc_sera": 25
+     "npc_sera": 20
     }
    },
    "lines": [
@@ -493,7 +493,7 @@
    "conditions": {
     "met": "npc_sera",
     "friendship_min": {
-     "npc_sera": 30
+     "npc_sera": 25
     }
    },
    "effects": [
@@ -639,7 +639,7 @@
      1
     ],
     "friendship_min": {
-     "npc_kyle": 25
+     "npc_kyle": 20
     }
    },
    "lines": [
@@ -681,7 +681,7 @@
    "conditions": {
     "met": "npc_kyle",
     "friendship_min": {
-     "npc_kyle": 30
+     "npc_kyle": 25
     }
    },
    "effects": [
@@ -827,7 +827,7 @@
      1
     ],
     "friendship_min": {
-     "npc_nora": 25
+     "npc_nora": 20
     }
    },
    "lines": [
@@ -869,7 +869,7 @@
    "conditions": {
     "met": "npc_nora",
     "friendship_min": {
-     "npc_nora": 30
+     "npc_nora": 25
     }
    },
    "effects": [
@@ -993,7 +993,7 @@
      1
     ],
     "friendship_min": {
-     "npc_rira": 25
+     "npc_rira": 20
     }
    },
    "lines": [
@@ -1054,7 +1054,7 @@
    "conditions": {
     "met": "npc_rira",
     "friendship_min": {
-     "npc_rira": 30
+     "npc_rira": 25
     }
    },
    "effects": [
@@ -1200,7 +1200,7 @@
      1
     ],
     "friendship_min": {
-     "npc_taeo": 25
+     "npc_taeo": 20
     }
    },
    "lines": [
@@ -1261,7 +1261,7 @@
    "conditions": {
     "met": "npc_taeo",
     "friendship_min": {
-     "npc_taeo": 30
+     "npc_taeo": 25
     }
    },
    "effects": [
@@ -1407,7 +1407,7 @@
      1
     ],
     "friendship_min": {
-     "npc_bibi": 25
+     "npc_bibi": 20
     }
    },
    "lines": [
@@ -1449,7 +1449,7 @@
    "conditions": {
     "met": "npc_bibi",
     "friendship_min": {
-     "npc_bibi": 30
+     "npc_bibi": 25
     }
    },
    "effects": [
@@ -1595,7 +1595,7 @@
      1
     ],
     "friendship_min": {
-     "npc_ella": 25
+     "npc_ella": 20
     }
    },
    "lines": [
@@ -1656,7 +1656,7 @@
    "conditions": {
     "met": "npc_ella",
     "friendship_min": {
-     "npc_ella": 30
+     "npc_ella": 25
     }
    },
    "effects": [
@@ -1802,7 +1802,7 @@
      1
     ],
     "friendship_min": {
-     "npc_haru": 25
+     "npc_haru": 20
     }
    },
    "lines": [
@@ -1863,7 +1863,7 @@
    "conditions": {
     "met": "npc_haru",
     "friendship_min": {
-     "npc_haru": 30
+     "npc_haru": 25
     }
    },
    "effects": [
@@ -1987,7 +1987,7 @@
      1
     ],
     "friendship_min": {
-     "npc_juno": 25
+     "npc_juno": 20
     }
    },
    "lines": [
@@ -2048,7 +2048,7 @@
    "conditions": {
     "met": "npc_juno",
     "friendship_min": {
-     "npc_juno": 30
+     "npc_juno": 25
     }
    },
    "effects": [
@@ -2172,7 +2172,7 @@
      1
     ],
     "friendship_min": {
-     "npc_miri": 25
+     "npc_miri": 20
     }
    },
    "lines": [
@@ -2214,7 +2214,7 @@
    "conditions": {
     "met": "npc_miri",
     "friendship_min": {
-     "npc_miri": 30
+     "npc_miri": 25
     }
    },
    "effects": [
@@ -2360,7 +2360,7 @@
      1
     ],
     "friendship_min": {
-     "npc_ona": 25
+     "npc_ona": 20
     }
    },
    "lines": [
@@ -2402,7 +2402,7 @@
    "conditions": {
     "met": "npc_ona",
     "friendship_min": {
-     "npc_ona": 30
+     "npc_ona": 25
     }
    },
    "effects": [
@@ -2526,7 +2526,7 @@
      1
     ],
     "friendship_min": {
-     "npc_ren": 25
+     "npc_ren": 20
     }
    },
    "lines": [
@@ -2568,7 +2568,7 @@
    "conditions": {
     "met": "npc_ren",
     "friendship_min": {
-     "npc_ren": 30
+     "npc_ren": 25
     }
    },
    "effects": [
@@ -2692,7 +2692,7 @@
      1
     ],
     "friendship_min": {
-     "npc_yul": 25
+     "npc_yul": 20
     }
    },
    "lines": [
@@ -2753,7 +2753,7 @@
    "conditions": {
     "met": "npc_yul",
     "friendship_min": {
-     "npc_yul": 30
+     "npc_yul": 25
     }
    },
    "effects": [
@@ -2877,7 +2877,7 @@
      1
     ],
     "friendship_min": {
-     "npc_sia": 25
+     "npc_sia": 20
     }
    },
    "lines": [
@@ -2938,7 +2938,7 @@
    "conditions": {
     "met": "npc_sia",
     "friendship_min": {
-     "npc_sia": 30
+     "npc_sia": 25
     }
    },
    "effects": [
@@ -4546,6 +4546,804 @@
    "choices": [
     {
      "text": "좋은 밤 보내",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_trust",
+   "npc": "npc_lumi",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "friendship_min": {
+     "npc_lumi": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_lumi",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "솔직히 말하면, 모임에 아무도 안 오는 꿈을 가끔 꿔.",
+    "그래서 자꾸 목소리가 커지나 봐. 네가 와 주면 그 꿈이 조금 덜 무서워."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_trust",
+   "npc": "npc_moa",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "friendship_min": {
+     "npc_moa": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_moa",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "저는 칩 요정이라 칩이 없으면 할 일이 없을까 봐 걱정했어요.",
+    "근데 요즘은 사람 세는 일이 더 많아요. 칩보다 훨씬 재밌어요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_trust",
+   "npc": "npc_sera",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_sera",
+    "friendship_min": {
+     "npc_sera": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_sera",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "불씨는 가만두면 꺼져요. 그래서 매일 닦는 거예요.",
+    "사람 사이도 그렇더라고요. 당신은 매일 닦아 주는 쪽이에요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_trust",
+   "npc": "npc_kyle",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "friendship_min": {
+     "npc_kyle": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_kyle",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "규칙을 쓰는 건, 내가 틀릴까 봐 무서워서다.",
+    "틀려도 되는 자리가 있다는 걸 이 마을에서 배웠다. …너한테서도."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_trust",
+   "npc": "npc_nora",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_nora",
+    "friendship_min": {
+     "npc_nora": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_nora",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "저는 오래전에 전하지 못한 편지가 하나 있어요. 받을 사람이 이사를 가 버렸거든요.",
+    "그래서 지금은 한 통도 늦게 전하지 않으려고요. 당신 편지도요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_trust",
+   "npc": "npc_rira",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_rira",
+    "friendship_min": {
+     "npc_rira": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_rira",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "찻집을 처음 열었을 땐 손님이 하루에 한 명이었어요. 테오요.",
+    "그래서 손님 취향을 다 외워요. 한 명이라도 다시 오게 하려고요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_trust",
+   "npc": "npc_taeo",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_taeo",
+    "friendship_min": {
+     "npc_taeo": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_taeo",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "난 말을 잘 못해. 그래서 옷으로 대신 말해.",
+    "네 외투 안감에 작은 네잎 하나 넣어 뒀어. 그게 내 말이야."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_trust",
+   "npc": "npc_bibi",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_bibi",
+    "friendship_min": {
+     "npc_bibi": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_bibi",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "고칠 수 없는 것도 있어요. 그래서 고칠 수 있는 건 꼭 고쳐요.",
+    "당신이랑 얘기하면… 고칠 게 없어도 공방 문을 열고 싶어져요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_trust",
+   "npc": "npc_ella",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_ella",
+    "friendship_min": {
+     "npc_ella": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_ella",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "옛 기록을 읽는 건, 제가 이 마을에 늦게 와서예요. 다들 아는 걸 저만 몰랐거든요.",
+    "요즘은 제가 기록을 남기는 쪽이 됐어요. 당신 이야기도 한 장 있어요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_trust",
+   "npc": "npc_haru",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_haru",
+    "friendship_min": {
+     "npc_haru": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_haru",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "저, 사실 이 마을에 온 첫해엔 집 밖에 거의 안 나갔어요.",
+    "지금은 데크까지 나와요. 가끔은 카드룸까지요. 당신이 걸어가는 걸 보고 따라간 거예요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_trust",
+   "npc": "npc_juno",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_juno",
+    "friendship_min": {
+     "npc_juno": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_juno",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "사회를 보는 건, 조용한 게 무서워서야. 조용하면 다들 가 버릴 것 같거든.",
+    "근데 너랑은 조용해도 괜찮더라. 신기하지?"
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_trust",
+   "npc": "npc_miri",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_miri",
+    "friendship_min": {
+     "npc_miri": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_miri",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "숫자가 틀리면 잠을 못 자요. 그래서 기록을 세 번씩 봐요.",
+    "사람 일은 세 번 봐도 모르겠어요. 그래도 당신 칸은 한 번만 봐도 알아요."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_trust",
+   "npc": "npc_ona",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_ona",
+    "friendship_min": {
+     "npc_ona": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_ona",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "난 어둠이 좋아. 불빛이 소중해지니까.",
+    "너도 그런 사람이야. 있으면 주변이 조금 밝아지는데, 눈부시진 않아."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_trust",
+   "npc": "npc_ren",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_ren",
+    "friendship_min": {
+     "npc_ren": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_ren",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "카드를 모으는 건, 준 사람을 잊기 싫어서야.",
+    "네가 준 카드는 앨범 맨 앞장이야. 희귀해서가 아니라, 네가 줘서."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_trust",
+   "npc": "npc_yul",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_yul",
+    "friendship_min": {
+     "npc_yul": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_yul",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "앉을 자리를 만드는 건, 내가 서 있는 게 힘들어서다. 농담이다.",
+    "…반은 농담이다. 쉬어 갈 곳이 있어야 사람이 남는다. 너도 남았잖아."
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_trust",
+   "npc": "npc_sia",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_sia",
+    "friendship_min": {
+     "npc_sia": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_sia",
+     "id": "trust"
+    }
+   ],
+   "lines": [
+    "저도 한때는 어디에도 오래 못 있는 사람이었어요.",
+    "여기선 짐을 다 풀었어요. 가방 바닥까지요. 그게 무슨 뜻인지 알죠?"
+   ],
+   "choices": [
+    {
+     "text": "말해 줘서 고마워요",
+     "action": "close"
+    },
+    {
+     "text": "(조용히 고개를 끄덕인다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_rival_banter",
+   "npc": "npc_lumi",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_lumi",
+    "rivalry_min": {
+     "npc_lumi": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "오늘 저녁 한 판? 이번엔 진 사람이 모임 청소하기!"
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "또 봐, 루미!",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_rival_banter",
+   "npc": "npc_kyle",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_kyle",
+    "rivalry_min": {
+     "npc_kyle": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "지난번 네 교체를 복기해 봤다. 두 가지 답을 찾았다. 둘 다 너를 이긴다."
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "알겠어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_rival_banter",
+   "npc": "npc_rira",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_rira",
+    "rivalry_min": {
+     "npc_rira": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "오늘 이기면 찻잔 무늬를 제가 고를 거예요. 각오해요!"
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "차 잘 마셨어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_rival_banter",
+   "npc": "npc_taeo",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_taeo",
+    "rivalry_min": {
+     "npc_taeo": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "오늘 판 이기면 네 목도리 색은 내가 정해."
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "그럼 이만",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_rival_banter",
+   "npc": "npc_ella",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ella",
+    "rivalry_min": {
+     "npc_ella": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "당신이 자주 지키는 문양, 적어 뒀어요. 오늘은 제가 먼저 갈게요!"
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "또 얘기해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_rival_banter",
+   "npc": "npc_haru",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_haru",
+    "rivalry_min": {
+     "npc_haru": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "저, 오늘은 이길 것 같아요. 아마도. 어쩌면."
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "천천히 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_rival_banter",
+   "npc": "npc_ren",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ren",
+    "rivalry_min": {
+     "npc_ren": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "너랑 친 판 기록이 두 페이지를 넘었어! 세 페이지째엔 내 승리를 적을 거야!"
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "다음 교환회 때!",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_rival_banter",
+   "npc": "npc_juno",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_juno",
+    "rivalry_min": {
+     "npc_juno": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "오늘의 광장 예고! 도전자 대 사회자, 제3라운드! …아직 신청 안 했지? 지금 받아!"
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "하하, 또 봐!",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_rival_banter",
+   "npc": "npc_yul",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_yul",
+    "rivalry_min": {
+     "npc_yul": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "오늘은 이긴다. 간식을 두 배로 먹었다."
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "간식 챙겨요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_rival_banter",
+   "npc": "npc_sia",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_sia",
+    "rivalry_min": {
+     "npc_sia": 15
+    },
+    "day_mod3": [
+     0
+    ]
+   },
+   "lines": [
+    "연습 많이 했어요! 오늘은 제가 봐주지 않을 거예요!"
+   ],
+   "choices": [
+    {
+     "text": "받아들이죠",
+     "action": "close"
+    },
+    {
+     "text": "또 봐요, 시아",
      "action": "close"
     }
    ]
