@@ -30,7 +30,9 @@ var _lumi: Node3D
 var _shot := ""
 const LAYOUT_FILE := "res://diorama/layout.json"
 ## Editable camera (edit mode sliders; saved to layout.json).
-var cam := {"dist": 40.0, "pitch": 42.0, "fov": 15.5, "yaw": 0.0, "cx": 0.3, "cz": -1.5, "lean": 0.3}
+## Defaults are the owner's saved layout (2026-09-25).
+const CAM_DEFAULT := {"dist": 11.53, "pitch": 20.6, "fov": 53.5, "yaw": 0.0, "cx": 0.00, "cz": -3.20, "lean_x": 0.55, "lean_z": 0.55}
+var cam := CAM_DEFAULT.duplicate()
 var _buildings: Array = []
 var _building_roots: Array = []
 var _pave_root: Node3D
@@ -64,6 +66,10 @@ func _ready() -> void:
 	_build_editor()
 	_apply_time()
 	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--player="):
+			var xz := a.get_slice("=", 1).split(",")
+			_player.position = Vector3(float(xz[0]), 0, float(xz[1]))
+			_follow(1.0)
 		if a.begins_with("--persp="):
 			_set_perspective(float(a.get_slice("=", 1)))
 			_follow(1.0)
@@ -247,10 +253,8 @@ func _build_camera() -> void:
 
 func _follow(weight: float) -> void:
 	var centre := Vector3(cam["cx"], 0, cam["cz"])
-	var lean := (_player.position - centre) * float(cam["lean"])
-	lean.x = clampf(lean.x, -1.6, 1.6)
-	lean.z = clampf(lean.z, -1.0, 1.2)
-	lean.y = 0.0
+	var off := _player.position - centre
+	var lean := Vector3(clampf(off.x * float(cam["lean_x"]), -8.0, 8.0), 0.0, clampf(off.z * float(cam["lean_z"]), -8.0, 8.0))
 	var focus := centre + lean
 	var pitch := deg_to_rad(float(cam["pitch"]))
 	var back := Vector3(0, sin(pitch), cos(pitch)).rotated(Vector3.UP, deg_to_rad(float(cam["yaw"]))) * float(cam["dist"])
@@ -425,10 +429,10 @@ func _scatter_grass(rng: RandomNumberGenerator) -> void:
 ## Buildings around the fountain: game id, centre (x, z), size (w, d), facing (radians; 0 faces the
 ## camera, negative turns the front to the left), door offset along the front.
 const BUILDINGS := [
-	{"id": "home_building", "at": Vector2(0.3, -6.3), "w": 3.2, "d": 2.4, "rot": 0.0, "door": 0.0},
-	{"id": "shop_building", "at": Vector2(-4.7, -5.9), "w": 3.6, "d": 2.6, "rot": 0.14, "door": 0.8},
-	{"id": "card_room_building", "at": Vector2(7.1, -3.1), "w": 4.0, "d": 3.0, "rot": -0.62, "door": 0.0},
-	{"id": "community_hall_building", "at": Vector2(-7.3, -0.5), "w": 3.4, "d": 2.8, "rot": 0.68, "door": 0.0},
+	{"id": "home_building", "at": Vector2(0.05, -7.10), "w": 3.20, "d": 1.60, "h": 1.55, "rot": 0.0000, "door": 0.0},
+	{"id": "shop_building", "at": Vector2(-6.10, -3.05), "w": 3.50, "d": 2.35, "h": 2.40, "rot": 0.8203, "door": 0.8},
+	{"id": "card_room_building", "at": Vector2(8.10, -2.10), "w": 4.15, "d": 2.40, "h": 2.60, "rot": -0.8029, "door": 0.0},
+	{"id": "community_hall_building", "at": Vector2(-7.70, 3.25), "w": 3.00, "d": 4.30, "h": 1.55, "rot": 1.6581, "door": 0.0},
 ]
 const PLAZA_R := 4.3
 ## Where the gate out of the square stands (the path to the waterfront).
@@ -997,6 +1001,9 @@ func _load_layout() -> void:
 	for k in data.get("camera", {}):
 		if cam.has(k):
 			cam[k] = float(data["camera"][k])
+		elif k == "lean":
+			cam["lean_x"] = float(data["camera"][k])
+			cam["lean_z"] = float(data["camera"][k])
 	for saved in data.get("buildings", []):
 		for b in _buildings:
 			if b["id"] == saved.get("id", ""):
@@ -1023,7 +1030,7 @@ func _save_layout() -> void:
 
 
 func _reset_layout() -> void:
-	cam = {"dist": 40.0, "pitch": 42.0, "fov": 15.5, "yaw": 0.0, "cx": 0.3, "cz": -1.5, "lean": 0.3}
+	cam = CAM_DEFAULT.duplicate()
 	_buildings = BUILDINGS.duplicate(true)
 	for i in _buildings.size():
 		_rebuild_building(i)
@@ -1051,7 +1058,8 @@ func _build_editor() -> void:
 	_slider_row(col, "cam.yaw", "좌우 회전", -60, 60, 1)
 	_slider_row(col, "cam.cx", "중심 X", -8, 8, 0.1)
 	_slider_row(col, "cam.cz", "중심 Z", -8, 8, 0.1)
-	_slider_row(col, "cam.lean", "따라가기", 0, 1, 0.05)
+	_slider_row(col, "cam.lean_x", "따라가기 좌우", 0, 1, 0.05)
+	_slider_row(col, "cam.lean_z", "따라가기 앞뒤", 0, 1, 0.05)
 	var head := HBoxContainer.new()
 	col.add_child(head)
 	var prev := UiKit.button("◀", 40, false)
