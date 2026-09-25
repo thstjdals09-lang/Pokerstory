@@ -80,6 +80,32 @@ var cam := CAM_DEFAULT.duplicate()
 		cam["lean_z"] = v
 	get:
 		return cam["lean_z"]
+@export_group("Blur")
+## Tilt-shift look: things nearer or further than the focus (the square) get blurred.
+@export var blur_on := true:
+	set(v):
+		blur_on = v
+		_apply_blur()
+## How strong the blur is (0 = none).
+@export_range(0.0, 0.3, 0.005) var blur_amount := 0.07:
+	set(v):
+		blur_amount = v
+		_apply_blur()
+## Blur starts this many metres in front of the focus (smaller = the front blurs sooner).
+@export_range(0.5, 40.0, 0.1) var blur_near_start := 5.0:
+	set(v):
+		blur_near_start = v
+		_apply_blur()
+## Blur starts this many metres behind the focus (smaller = the back blurs sooner).
+@export_range(0.5, 60.0, 0.1) var blur_far_start := 6.0:
+	set(v):
+		blur_far_start = v
+		_apply_blur()
+## How gradually the blur fades in (metres).
+@export_range(0.1, 30.0, 0.1) var blur_softness := 5.0:
+	set(v):
+		blur_softness = v
+		_apply_blur()
 @export_group("Preview")
 ## Editor preview only: show the evening lighting.
 @export var preview_evening := false:
@@ -182,6 +208,20 @@ func _process(delta: float) -> void:
 				remove_child(ch)
 				ch.queue_free()
 		_build_all()
+
+
+func _apply_blur() -> void:
+	if _cam == null or not (_cam.attributes is CameraAttributesPractical):
+		return
+	var a: CameraAttributesPractical = _cam.attributes
+	var d := float(cam["dist"])
+	a.dof_blur_far_enabled = blur_on
+	a.dof_blur_near_enabled = blur_on
+	a.dof_blur_amount = blur_amount
+	a.dof_blur_far_distance = d + blur_far_start
+	a.dof_blur_near_distance = maxf(0.1, d - blur_near_start)
+	a.dof_blur_far_transition = blur_softness
+	a.dof_blur_near_transition = blur_softness
 
 
 func _camera_changed() -> void:
@@ -351,13 +391,7 @@ func _build_camera() -> void:
 	# A long lens from far away: little size difference front to back, steady verticals.
 	_cam.fov = cam["fov"]
 	var attrs := CameraAttributesPractical.new()
-	attrs.dof_blur_far_enabled = true
-	attrs.dof_blur_far_distance = float(cam["dist"]) + 6.0
-	attrs.dof_blur_far_transition = 6.0
-	attrs.dof_blur_near_enabled = true
-	attrs.dof_blur_near_distance = float(cam["dist"]) - 5.0
-	attrs.dof_blur_near_transition = 4.0
-	attrs.dof_blur_amount = 0.07
+	# blur values come from the Blur exports (_apply_blur)
 	_cam.attributes = attrs
 	if own_cam:
 		add_child(_cam)
@@ -373,8 +407,7 @@ func _follow(weight: float) -> void:
 	var pitch := deg_to_rad(float(cam["pitch"]))
 	var back := Vector3(0, sin(pitch), cos(pitch)).rotated(Vector3.UP, deg_to_rad(float(cam["yaw"]))) * float(cam["dist"])
 	_cam.fov = cam["fov"]
-	_cam.attributes.dof_blur_far_distance = float(cam["dist"]) + 6.0
-	_cam.attributes.dof_blur_near_distance = float(cam["dist"]) - 5.0
+	_apply_blur()
 	_cam.position = _cam.position.lerp(focus + back, weight)
 	_cam.look_at(_cam.position - back, Vector3.UP)
 
