@@ -1,6 +1,54 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3]
 
-[ext_resource type="Script" path="res://diorama/diorama.gd" id="1"]
+[ext_resource type="Script" path="res://diorama/diorama.gd" id="1_u4jjr"]
+[ext_resource type="Script" path="res://diorama/building_marker.gd" id="2_82lga"]
 
-[node name="Diorama" type="Node3D"]
-script = ExtResource("1")
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_u4jjr"]
+dof_blur_far_enabled = true
+dof_blur_far_distance = 17.0
+dof_blur_far_transition = 6.0
+dof_blur_near_enabled = true
+dof_blur_near_distance = 6.0
+dof_blur_near_transition = 4.0
+dof_blur_amount = 0.07
+
+[node name="Diorama" type="Node3D" unique_id=292455815]
+script = ExtResource("1_u4jjr")
+
+[node name="Buildings" type="Node3D" parent="." unique_id=1240447554]
+
+[node name="Home" type="Marker3D" parent="Buildings" unique_id=1728401376]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0, -7.1)
+script = ExtResource("2_82lga")
+depth = 1.6
+wall_height = 1.55
+
+[node name="Shop" type="Marker3D" parent="Buildings" unique_id=2094944367]
+transform = Transform3D(0.6819984, 0, 0.7313537, 0, 1, 0, -0.7313537, 0, 0.6819984, -6.1, 0, -4.15)
+script = ExtResource("2_82lga")
+building_id = "shop_building"
+width = 3.5
+depth = 2.35
+wall_height = 2.4
+door_offset = 0.8
+
+[node name="CardRoom" type="Marker3D" parent="Buildings" unique_id=2049779815]
+transform = Transform3D(0.6293204, 0, -0.777146, 0, 1, 0, 0.777146, 0, 0.6293204, 7.3, 0, -2.1)
+script = ExtResource("2_82lga")
+building_id = "card_room_building"
+width = 4.15
+wall_height = 2.6
+
+[node name="Hall" type="Marker3D" parent="Buildings" unique_id=474482071]
+transform = Transform3D(0.2419219, 0, 0.9702957, 0, 1, 0, -0.9702957, 0, 0.2419219, -6.3, 0, 3.55)
+script = ExtResource("2_82lga")
+building_id = "community_hall_building"
+width = 2.2
+depth = 3.65
+wall_height = 1.55
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1732851293]
+transform = Transform3D(1, 0, 0, 0, 0.9135454, 0.40673664, 0, -0.40673664, 0.9135454, 0.060000002, 4.474103, 10.774)
+attributes = SubResource("CameraAttributesPractical_u4jjr")
+current = true
+fov = 47.5

@@ -1,3 +1,4 @@
+@tool
 extends Node3D
 ## 3D diorama prototype of the village square, built only from primitive shapes (no image assets).
 ## Composition pass: the square is re-laid out for the camera (fountain in the middle, buildings
@@ -7,7 +8,10 @@ extends Node3D
 ## Keys: WASD / arrows walk, T day <-> evening, F1 edit mode, Esc quit.
 ## Edit mode (F1): sliders for the camera and the selected building. Click a building to select it,
 ## drag it on the ground, Q / E turn it; mouse wheel zooms, right-drag orbits, middle-drag pans.
-## "저장" writes diorama/layout.json, which is loaded on the next start.
+## "저장" writes the values into diorama.tscn itself.
+## In the Godot editor (edit_diorama.bat): the buildings are the markers under "Buildings" (move and
+## turn them with the gizmo, sizes in the Inspector), the camera and time of day are the exports on
+## the root node, and the Camera3D node's Preview shows the game view.
 ## Screenshot mode: -- --shot=<png> [--evening] quits after saving one frame.
 
 const PX := 0.01
@@ -28,11 +32,64 @@ var _hud_icon: TextureRect
 var _prompt: Control
 var _lumi: Node3D
 var _shot := ""
-const LAYOUT_FILE := "res://diorama/layout.json"
-## Editable camera (edit mode sliders; saved to layout.json).
+## Editable camera (Inspector exports and the F1 sliders; saved into the scene).
 ## Defaults are the owner's saved layout (2026-09-25).
-const CAM_DEFAULT := {"dist": 11.53, "pitch": 20.6, "fov": 53.5, "yaw": 0.0, "cx": 0.00, "cz": -3.20, "lean_x": 0.55, "lean_z": 0.55}
+const CAM_DEFAULT := {"dist": 11.00, "pitch": 24.0, "fov": 47.5, "yaw": 0.0, "cx": 0.00, "cz": -5.20, "lean_x": 0.60, "lean_z": 0.75}
 var cam := CAM_DEFAULT.duplicate()
+
+@export_group("Camera")
+@export_range(3.0, 80.0, 0.01) var cam_distance: float = CAM_DEFAULT["dist"]:
+	set(v):
+		cam["dist"] = v
+		_camera_changed()
+	get:
+		return cam["dist"]
+@export_range(6.0, 70.0, 0.1) var cam_fov: float = CAM_DEFAULT["fov"]:
+	set(v):
+		cam["fov"] = v
+		_camera_changed()
+	get:
+		return cam["fov"]
+@export_range(10.0, 85.0, 0.1) var cam_pitch: float = CAM_DEFAULT["pitch"]:
+	set(v):
+		cam["pitch"] = v
+		_camera_changed()
+	get:
+		return cam["pitch"]
+@export_range(-60.0, 60.0, 0.1) var cam_yaw: float = CAM_DEFAULT["yaw"]:
+	set(v):
+		cam["yaw"] = v
+		_camera_changed()
+	get:
+		return cam["yaw"]
+@export var cam_centre := Vector2(CAM_DEFAULT["cx"], CAM_DEFAULT["cz"]):
+	set(v):
+		cam["cx"] = v.x
+		cam["cz"] = v.y
+		_camera_changed()
+	get:
+		return Vector2(cam["cx"], cam["cz"])
+@export_range(0.0, 1.0, 0.01) var follow_left_right: float = CAM_DEFAULT["lean_x"]:
+	set(v):
+		cam["lean_x"] = v
+	get:
+		return cam["lean_x"]
+@export_range(0.0, 1.0, 0.01) var follow_forward_back: float = CAM_DEFAULT["lean_z"]:
+	set(v):
+		cam["lean_z"] = v
+	get:
+		return cam["lean_z"]
+@export_group("Preview")
+## Editor preview only: show the evening lighting.
+@export var preview_evening := false:
+	set(v):
+		preview_evening = v
+		_evening = v
+		if _env != null:
+			_apply_time()
+var _rebuild_in := 0.0
+var _start_cam := {}
+var _start_buildings: Array = []
 var _buildings: Array = []
 var _building_roots: Array = []
 var _pave_root: Node3D
@@ -53,15 +110,11 @@ func _ready() -> void:
 			_shot = a.get_slice("=", 1)
 		if a == "--evening":
 			_evening = true
-	_buildings = BUILDINGS.duplicate(true)
-	_load_layout()
-	_build_world_env()
-	_build_ground()
-	for i in _buildings.size():
-		_building_roots.append(_build_building(_buildings[i]))
-	_build_decor()
-	_build_people()
-	_build_camera()
+	_build_all()
+	if Engine.is_editor_hint():
+		return
+	_start_cam = cam.duplicate()
+	_start_buildings = _buildings.duplicate(true)
 	_build_hud()
 	_build_editor()
 	_apply_time()
@@ -75,8 +128,64 @@ func _ready() -> void:
 			_follow(1.0)
 	if "--edit" in OS.get_cmdline_user_args():
 		_set_edit(true)
+	if "--save-check" in OS.get_cmdline_user_args():
+		_save_layout()
+		print("[diorama] ", _sel_label.text)
+		get_tree().quit()
 	if _shot != "":
 		_take_shot.call_deferred()
+
+
+## Everything generated (not saved in the scene): world, buildings, props, people.
+func _build_all() -> void:
+	_buildings = _read_markers()
+	_night_lights = []
+	_glows = []
+	_bobbers = []
+	_building_roots = []
+	_pave_root = null
+	_lumi = null
+	_build_world_env()
+	_build_ground()
+	for i in _buildings.size():
+		_building_roots.append(_build_building(_buildings[i]))
+	_build_decor()
+	_build_people()
+	_build_camera()
+	_apply_time()
+
+
+func _read_markers() -> Array:
+	var holder := get_node_or_null("Buildings")
+	if holder == null or holder.get_child_count() == 0:
+		return BUILDINGS.duplicate(true)
+	var out: Array = []
+	for m in holder.get_children():
+		if m.has_method("to_layout"):
+			out.append(m.to_layout())
+	return out
+
+
+## Editor: rebuild a moment after a marker or size changes.
+func queue_rebuild() -> void:
+	_rebuild_in = 0.25
+
+
+func _process(delta: float) -> void:
+	if not Engine.is_editor_hint() or _rebuild_in <= 0.0:
+		return
+	_rebuild_in -= delta
+	if _rebuild_in <= 0.0:
+		for ch in get_children():
+			if ch.owner == null:
+				remove_child(ch)
+				ch.queue_free()
+		_build_all()
+
+
+func _camera_changed() -> void:
+	if _cam != null and _player != null and is_inside_tree():
+		_follow(1.0)
 
 
 func _v(p: Array) -> Vector3:
@@ -234,7 +343,10 @@ func _apply_time() -> void:
 
 
 func _build_camera() -> void:
-	_cam = Camera3D.new()
+	_cam = get_node_or_null("Camera3D")
+	var own_cam := _cam == null
+	if own_cam:
+		_cam = Camera3D.new()
 	# A long lens from far away: little size difference front to back, steady verticals.
 	_cam.fov = cam["fov"]
 	var attrs := CameraAttributesPractical.new()
@@ -246,7 +358,8 @@ func _build_camera() -> void:
 	attrs.dof_blur_near_transition = 4.0
 	attrs.dof_blur_amount = 0.07
 	_cam.attributes = attrs
-	add_child(_cam)
+	if own_cam:
+		add_child(_cam)
 	_cam.current = true
 	_follow(1.0)
 
@@ -428,11 +541,12 @@ func _scatter_grass(rng: RandomNumberGenerator) -> void:
 
 ## Buildings around the fountain: game id, centre (x, z), size (w, d), facing (radians; 0 faces the
 ## camera, negative turns the front to the left), door offset along the front.
+## Fallback when the scene has no "Buildings" markers.
 const BUILDINGS := [
-	{"id": "home_building", "at": Vector2(0.05, -7.10), "w": 3.20, "d": 1.60, "h": 1.55, "rot": 0.0000, "door": 0.0},
-	{"id": "shop_building", "at": Vector2(-6.10, -3.05), "w": 3.50, "d": 2.35, "h": 2.40, "rot": 0.8203, "door": 0.8},
-	{"id": "card_room_building", "at": Vector2(8.10, -2.10), "w": 4.15, "d": 2.40, "h": 2.60, "rot": -0.8029, "door": 0.0},
-	{"id": "community_hall_building", "at": Vector2(-7.70, 3.25), "w": 3.00, "d": 4.30, "h": 1.55, "rot": 1.6581, "door": 0.0},
+	{"id": "home_building", "at": Vector2(0.05, -7.10), "w": 3.20, "d": 1.60, "h": 1.55, "rot": 0.0000, "door": 0.00},
+	{"id": "shop_building", "at": Vector2(-6.10, -4.15), "w": 3.50, "d": 2.35, "h": 2.40, "rot": 0.8203, "door": 0.80},
+	{"id": "card_room_building", "at": Vector2(7.30, -2.10), "w": 4.15, "d": 2.40, "h": 2.60, "rot": -0.8901, "door": 0.00},
+	{"id": "community_hall_building", "at": Vector2(-6.30, 3.55), "w": 2.20, "d": 3.65, "h": 1.55, "rot": 1.3265, "door": 0.00},
 ]
 const PLAZA_R := 4.3
 ## Where the gate out of the square stands (the path to the waterfront).
@@ -806,9 +920,10 @@ func _build_people() -> void:
 	var places := {"npc_lumi": "fox", "npc_moa": "fairy", "npc_juno": "bird"}
 	var spots := {"npc_lumi": Vector3(1.3, 0, 2.2), "npc_moa": Vector3(-2.3, 0, -1.3), "npc_juno": Vector3(5.8, 0, 0.1)}
 	for id in places:
-		var place: Dictionary = Game.data.npc_place(id, "evening" if _evening else "day", Game.state if Game.state != null else GameState.new())
-		if str(place.get("loc", "")) != "village_square":
-			continue
+		if not Engine.is_editor_hint():
+			var place: Dictionary = Game.data.npc_place(id, "evening" if _evening else "day", Game.state if Game.state != null else GameState.new())
+			if str(place.get("loc", "")) != "village_square":
+				continue
 		var node := Node3D.new()
 		node.position = spots[id]
 		add_child(node)
@@ -944,6 +1059,8 @@ func _build_hud() -> void:
 # --- loop ----------------------------------------------------------------------------------------
 
 func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	_t += delta
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	_player.velocity = Vector3(dir.x, 0, dir.y) * WALK
@@ -966,6 +1083,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if Engine.is_editor_hint():
+		return
 	if _edit:
 		_edit_input(event)
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -992,46 +1111,21 @@ func _take_shot() -> void:
 const BUILDING_NAMES := {"home_building": "내 집", "shop_building": "잡화점", "card_room_building": "카드룸", "community_hall_building": "마을 회관"}
 
 
-func _load_layout() -> void:
-	if not FileAccess.file_exists(LAYOUT_FILE):
-		return
-	var data = JSON.parse_string(FileAccess.get_file_as_string(LAYOUT_FILE))
-	if not data is Dictionary:
-		return
-	for k in data.get("camera", {}):
-		if cam.has(k):
-			cam[k] = float(data["camera"][k])
-		elif k == "lean":
-			cam["lean_x"] = float(data["camera"][k])
-			cam["lean_z"] = float(data["camera"][k])
-	for saved in data.get("buildings", []):
-		for b in _buildings:
-			if b["id"] == saved.get("id", ""):
-				b["at"] = Vector2(float(saved["at"][0]), float(saved["at"][1]))
-				b["rot"] = deg_to_rad(float(saved["rot_deg"]))
-				for k in ["w", "d", "h", "door"]:
-					if saved.has(k):
-						b[k] = float(saved[k])
-
-
+## Writes the current camera and buildings into diorama.tscn (the markers and the root's exports).
 func _save_layout() -> void:
-	var out := {"camera": cam.duplicate(), "buildings": []}
 	for b in _buildings:
-		out["buildings"].append({"id": b["id"], "at": [snappedf(b["at"].x, 0.01), snappedf(b["at"].y, 0.01)],
-			"rot_deg": snappedf(rad_to_deg(b["rot"]), 0.1), "w": snappedf(b["w"], 0.01), "d": snappedf(b["d"], 0.01),
-			"h": snappedf(float(b.get("h", STYLES[b["id"]]["h"])), 0.01), "door": b["door"]})
-	var f := FileAccess.open(LAYOUT_FILE, FileAccess.WRITE)
-	if f == null:
-		_sel_label.text = "저장 실패: " + LAYOUT_FILE
-		return
-	f.store_string(JSON.stringify(out, "  "))
-	f.close()
-	_sel_label.text = "저장됨: diorama/layout.json"
+		if b.has("marker") and is_instance_valid(b["marker"]):
+			b["marker"].from_layout(b)
+	var packed := PackedScene.new()
+	var err := packed.pack(self)
+	if err == OK:
+		err = ResourceSaver.save(packed, scene_file_path if scene_file_path != "" else "res://diorama/diorama.tscn")
+	_sel_label.text = "저장됨: diorama.tscn" if err == OK else "저장 실패 (%d)" % err
 
 
 func _reset_layout() -> void:
-	cam = CAM_DEFAULT.duplicate()
-	_buildings = BUILDINGS.duplicate(true)
+	cam = _start_cam.duplicate()
+	_buildings = _start_buildings.duplicate(true)
 	for i in _buildings.size():
 		_rebuild_building(i)
 	_pave_dirty = 0.05

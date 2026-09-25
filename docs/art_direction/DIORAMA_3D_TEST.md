@@ -38,3 +38,17 @@
 - 카메라: 거리 11.5, 원근(화각) 53.5도, 내려다보는 각도 20.6도, 중심 (0, -3.2)
 - 건물 4채의 위치·방향·크기도 저장값이 기본 배치. "처음 값"도 이 값으로 돌아감
 - 카메라 따라가기를 좌우와 앞뒤로 나눔(각각 0~1, 기본 0.55)
+
+## Godot 에디터에서 수정하기
+- 최신 저장값(거리 11, 화각 47.5, 각도 24, 중심 (0, -5.2), 따라가기 좌우 0.6·앞뒤 0.75, 건물 4채)을 `game/diorama/diorama.tscn`에 넣음. layout.json은 없앰
+- 열기: `edit_diorama.bat` (Forward+로 에디터를 열고 이 장면을 띄움)
+- 건물: 씬 트리 `Diorama > Buildings > Home / Shop / CardRoom / Hall`을 선택하고
+  - 이동: 뷰포트의 화살표 기즈모를 끌거나 Inspector의 Transform > Position (X, Z)
+  - 방향: Transform > Rotation의 Y (다른 축은 무시)
+  - 크기: Inspector의 width(폭), depth(깊이), wall_height(벽 높이), door_offset(문 위치)
+  - 바꾸면 0.25초 뒤 미리보기가 다시 그려지고 돌길도 문 쪽으로 다시 깔림
+- 카메라: 씬 트리에서 `Diorama`(맨 위)를 선택하면 Inspector의 Camera 그룹에 cam_distance, cam_fov, cam_pitch, cam_yaw, cam_centre, follow_left_right, follow_forward_back
+  - 게임 화면 그대로 보기: `Camera3D` 노드를 선택하고 뷰포트 위쪽의 "Preview" 체크
+- 저녁 미리보기: `Diorama` Inspector의 Preview > preview_evening
+- 저장: Ctrl+S. 게임 중 F1 패널의 "저장"도 같은 diorama.tscn에 기록함
+- 참고: 미리보기 건물·소품·사람은 저장되지 않는 자동 생성물이라 씬 트리에 보이지 않음. 뷰포트에서 건물을 클릭하면 Diorama가 선택되므로 건물은 씬 트리에서 고름
