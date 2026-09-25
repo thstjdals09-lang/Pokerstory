@@ -1,0 +1,312 @@
+{
+  "pack": "P20-CONTENT-0.3",
+  "status": "design_only",
+  "file_count": 61,
+  "files": [
+    {
+      "path": "00_governance/00_START_HERE.md",
+      "sha256": "d8157f8d4c8388cf68910a18e37c531501d311b0f83ae55afecb34e1daeb9ea0",
+      "bytes": 2306
+    },
+    {
+      "path": "00_governance/01_DECISIONS_AND_PRECEDENCE.md",
+      "sha256": "3014045be2f8c333b49061772af43d5ecf41580b0ce11e8a77809c368a028ca3",
+      "bytes": 2325
+    },
+    {
+      "path": "00_governance/02_CONTENT_COMPLETE_DEFINITION.md",
+      "sha256": "0c1c00372635b798ea5c971d8df990444be2b102098e40d85265344353552eb7",
+      "bytes": 2431
+    },
+    {
+      "path": "00_governance/03_BALANCE_AND_FLAGS.md",
+      "sha256": "67420b93ee81c4126a746d464aa0973a0fda77f920b889d8b09ba5936179cac2",
+      "bytes": 1692
+    },
+    {
+      "path": "01_world/01_WORLD_BIBLE.md",
+      "sha256": "7aa010d87c11f9a32746ee42dfdfad4f19077f44470b9a4d293b610c90200f42",
+      "bytes": 2433
+    },
+    {
+      "path": "01_world/02_STORY_ARCS.md",
+      "sha256": "dea99eeb5bf6bfa5af156f96c201597dcd5b2679e09e8d3bd3636e35b0c19237",
+      "bytes": 2516
+    },
+    {
+      "path": "01_world/03_CULTURE_AND_EVENTS.md",
+      "sha256": "d3aefd8eb54941b01e5426e21dd3345b6e7551acc3cbeda78d46ce4ad116385b",
+      "bytes": 1720
+    },
+    {
+      "path": "01_world/04_ACT1_SCENE_SCRIPT.md",
+      "sha256": "a11b5927da4c2ec2b7e3b575d9e7aee4cf6f1d96d078c4c1c9ce88fcf7d873ec",
+      "bytes": 2178
+    },
+    {
+      "path": "01_world/05_ACT2_SCENE_SCRIPT.md",
+      "sha256": "c76fc755e6d62454b31f7116df18a60f63e384ec0e9a5ebeb8c19a14d2c822b2",
+      "bytes": 2019
+    },
+    {
+      "path": "01_world/06_ACT3_AND_POSTGAME_SCRIPT.md",
+      "sha256": "16fa4cd0c100650e8ec50ed5ed79ef9e68566889ee84a5528a724773643b431b",
+      "bytes": 2042
+    },
+    {
+      "path": "02_village/01_DISTRICTS_AND_TRAVEL.md",
+      "sha256": "656878bb72137bfeb35c65e30231086b84a9bd3a14f46e0b9a0b780dead28b4d",
+      "bytes": 1936
+    },
+    {
+      "path": "02_village/02_BUILDING_AND_ROOM_REGISTER.md",
+      "sha256": "46df899add12cdbb5dccc608ceca8dd00d77fb71b1b16ee921b91a1e597b3465",
+      "bytes": 2124
+    },
+    {
+      "path": "02_village/03_WORLD_INTERACTION_CONTRACT.md",
+      "sha256": "fe5b5ab544690dcc6d3a8844e7991fdbe43eefd439bb3260b7ad92111106c918",
+      "bytes": 1560
+    },
+    {
+      "path": "02_village/04_UNLOCKS_AND_MILESTONES.md",
+      "sha256": "cf42f59b7ae7ea5fe18b235b911db5c531055cb3beb95785fd1c3096159638b5",
+      "bytes": 1124
+    },
+    {
+      "path": "03_residents/01_ROSTER.md",
+      "sha256": "e51006ebe4e6e23b968ffecd468f79f4ba18ed2546821aa99a04d139ff2636e3",
+      "bytes": 2781
+    },
+    {
+      "path": "03_residents/02_RELATIONSHIP_MODEL.md",
+      "sha256": "f3efb2415edfe44e9987aa79a7900dd2eb955df0d741873879ed23a5cac63b6a",
+      "bytes": 2186
+    },
+    {
+      "path": "03_residents/03_SCHEDULE_AND_GROUPS.md",
+      "sha256": "808e31ca012c43de13f0471145a3a23807fe572c379e93395455c12e268caf6e",
+      "bytes": 1747
+    },
+    {
+      "path": "03_residents/04_DIALOGUE_EVENT_CATALOG.md",
+      "sha256": "c85e8000677de8a41533f9c035a5b0ce9b4346d271ef12f2df15e2810720679e",
+      "bytes": 1864
+    },
+    {
+      "path": "03_residents/05_PERSONAL_EPISODES_32.md",
+      "sha256": "33701937e7f674a17acd5f94001045844b70f8a8df2a373909966dedaed591c2",
+      "bytes": 3218
+    },
+    {
+      "path": "03_residents/06_ROMANCE_AND_RIVALRY_EPISODES.md",
+      "sha256": "5392125bdf4dd28369b2ed6afe416a5fdc9e6559ee6cabc834f8d709167240c1",
+      "bytes": 2224
+    },
+    {
+      "path": "03_residents/cards/npc_bibi.md",
+      "sha256": "aafd8581ef9dd4915b32cedd5f652384fd0c69ed488e4b2ac905a14331d2f882",
+      "bytes": 2541
+    },
+    {
+      "path": "03_residents/cards/npc_ella.md",
+      "sha256": "24f0a1c46778945474dcf74095b32ff0dce775b0022e4907486bc3068ac39531",
+      "bytes": 2595
+    },
+    {
+      "path": "03_residents/cards/npc_haru.md",
+      "sha256": "9f1d7727c88c39438d3655b6f3090bcf8597dd01e7c69b6e86fdf1ecc937d87e",
+      "bytes": 2565
+    },
+    {
+      "path": "03_residents/cards/npc_juno.md",
+      "sha256": "4a624cc0b36786a08ec7d4692963ce31f9ef78e65c975e576f30fe9207710055",
+      "bytes": 2571
+    },
+    {
+      "path": "03_residents/cards/npc_kyle.md",
+      "sha256": "a7aae1f46b48c93de754d1c5a10d3d9b00a6af98971885badafbb4b6c98ea9b8",
+      "bytes": 2619
+    },
+    {
+      "path": "03_residents/cards/npc_lumi.md",
+      "sha256": "2ed9db862775ff4725cd8b2650926fbea84cb2aceb165418bd3d44f0f3c074a6",
+      "bytes": 2647
+    },
+    {
+      "path": "03_residents/cards/npc_miri.md",
+      "sha256": "3110e4cfe0862e8c40b3ac8f37bf01331514dfa039cfc37776194d0ee71ceb27",
+      "bytes": 2618
+    },
+    {
+      "path": "03_residents/cards/npc_moa.md",
+      "sha256": "ae44aaa45b84ee5a1857724e234f8a50033dad5c7bdfbc1adce07d116a6c4bdc",
+      "bytes": 2631
+    },
+    {
+      "path": "03_residents/cards/npc_nora.md",
+      "sha256": "9dbc0790e564d3f1269e45bb0b3663bf640a8058196346fe736e17ce7d8d34e7",
+      "bytes": 2619
+    },
+    {
+      "path": "03_residents/cards/npc_ona.md",
+      "sha256": "48082da0564b20da1dd0a4138951dedc7f8ab36e4d8e3b949271b15d1cb2cb7f",
+      "bytes": 2579
+    },
+    {
+      "path": "03_residents/cards/npc_ren.md",
+      "sha256": "63ce32bdcd63e991abb972a55f0b5db53a886af5e3c2f948b2d6f453aa572924",
+      "bytes": 2546
+    },
+    {
+      "path": "03_residents/cards/npc_rira.md",
+      "sha256": "578da77818a9160add9057d7a082e5af20eb8007cfab2232521ca4545c8b4f4b",
+      "bytes": 2552
+    },
+    {
+      "path": "03_residents/cards/npc_sera.md",
+      "sha256": "638f6abe6a5e6b5d684025814ec6884e736fdccfd0e889b98a455621236569ba",
+      "bytes": 2633
+    },
+    {
+      "path": "03_residents/cards/npc_sia.md",
+      "sha256": "4cb1957a757f7d3d07773497d19d59f9af91eac819b3c7429a8fe6a7bd6e21a4",
+      "bytes": 2609
+    },
+    {
+      "path": "03_residents/cards/npc_taeo.md",
+      "sha256": "792069361d0a130d4abe8e7bd65aa4e06dd0403210c2eb4f17a38a8a59c20a2d",
+      "bytes": 2572
+    },
+    {
+      "path": "03_residents/cards/npc_yul.md",
+      "sha256": "466f1b0097f346e35cc467d241d8137fce4fc9be7a9c7c465f74ddff88e2f66c",
+      "bytes": 2588
+    },
+    {
+      "path": "04_life/01_HOME_HOUSING.md",
+      "sha256": "627679cef5b8c9d7e0640070cb556da4d7d76a68434ca41dac252805974dc1d2",
+      "bytes": 1920
+    },
+    {
+      "path": "04_life/02_TOWN_PROJECTS.md",
+      "sha256": "296b33447b8888e9deba0932f69518b3b4d9374c4389252c7a2245f82051f61b",
+      "bytes": 2004
+    },
+    {
+      "path": "04_life/03_JOBS_AND_RECOVERY.md",
+      "sha256": "4bfcc16ffb558e0d0e58abd1b6192ae9409ce502082782a0475c7ba2ab4cc61d",
+      "bytes": 1520
+    },
+    {
+      "path": "04_life/04_QUEST_CATALOG.md",
+      "sha256": "0457dddb87053ef54aad762ea90708cad3e2a0d11768346736099ace012c0dde",
+      "bytes": 2969
+    },
+    {
+      "path": "04_life/05_ITEM_AND_COLLECTION_SCHEMA.md",
+      "sha256": "e9b64d298a90bbd4b777fae3f02ea3896c585505ed5ad1651e676aaa90793879",
+      "bytes": 1491
+    },
+    {
+      "path": "04_life/06_ITEM_CATALOG_64.md",
+      "sha256": "1ae34b8c1fb7047b6eed095f9ed71cc0afc22f5ac3dec182662fded563cfcc2d",
+      "bytes": 7521
+    },
+    {
+      "path": "04_life/07_SHOPS_AND_EXCHANGE.md",
+      "sha256": "d2bc19852c8fa872574201467e3285bb7a5f0bd1f2431da5a81729fda4143c24",
+      "bytes": 1123
+    },
+    {
+      "path": "04_life/08_QUEST_INTERACTION_SCRIPTS.md",
+      "sha256": "9031c3ec7fd11416266533d557b64335f59c94872604e30dd061c385b2a04a9a",
+      "bytes": 3957
+    },
+    {
+      "path": "05_poker/01_GAME_MODES.md",
+      "sha256": "dc6999183afde86ef34e72a67e2d398ff1a5857edf72a9f3cff431cf4013647d",
+      "bytes": 1907
+    },
+    {
+      "path": "05_poker/02_ABILITIES_8.md",
+      "sha256": "4a9504b81742078a590ef1607abff7285ed2857e3a377d734832151228ee26be",
+      "bytes": 2898
+    },
+    {
+      "path": "05_poker/03_OPPONENT_PERSONAS.md",
+      "sha256": "4e1df2815df6de996475010dfd3bd0557b4f70fc1bfd544253f83ac9aaf3c46b",
+      "bytes": 1961
+    },
+    {
+      "path": "05_poker/04_TOURNAMENTS.md",
+      "sha256": "188f41177492cd7746d44b34ac316e807d21b04ed6d93c3161f6a392b862255b",
+      "bytes": 1451
+    },
+    {
+      "path": "05_poker/05_ECONOMY_LONG_LOOP.md",
+      "sha256": "cc8abfa40340b56696a9d9b5785243d2a770c5241ad5e13fed82a328d977dab2",
+      "bytes": 1642
+    },
+    {
+      "path": "05_poker/06_POKER_RULE_VALIDATION.md",
+      "sha256": "bda64b2bbdec5ae4bd9cc4958aea68d138a766e62ca1f7bae0ca61429f2bda78",
+      "bytes": 1602
+    },
+    {
+      "path": "06_integration/01_GAME_LOOP_AND_SYSTEM_DEPENDENCIES.md",
+      "sha256": "2bda77d974807492a17ef9de2eccfb55aef43c2401067018eed9e1c6e9f8eebd",
+      "bytes": 1595
+    },
+    {
+      "path": "06_integration/02_EVENT_BUS_AND_DATA_CONTRACT.md",
+      "sha256": "ea2fced18f76dbcd7be458b8971eaad797573ea0b19cecf622a6c622e582e5b9",
+      "bytes": 1749
+    },
+    {
+      "path": "06_integration/03_SAVE_MIGRATION_AND_RECOVERY.md",
+      "sha256": "a260fe0cff697088baab259fe615eca6eebe9502abd0766374bc104e9f223c22",
+      "bytes": 1620
+    },
+    {
+      "path": "06_integration/04_STORY_QUEST_DEPENDENCY_MATRIX.md",
+      "sha256": "f5c646c103ac85ff958639bd5af04e3c8c7f17a5d3b26b02ce2ca4a7cc292d6f",
+      "bytes": 1503
+    },
+    {
+      "path": "06_integration/05_ACCEPTANCE_AND_QA_MATRIX.md",
+      "sha256": "632b49bb50cfe81c03b91156f61cf738c33e9a32737afce0a0afb9830b82a8ad",
+      "bytes": 2056
+    },
+    {
+      "path": "06_integration/06_CONTENT_AUDIT.md",
+      "sha256": "848db476891b7f6234982b545625b5e0a8e1476c0177b2ae5c14efb3698e56b2",
+      "bytes": 1387
+    },
+    {
+      "path": "06_integration/07_SCREEN_TEXT_AND_FEEDBACK.md",
+      "sha256": "48cc84126a908d20ec87c5c998c4c069fa9c4fe9eeead785899ad0d97197a200",
+      "bytes": 1918
+    },
+    {
+      "path": "07_development/01_IMPLEMENTATION_SEQUENCE.md",
+      "sha256": "eb8c3f6840983ba6d4242891d40c0b4ffe2bab86e454b6909bd5f1aeec0da827",
+      "bytes": 2092
+    },
+    {
+      "path": "07_development/02_CLAUDE_EXECUTION_PROMPT.md",
+      "sha256": "bd084ba76b1b057d28732b8527b473dd24c1b1f6960d3cba4c5c3a0d3de76663",
+      "bytes": 1882
+    },
+    {
+      "path": "07_development/03_DELIVERY_CHECKLIST.md",
+      "sha256": "af676f944b9613b31db1e63de7ca61321147de760d74165f7d14a06733568c00",
+      "bytes": 1281
+    },
+    {
+      "path": "INDEX.md",
+      "sha256": "7e3e13b702e23c8ab20438d1a9ecefbb0ababef134bd8fa04e56a05a9e03957d",
+      "bytes": 5088
+    }
+  ]
+}
