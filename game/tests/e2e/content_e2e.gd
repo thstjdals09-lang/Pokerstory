@@ -467,8 +467,12 @@ func _cc06() -> void:
 	await _close_any()
 	_check_eq(int(Game.state.relation("npc_kyle")["rivalry"]), 10, "rivalry +10")
 	_check_eq(int(Game.state.relation("npc_kyle")["friendship"]), fk, "friendship unchanged by rivalry")
-	# Romance: opt in, two dates, together, then end it kindly.
-	await _talk_until("npc_kyle", "kyle.romance_offer")
+	# Romance: offered only to a close friend (friendship 30, set here; the paths to it are in
+	# cc05/react) and not on the same day as the second episode. Opt in, dates, together, end it.
+	Game.state.relation("npc_kyle")["friendship"] = 30
+	fk = 30
+	await _next_day()
+	await _talk_until("npc_kyle", "kyle.romance_offer", 6)
 	await _choose_text("더 알아가고")
 	await _close_any()
 	for want in ["kyle.date1", "kyle.date2"]:
@@ -488,8 +492,10 @@ func _cc06() -> void:
 	# Declining: Lumi stays a friend and never asks again.
 	await _accept_offer("npc_lumi", "npc_lumi.bond_02")
 	await _finish_task("npc_lumi.bond_02", 1)
+	Game.state.relation("npc_lumi")["friendship"] = 30
 	var fl: int = Game.state.relation("npc_lumi")["friendship"]
-	await _talk_until("npc_lumi", "lumi.romance_offer")
+	await _next_day()
+	await _talk_until("npc_lumi", "lumi.romance_offer", 6)
 	await _choose_text("친구로")
 	await _close_any()
 	_check_eq(Game.state.relation("npc_lumi")["romance"]["stage"], "closed", "declined")
@@ -665,8 +671,9 @@ func _cc07() -> void:
 func _life() -> void:
 	await _new_game("생활")
 	_setup_open_town()
-	for f in ["story.act2_started", "story.act3_started"]:
+	for f in ["story.act2_started", "story.act2_complete", "story.act3_started"]:
 		Game.state.set_flag(f)
+	Game.state.day_count += 1  # festival requests open the morning after act 2
 	Game.state.quests.erase("quest.sera_delivery")
 	# Plaza job (board), letter delivery (postbox), shelving (shop), lantern check (grove).
 	await _start_job()
@@ -736,7 +743,7 @@ func _life() -> void:
 ## (swapped at the table; there is no separate loadout step). Hands started straight from a
 ## dialogue choice get their stacked deck from _choose_arg.
 func _pick_loadout(mode: String, opponent: String, ability: String, deck: String = "win", expect_table: bool = true) -> void:
-	if main.ui_mode != "poker":
+	if main.ui_mode == "dialogue":
 		Game.debug_deck_queue = [DECKS[deck]]
 		await _read_to_choices()
 		var first := "%s|%s|" % [mode, opponent]
