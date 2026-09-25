@@ -68,56 +68,53 @@
    "tile": true
   },
   "char.player": {
-   "path": "res://assets/art/characters/player.svg",
+   "path": "res://assets/art/square/final/char_player.png",
    "size": [
-    56,
-    72
+    35,
+    84
    ],
    "anchor": [
-    28,
-    70
+    18,
+    81
    ],
-   "portrait": [
-    16,
-    0,
-    80,
-    80
-   ]
+   "portraits": {
+    "neutral": "res://assets/art/square/final/portrait_player_neutral.png",
+    "happy": "res://assets/art/square/final/portrait_player_happy.png",
+    "sad": "res://assets/art/square/final/portrait_player_sad.png"
+   }
   },
   "char.lumi": {
-   "path": "res://assets/art/characters/lumi.svg",
-   "size": [
-    56,
-    72
-   ],
-   "anchor": [
-    28,
-    70
-   ],
-   "portrait": [
-    16,
-    0,
-    80,
-    80
-   ]
-  },
-  "char.moa": {
-   "path": "res://assets/art/characters/moa.svg",
+   "path": "res://assets/art/square/final/char_lumi.png",
    "size": [
     44,
-    56
+    84
+   ],
+   "anchor": [
+    22,
+    81
+   ],
+   "portraits": {
+    "neutral": "res://assets/art/square/final/portrait_lumi_neutral.png",
+    "happy": "res://assets/art/square/final/portrait_lumi_happy.png",
+    "sad": "res://assets/art/square/final/portrait_lumi_sad.png"
+   }
+  },
+  "char.moa": {
+   "path": "res://assets/art/square/final/char_moa.png",
+   "size": [
+    44,
+    62
    ],
    "anchor": [
     22,
     60
    ],
    "hover": true,
-   "portrait": [
-    14,
-    0,
-    60,
-    64
-   ]
+   "portraits": {
+    "neutral": "res://assets/art/square/final/portrait_moa_neutral.png",
+    "happy": "res://assets/art/square/final/portrait_moa_happy.png",
+    "sad": "res://assets/art/square/final/portrait_moa_sad.png"
+   }
   },
   "char.sera": {
    "path": "res://assets/art/characters/sera.svg",
@@ -607,18 +604,779 @@
    ]
   },
   "ui.chip": {
-   "path": "res://assets/art/ui/chip.svg",
+   "path": "res://assets/art/square/final/ui_chip.png",
    "size": [
-    24,
-    24
+    28,
+    28
    ],
    "anchor": [
-    12,
-    12
+    14,
+    14
    ]
   },
   "ui.sun": {
-   "path": "res://assets/art/ui/sun.svg",
+   "path": "res://assets/art/square/final/ui_sun.png",
+   "size": [
+    28,
+    28
+   ],
+   "anchor": [
+    14,
+    14
+   ]
+  },
+  "ui.moon": {
+   "path": "res://assets/art/square/final/ui_moon.png",
+   "size": [
+    27,
+    28
+   ],
+   "anchor": [
+    14,
+    14
+   ]
+  },
+  "sq.ground": {
+   "path": "res://assets/art/square/final/ground.png",
+   "size": [
+    1600,
+    1100
+   ],
+   "anchor": [
+    0,
+    0
+   ]
+  },
+  "sq.bld_shop": {
+   "path": "res://assets/art/square/final/bld_shop.png",
+   "size": [
+    264,
+    341
+   ],
+   "anchor": [
+    164,
+    331
+   ],
+   "sort": true,
+   "lights": [
+    [
+     -111,
+     -68,
+     110,
+     1.0
+    ],
+    [
+     -79,
+     -211,
+     70,
+     0.7
+    ],
+    [
+     13,
+     -232,
+     70,
+     0.7
+    ]
+   ]
+  },
+  "sq.bld_home": {
+   "path": "res://assets/art/square/final/bld_home.png",
+   "size": [
+    295,
+    321
+   ],
+   "anchor": [
+    148,
+    315
+   ],
+   "sort": true,
+   "lights": [
+    [
+     -88,
+     -96,
+     80,
+     0.8
+    ],
+    [
+     83,
+     -96,
+     80,
+     0.8
+    ],
+    [
+     15,
+     -199,
+     60,
+     0.6
+    ]
+   ]
+  },
+  "sq.bld_cardroom": {
+   "path": "res://assets/art/square/final/bld_cardroom.png",
+   "size": [
+    354,
+    355
+   ],
+   "anchor": [
+    205,
+    351
+   ],
+   "sort": true,
+   "lights": [
+    [
+     -71,
+     -153,
+     120,
+     1.2
+    ],
+    [
+     42,
+     -153,
+     120,
+     1.2
+    ],
+    [
+     -46,
+     -71,
+     90,
+     1.1
+    ],
+    [
+     42,
+     -71,
+     90,
+     1.1
+    ],
+    [
+     -177,
+     -142,
+     80,
+     0.8
+    ],
+    [
+     0,
+     -7,
+     150,
+     0.9
+    ]
+   ]
+  },
+  "sq.bld_hall": {
+   "path": "res://assets/art/square/final/bld_hall.png",
+   "size": [
+    389,
+    324
+   ],
+   "anchor": [
+    218,
+    321
+   ],
+   "sort": true,
+   "lights": [
+    [
+     -136,
+     -97,
+     80,
+     0.7
+    ],
+    [
+     136,
+     -97,
+     80,
+     0.7
+    ]
+   ]
+  },
+  "sq.gate": {
+   "path": "res://assets/art/square/final/gate.png",
+   "size": [
+    121,
+    130
+   ],
+   "anchor": [
+    60,
+    126
+   ],
+   "sort": true,
+   "lights": [
+    [
+     36,
+     -81,
+     70,
+     0.8
+    ]
+   ]
+  },
+  "sq.fountain": {
+   "path": "res://assets/art/square/final/fountain.png",
+   "size": [
+    189,
+    190
+   ],
+   "anchor": [
+    94,
+    133
+   ],
+   "sort": true
+  },
+  "sq.lamp": {
+   "path": "res://assets/art/square/final/lamp.png",
+   "size": [
+    24,
+    118
+   ],
+   "anchor": [
+    12,
+    116
+   ],
+   "sort": true,
+   "lights": [
+    [
+     0,
+     -99,
+     130,
+     0.8
+    ]
+   ]
+  },
+  "sq.bench": {
+   "path": "res://assets/art/square/final/bench.png",
+   "size": [
+    84,
+    80
+   ],
+   "anchor": [
+    42,
+    74
+   ],
+   "sort": true
+  },
+  "sq.board": {
+   "path": "res://assets/art/square/final/board.png",
+   "size": [
+    86,
+    122
+   ],
+   "anchor": [
+    43,
+    118
+   ],
+   "sort": true
+  },
+  "sq.signpost": {
+   "path": "res://assets/art/square/final/signpost.png",
+   "size": [
+    49,
+    90
+   ],
+   "anchor": [
+    24,
+    87
+   ],
+   "sort": true
+  },
+  "sq.tree": {
+   "path": "res://assets/art/square/final/tree.png",
+   "size": [
+    137,
+    160
+   ],
+   "anchor": [
+    68,
+    154
+   ],
+   "sort": true
+  },
+  "sq.tree_blossom": {
+   "path": "res://assets/art/square/final/tree_blossom.png",
+   "size": [
+    139,
+    160
+   ],
+   "anchor": [
+    70,
+    154
+   ],
+   "sort": true
+  },
+  "sq.bush": {
+   "path": "res://assets/art/square/final/bush.png",
+   "size": [
+    65,
+    58
+   ],
+   "anchor": [
+    32,
+    53
+   ],
+   "sort": true
+  },
+  "sq.planter": {
+   "path": "res://assets/art/square/final/planter.png",
+   "size": [
+    130,
+    89
+   ],
+   "anchor": [
+    65,
+    80
+   ],
+   "sort": true
+  },
+  "sq.booth": {
+   "path": "res://assets/art/square/final/booth.png",
+   "size": [
+    129,
+    140
+   ],
+   "anchor": [
+    64,
+    133
+   ],
+   "sort": true
+  },
+  "sq.crates": {
+   "path": "res://assets/art/square/final/crates.png",
+   "size": [
+    55,
+    62
+   ],
+   "anchor": [
+    28,
+    59
+   ],
+   "sort": true
+  },
+  "sq.pot": {
+   "path": "res://assets/art/square/final/pot.png",
+   "size": [
+    44,
+    54
+   ],
+   "anchor": [
+    22,
+    51
+   ],
+   "sort": true
+  },
+  "sq.aframe": {
+   "path": "res://assets/art/square/final/aframe.png",
+   "size": [
+    46,
+    56
+   ],
+   "anchor": [
+    23,
+    54
+   ],
+   "sort": true
+  },
+  "char.player@front1": {
+   "path": "res://assets/art/square/final/char_player_front1.png",
+   "size": [
+    36,
+    84
+   ],
+   "anchor": [
+    18,
+    81
+   ]
+  },
+  "char.player@side0": {
+   "path": "res://assets/art/square/final/char_player_side0.png",
+   "size": [
+    34,
+    84
+   ],
+   "anchor": [
+    17,
+    81
+   ]
+  },
+  "char.player@side1": {
+   "path": "res://assets/art/square/final/char_player_side1.png",
+   "size": [
+    41,
+    84
+   ],
+   "anchor": [
+    20,
+    81
+   ]
+  },
+  "char.player@back0": {
+   "path": "res://assets/art/square/final/char_player_back0.png",
+   "size": [
+    34,
+    84
+   ],
+   "anchor": [
+    17,
+    81
+   ]
+  },
+  "char.lumi@front1": {
+   "path": "res://assets/art/square/final/char_lumi_front1.png",
+   "size": [
+    42,
+    84
+   ],
+   "anchor": [
+    21,
+    81
+   ]
+  },
+  "char.lumi@side0": {
+   "path": "res://assets/art/square/final/char_lumi_side0.png",
+   "size": [
+    44,
+    84
+   ],
+   "anchor": [
+    22,
+    81
+   ]
+  },
+  "char.lumi@side1": {
+   "path": "res://assets/art/square/final/char_lumi_side1.png",
+   "size": [
+    49,
+    84
+   ],
+   "anchor": [
+    24,
+    81
+   ]
+  },
+  "char.lumi@back0": {
+   "path": "res://assets/art/square/final/char_lumi_back0.png",
+   "size": [
+    42,
+    84
+   ],
+   "anchor": [
+    21,
+    81
+   ]
+  },
+  "char.moa@front1": {
+   "path": "res://assets/art/square/final/char_moa_front1.png",
+   "size": [
+    48,
+    62
+   ],
+   "anchor": [
+    24,
+    60
+   ],
+   "hover": true
+  },
+  "char.moa@side0": {
+   "path": "res://assets/art/square/final/char_moa_side0.png",
+   "size": [
+    44,
+    62
+   ],
+   "anchor": [
+    22,
+    60
+   ],
+   "hover": true
+  },
+  "char.moa@side1": {
+   "path": "res://assets/art/square/final/char_moa_side1.png",
+   "size": [
+    41,
+    62
+   ],
+   "anchor": [
+    20,
+    60
+   ],
+   "hover": true
+  },
+  "char.moa@back0": {
+   "path": "res://assets/art/square/final/char_moa_back0.png",
+   "size": [
+    45,
+    62
+   ],
+   "anchor": [
+    22,
+    60
+   ],
+   "hover": true
+  },
+  "char.juno": {
+   "path": "res://assets/art/square/final/char_juno.png",
+   "size": [
+    53,
+    80
+   ],
+   "anchor": [
+    26,
+    78
+   ],
+   "portraits": {
+    "neutral": "res://assets/art/square/final/portrait_juno_neutral.png",
+    "happy": "res://assets/art/square/final/portrait_juno_happy.png",
+    "sad": "res://assets/art/square/final/portrait_juno_sad.png"
+   }
+  },
+  "char.juno@front1": {
+   "path": "res://assets/art/square/final/char_juno_front1.png",
+   "size": [
+    58,
+    80
+   ],
+   "anchor": [
+    29,
+    78
+   ]
+  },
+  "char.juno@side0": {
+   "path": "res://assets/art/square/final/char_juno_side0.png",
+   "size": [
+    58,
+    80
+   ],
+   "anchor": [
+    29,
+    78
+   ]
+  },
+  "char.juno@side1": {
+   "path": "res://assets/art/square/final/char_juno_side1.png",
+   "size": [
+    56,
+    80
+   ],
+   "anchor": [
+    28,
+    78
+   ]
+  },
+  "char.juno@back0": {
+   "path": "res://assets/art/square/final/char_juno_back0.png",
+   "size": [
+    46,
+    80
+   ],
+   "anchor": [
+    23,
+    78
+   ]
+  },
+  "char.bibi": {
+   "path": "res://assets/art/square/final/char_bibi.png",
+   "size": [
+    35,
+    70
+   ],
+   "anchor": [
+    18,
+    68
+   ],
+   "portraits": {
+    "neutral": "res://assets/art/square/final/portrait_bibi_neutral.png",
+    "happy": "res://assets/art/square/final/portrait_bibi_happy.png",
+    "sad": "res://assets/art/square/final/portrait_bibi_sad.png"
+   }
+  },
+  "char.bibi@front1": {
+   "path": "res://assets/art/square/final/char_bibi_front1.png",
+   "size": [
+    35,
+    70
+   ],
+   "anchor": [
+    18,
+    68
+   ]
+  },
+  "char.bibi@side0": {
+   "path": "res://assets/art/square/final/char_bibi_side0.png",
+   "size": [
+    31,
+    70
+   ],
+   "anchor": [
+    16,
+    68
+   ]
+  },
+  "char.bibi@side1": {
+   "path": "res://assets/art/square/final/char_bibi_side1.png",
+   "size": [
+    32,
+    70
+   ],
+   "anchor": [
+    16,
+    68
+   ]
+  },
+  "char.bibi@back0": {
+   "path": "res://assets/art/square/final/char_bibi_back0.png",
+   "size": [
+    33,
+    70
+   ],
+   "anchor": [
+    16,
+    68
+   ]
+  },
+  "char.miri": {
+   "path": "res://assets/art/square/final/char_miri.png",
+   "size": [
+    34,
+    92
+   ],
+   "anchor": [
+    17,
+    89
+   ],
+   "portraits": {
+    "neutral": "res://assets/art/square/final/portrait_miri_neutral.png",
+    "happy": "res://assets/art/square/final/portrait_miri_happy.png",
+    "sad": "res://assets/art/square/final/portrait_miri_sad.png"
+   }
+  },
+  "char.miri@front1": {
+   "path": "res://assets/art/square/final/char_miri_front1.png",
+   "size": [
+    39,
+    92
+   ],
+   "anchor": [
+    20,
+    89
+   ]
+  },
+  "char.miri@side0": {
+   "path": "res://assets/art/square/final/char_miri_side0.png",
+   "size": [
+    31,
+    92
+   ],
+   "anchor": [
+    16,
+    89
+   ]
+  },
+  "char.miri@side1": {
+   "path": "res://assets/art/square/final/char_miri_side1.png",
+   "size": [
+    40,
+    92
+   ],
+   "anchor": [
+    20,
+    89
+   ]
+  },
+  "char.miri@back0": {
+   "path": "res://assets/art/square/final/char_miri_back0.png",
+   "size": [
+    33,
+    92
+   ],
+   "anchor": [
+    16,
+    89
+   ]
+  },
+  "ui.panel": {
+   "path": "res://assets/art/square/final/ui_panel.png",
+   "size": [
+    886,
+    170
+   ],
+   "anchor": [
+    443,
+    85
+   ]
+  },
+  "ui.tag": {
+   "path": "res://assets/art/square/final/ui_tag.png",
+   "size": [
+    222,
+    70
+   ],
+   "anchor": [
+    111,
+    35
+   ]
+  },
+  "ui.tab": {
+   "path": "res://assets/art/square/final/ui_tab.png",
+   "size": [
+    190,
+    56
+   ],
+   "anchor": [
+    95,
+    28
+   ]
+  },
+  "ui.slip": {
+   "path": "res://assets/art/square/final/ui_slip.png",
+   "size": [
+    207,
+    64
+   ],
+   "anchor": [
+    104,
+    32
+   ]
+  },
+  "ui.pill": {
+   "path": "res://assets/art/square/final/ui_pill.png",
+   "size": [
+    156,
+    60
+   ],
+   "anchor": [
+    78,
+    30
+   ]
+  },
+  "ui.suit_spade": {
+   "path": "res://assets/art/square/final/ui_suit_spade.png",
+   "size": [
+    21,
+    24
+   ],
+   "anchor": [
+    10,
+    12
+   ]
+  },
+  "ui.suit_diamond": {
+   "path": "res://assets/art/square/final/ui_suit_diamond.png",
+   "size": [
+    19,
+    24
+   ],
+   "anchor": [
+    10,
+    12
+   ]
+  },
+  "ui.next": {
+   "path": "res://assets/art/square/final/ui_next.png",
+   "size": [
+    22,
+    14
+   ],
+   "anchor": [
+    11,
+    7
+   ]
+  },
+  "ui.suit_heart": {
+   "path": "res://assets/art/square/final/ui_suit_heart.png",
    "size": [
     24,
     24
@@ -628,16 +1386,65 @@
     12
    ]
   },
-  "ui.moon": {
-   "path": "res://assets/art/ui/moon.svg",
+  "ui.suit_club": {
+   "path": "res://assets/art/square/final/ui_suit_club.png",
    "size": [
-    24,
+    22,
     24
    ],
    "anchor": [
-    12,
+    11,
     12
    ]
+  },
+  "sq.card_table": {
+   "path": "res://assets/art/square/final/card_table.png",
+   "size": [
+    120,
+    99
+   ],
+   "anchor": [
+    60,
+    71
+   ],
+   "sort": true
+  },
+  "sq.bunting": {
+   "path": "res://assets/art/square/final/bunting.png",
+   "size": [
+    300,
+    237
+   ],
+   "anchor": [
+    150,
+    230
+   ],
+   "sort": true
+  },
+  "sq.welcome": {
+   "path": "res://assets/art/square/final/welcome.png",
+   "size": [
+    96,
+    105
+   ],
+   "anchor": [
+    48,
+    101
+   ],
+   "sort": true
+  },
+  "sq.flag": {
+   "path": "res://assets/art/square/final/flag.png",
+   "size": [
+    63,
+    120
+   ],
+   "anchor": [
+    19,
+    118
+   ],
+   "sort": true
   }
- }
+ },
+ "_comment_square": "Square art (direction B, hand-painted 2D): sq.* and the char.* / ui.* entries come from tools/art/build_square_art.py. Character poses: key (front), key@front1 (walking), key@side0 / @side1 (facing right), key@back0. \"portraits\": neutral / happy / sad."
 }

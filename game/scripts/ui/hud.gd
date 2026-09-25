@@ -84,11 +84,12 @@ func _ready() -> void:
 
 	_prompt_button = UiKit.button("", 260, false)
 	_prompt_button.add_theme_font_size_override("font_size", 19)
-	# In-world prompt: a small dark pill rather than a big menu button.
+	# In-world prompt: a small paper note (or a dark pill without the painted kit).
+	var note := UiKit.paper("ui.pill")
 	for st in ["normal", "hover", "pressed", "focus"]:
-		_prompt_button.add_theme_stylebox_override(st, UiKit.dark_style(22, 8))
+		_prompt_button.add_theme_stylebox_override(st, note if note != null else UiKit.dark_style(22, 8))
 	for key in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
-		_prompt_button.add_theme_color_override(key, UiKit.CREAM)
+		_prompt_button.add_theme_color_override(key, UiKit.TEXT if note != null else UiKit.CREAM)
 	_prompt_button.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_prompt_button.offset_left = -170
 	_prompt_button.offset_right = 170

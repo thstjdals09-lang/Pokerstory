@@ -57,7 +57,16 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, 17.0, Color(0, 0, 0, 0.22))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		var bob := -absf(sin(_walk)) * 3.0 if _moving else 0.0
-		ArtLib.draw(self, _art, Vector2(0, 16 + bob), 1.0, Color.WHITE, facing.x < -0.2)
+		var step := _moving and sin(_walk) > 0.0
+		var pose := "front1" if step else ""
+		if absf(facing.x) > absf(facing.y):
+			pose = "side1" if step else "side0"
+		elif facing.y < 0.0:
+			pose = "back0"
+		# Side poses face right; the art flips for the left.
+		var key := ArtLib.pose(_art, pose)
+		var flip := facing.x < -0.2 if key != _art else false
+		ArtLib.draw(self, key, Vector2(0, 16 + bob), 1.0, Color.WHITE, flip)
 		return
 	draw_circle(Vector2(0, 11), RADIUS * 0.9, Color(0, 0, 0, 0.2))
 	draw_circle(Vector2.ZERO, RADIUS + 3, Color.WHITE)

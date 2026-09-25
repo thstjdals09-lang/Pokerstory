@@ -105,13 +105,19 @@ func _draw() -> void:
 			_draw_art_interior(size, art)
 		else:
 			_draw_interior_shell(size)
+	elif ArtLib.has(str(art.get("plate", ""))):
+		# One painted ground for the whole place (paths and plaza are part of the painting).
+		ArtLib.draw_fit(self, art["plate"], Rect2(Vector2.ZERO, size))
 	elif ArtLib.has(str(art.get("ground", ""))):
 		ArtLib.draw_tiled(self, art["ground"], Rect2(Vector2.ZERO, size))
 	else:
 		draw_rect(Rect2(Vector2.ZERO, size), _c(loc.get("ground", "#a3c982")))
 		var inset := float(loc.get("bounds_inset", 20))
 		draw_rect(Rect2(Vector2(inset, inset) * 0.5, size - Vector2(inset, inset)), Color("#8a6a48"), false, 4.0)
+	var plate := ArtLib.has(str(art.get("plate", "")))
 	for p in loc.get("paths", []):
+		if plate:
+			continue
 		if ArtLib.has(str(art.get("path", ""))):
 			var pr := Geo.rect(p)
 			draw_rect(pr.grow(3), Color(0.45, 0.55, 0.3, 0.35))
@@ -119,6 +125,8 @@ func _draw() -> void:
 		else:
 			draw_rect(Geo.rect(p), _c(loc.get("path_color", "#e6d3a3")))
 	for pl in loc.get("plazas", []):
+		if plate:
+			continue
 		if ArtLib.has(str(art.get("plaza", ""))):
 			draw_circle(Geo.vec(pl["center"]), float(pl["radius"]) + 6, Color("#b8a47f"))
 			ArtLib.draw_tiled_circle(self, art["plaza"], Geo.vec(pl["center"]), float(pl["radius"]))
@@ -136,12 +144,12 @@ func _draw() -> void:
 	for b in loc.get("buildings", []):
 		if _flat_art(str(b.get("art", ""))):
 			ArtLib.draw(self, b["art"], Vector2(Geo.vec(b["door"]).x, Geo.rect(b["rect"]).end.y))
-		else:
+		elif not ArtLib.has(str(b.get("art", ""))):
 			_draw_building(b)
 	for g in loc.get("gates", []):
 		if _flat_art(str(g.get("art", ""))):
 			ArtLib.draw(self, g["art"], Geo.vec(g["pos"]) + Vector2(0, 16))
-		else:
+		elif not ArtLib.has(str(g.get("art", ""))):
 			_draw_gate(Geo.vec(g["pos"]))
 	for it in loc.get("interactables", []):
 		if it.get("kind", "") == "object" and _visible(it):

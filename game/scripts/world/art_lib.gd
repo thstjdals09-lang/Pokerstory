@@ -53,9 +53,22 @@ static func sorts(key: String) -> bool:
 	return bool(def(key).get("sort", false))
 
 
-## The "portrait" region [x, y, w, h] of a character, in source-file px (art is authored at 2x
-## the display size), as a texture; null without one.
-static func portrait(key: String) -> Texture2D:
+## A character pose: "char.lumi" + "@side1" when that pose exists, else the character itself.
+static func pose(key: String, pose_name: String) -> String:
+	var k := key + "@" + pose_name
+	return k if pose_name != "" and has(k) else key
+
+
+## A character's dialogue portrait. Painted portraits ("portraits": {mood: path}) come first, with
+## "neutral" as the fallback mood; otherwise the "portrait" region [x, y, w, h] of the sprite, in
+## source-file px (art is authored at 2x the display size). null without either.
+static func portrait(key: String, mood: String = "neutral") -> Texture2D:
+	var moods: Dictionary = def(key).get("portraits", {})
+	if not moods.is_empty():
+		var path := str(moods.get(mood, moods.get("neutral", "")))
+		if not _tex.has(path):
+			_tex[path] = load(path) if ResourceLoader.exists(path) else null
+		return _tex[path]
 	var t := texture(key)
 	var r: Array = def(key).get("portrait", [])
 	if t == null or r.size() != 4:

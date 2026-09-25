@@ -24,8 +24,48 @@ static func stylebox(bg: Color, border: Color = BORDER, border_w: int = 3, radiu
 	return sb
 
 
+## Painted paper pieces (art.json ui.* textures): [texture margin x, y, content pad x, y].
+## The margins keep the torn edges and the leaf ornaments at the ends unstretched.
+const PAPER_CUTS := {
+	"ui.tag": [50, 30, 48, 12],
+	"ui.panel": [84, 66, 40, 20],
+	"ui.pill": [30, 26, 34, 8],
+	"ui.slip": [18, 24, 26, 10],
+	"ui.tab": [30, 18, 30, 8],
+}
+
+
+## Painted paper (nine-sliced) or null when the art is missing.
+static func paper(key: String, _edge: int = 0, pad: int = -1, tint: Color = Color.WHITE) -> StyleBoxTexture:
+	if not ArtLib.has(key):
+		return null
+	var cut: Array = PAPER_CUTS.get(key, [24, 24, 16, 12])
+	var sb := StyleBoxTexture.new()
+	sb.texture = ArtLib.texture(key)
+	sb.texture_margin_left = cut[0]
+	sb.texture_margin_right = cut[0]
+	sb.texture_margin_top = cut[1]
+	sb.texture_margin_bottom = cut[1]
+	sb.content_margin_left = cut[2]
+	sb.content_margin_right = cut[2]
+	sb.content_margin_top = cut[3] if pad < 0 else maxi(cut[3], pad)
+	sb.content_margin_bottom = cut[3] if pad < 0 else maxi(cut[3], pad)
+	sb.modulate_color = tint
+	return sb
+
+
 static func panel(bg: Color = PAPER, pad: int = 16) -> PanelContainer:
 	var p := PanelContainer.new()
+	# Light panels are painted parchment in the painted style (a tag when small, a page when tall);
+	# dark ones stay flat.
+	var paper_box := paper("ui.tag", 0, pad) if bg.v > 0.85 else null
+	if paper_box != null:
+		p.add_theme_stylebox_override("panel", paper_box)
+		var page := paper("ui.panel", 0, pad)
+		var fit := func() -> void:
+			p.add_theme_stylebox_override("panel", page if p.size.y > 150.0 else paper_box)
+		p.resized.connect(fit)
+		return p
 	var sb := stylebox(bg, BORDER, 3, 14, pad)
 	sb.shadow_color = SHADOW
 	sb.shadow_size = 6
@@ -75,11 +115,27 @@ static func button(text: String, min_w: int = 150, focusable: bool = true) -> Bu
 	b.text = text
 	b.custom_minimum_size = Vector2(min_w, 44)
 	b.add_theme_font_size_override("font_size", 18)
-	b.add_theme_stylebox_override("normal", stylebox(Color("#f3dfc1"), BORDER, 2, 10, 8))
-	b.add_theme_stylebox_override("hover", stylebox(Color("#ffe9c7"), ACCENT, 2, 10, 8))
-	b.add_theme_stylebox_override("pressed", stylebox(Color("#e8c79c"), ACCENT, 2, 10, 8))
-	b.add_theme_stylebox_override("focus", stylebox(Color(0, 0, 0, 0), ACCENT, 3, 10, 8))
-	b.add_theme_stylebox_override("disabled", stylebox(Color("#e3dbd0"), Color("#b5a898"), 2, 10, 8))
+	var pill := paper("ui.pill")
+	if pill != null:
+		b.add_theme_stylebox_override("normal", pill)
+		b.add_theme_stylebox_override("hover", paper("ui.pill", 0, -1, Color(1.06, 1.02, 0.9)))
+		b.add_theme_stylebox_override("pressed", paper("ui.pill", 0, -1, Color(0.88, 0.82, 0.74)))
+		b.add_theme_stylebox_override("disabled", paper("ui.pill", 0, -1, Color(0.8, 0.8, 0.8, 0.6)))
+		# Tall buttons (shop rows) use the plain paper slip: the pill's leaf ends would stretch.
+		var tall := func() -> void:
+			if b.size.y > 66.0 and b.get_theme_stylebox("normal").texture != ArtLib.texture("ui.slip"):
+				b.add_theme_stylebox_override("normal", paper("ui.slip"))
+				b.add_theme_stylebox_override("hover", paper("ui.slip", 0, -1, Color(1.06, 1.02, 0.9)))
+				b.add_theme_stylebox_override("pressed", paper("ui.slip", 0, -1, Color(0.88, 0.82, 0.74)))
+				b.add_theme_stylebox_override("disabled", paper("ui.slip", 0, -1, Color(0.8, 0.8, 0.8, 0.6)))
+		b.resized.connect(tall)
+		b.add_theme_stylebox_override("focus", stylebox(Color(0, 0, 0, 0), ACCENT, 2, 22, 8))
+	else:
+		b.add_theme_stylebox_override("normal", stylebox(Color("#f3dfc1"), BORDER, 2, 10, 8))
+		b.add_theme_stylebox_override("hover", stylebox(Color("#ffe9c7"), ACCENT, 2, 10, 8))
+		b.add_theme_stylebox_override("pressed", stylebox(Color("#e8c79c"), ACCENT, 2, 10, 8))
+		b.add_theme_stylebox_override("focus", stylebox(Color(0, 0, 0, 0), ACCENT, 3, 10, 8))
+		b.add_theme_stylebox_override("disabled", stylebox(Color("#e3dbd0"), Color("#b5a898"), 2, 10, 8))
 	for key in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(key, TEXT)
 	b.add_theme_color_override("font_disabled_color", Color("#9a8d80"))

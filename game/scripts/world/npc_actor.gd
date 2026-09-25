@@ -18,6 +18,9 @@ var _t := 0.0
 var _activity: Label = null
 ## Visual slice: sprite key from look.art (data/art.json); empty -> greybox shapes.
 var art_key := ""
+## Pose toward the player ("" front, "side" (flipped when left), "back"); set by World.
+var _pose := ""
+var _flip := false
 var _name_label: Label = null
 
 
@@ -41,7 +44,8 @@ func setup(def: Dictionary) -> void:
 		art_key = ""
 	else:
 		label.text = str(def["name"])
-		label.position = Vector2(-90, _sprite_top() - 24)
+		# Name under the feet; the space over the head belongs to the signal.
+		label.position = Vector2(-90, 20)
 	queue_redraw()
 
 
@@ -60,13 +64,13 @@ func set_activity(text: String) -> void:
 	if text == "":
 		return
 	_activity = WorldLabel.make(text, 12, Color("#ffe9b0"))
-	_activity.position = Vector2(-90, 22)
+	_activity.position = Vector2(-90, 38 if art_key != "" else 22)
 	_activity.size = Vector2(180, 18)
 	add_child(_activity)
 
 
 func _process(delta: float) -> void:
-	if show_marker or (art_key != "" and ArtLib.def(art_key).get("hover", false)):
+	if show_marker or art_key != "":
 		_t += delta
 		queue_redraw()
 
@@ -164,13 +168,32 @@ func _draw() -> void:
 	_draw_marker(-80.0)
 
 
+## Turns toward `dir` (the player's offset); Vector2.ZERO faces the front again.
+func face_toward(dir: Vector2) -> void:
+	var pose := ""
+	var flip := false
+	if dir != Vector2.ZERO:
+		if absf(dir.x) > absf(dir.y) * 1.2:
+			pose = "side0"
+			flip = dir.x < 0.0
+		elif dir.y < 0.0:
+			pose = "back0"
+	if pose != _pose or flip != _flip:
+		_pose = pose
+		_flip = flip
+		queue_redraw()
+
+
 func _draw_art() -> void:
 	var hover: bool = bool(ArtLib.def(art_key).get("hover", false))
 	var lift := (-10.0 + sin(_t * 3.0) * 3.0) if hover else 0.0
+	# A gentle breath for everyone standing still.
+	var breath := 1.0 + sin(_t * 2.2) * 0.012
 	draw_set_transform(Vector2(0, 16), 0.0, Vector2(1.0, 0.35))
 	draw_circle(Vector2.ZERO, 17.0 if not hover else 12.0, Color(0, 0, 0, 0.22))
+	draw_set_transform(Vector2(0, 16 + lift), 0.0, Vector2(1.0, breath))
+	ArtLib.draw(self, ArtLib.pose(art_key, _pose), Vector2.ZERO, 1.0, Color.WHITE, _flip)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	ArtLib.draw(self, art_key, Vector2(0, 16 + lift))
 	_draw_marker(_sprite_top() - 40.0)
 
 

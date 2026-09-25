@@ -21,6 +21,7 @@ var _panel: PanelContainer
 var _name_tab: PanelContainer
 var _portrait_frame: PanelContainer
 var _portrait: TextureRect
+var _portrait_key := ""
 
 
 func _ready() -> void:
@@ -54,11 +55,14 @@ func _ready() -> void:
 	tab_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(tab_margin)
 	_name_tab = PanelContainer.new()
-	var tab_style := UiKit.dark_style(10, 6)
-	tab_style.corner_radius_bottom_left = 0
-	tab_style.corner_radius_bottom_right = 0
-	tab_style.content_margin_left = 18
-	tab_style.content_margin_right = 18
+	var tab_style: StyleBox = UiKit.paper("ui.tab")
+	if tab_style == null:
+		var flat := UiKit.dark_style(10, 6)
+		flat.corner_radius_bottom_left = 0
+		flat.corner_radius_bottom_right = 0
+		tab_style = flat
+	tab_style.content_margin_left = 26
+	tab_style.content_margin_right = 26
 	_name_tab.add_theme_stylebox_override("panel", tab_style)
 	_name_tab.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	tab_margin.add_child(_name_tab)
@@ -66,6 +70,12 @@ func _ready() -> void:
 	_name_tab.add_child(_name_label)
 
 	_panel = UiKit.panel(UiKit.PAPER, 18)
+	var page := UiKit.paper("ui.panel")
+	if page != null:
+		page.content_margin_left = 34
+		page.content_margin_right = 60
+		page.content_margin_bottom = 34
+		_panel.add_theme_stylebox_override("panel", page)
 	_panel.custom_minimum_size = Vector2(0, 160)
 	_panel.gui_input.connect(_on_panel_input)
 	box.add_child(_panel)
@@ -73,12 +83,12 @@ func _ready() -> void:
 	row.add_theme_constant_override("separation", 18)
 	_panel.add_child(row)
 	_portrait_frame = PanelContainer.new()
-	var frame_style := UiKit.stylebox(Color("#f3dfc1"), UiKit.BORDER, 2, 12, 4)
+	var frame_style := UiKit.stylebox(Color(0, 0, 0, 0), Color(0, 0, 0, 0), 0, 12, 0)
 	_portrait_frame.add_theme_stylebox_override("panel", frame_style)
 	_portrait_frame.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	row.add_child(_portrait_frame)
 	_portrait = TextureRect.new()
-	_portrait.custom_minimum_size = Vector2(104, 112)
+	_portrait.custom_minimum_size = Vector2(118, 124)
 	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_portrait_frame.add_child(_portrait)
@@ -98,6 +108,7 @@ func _ready() -> void:
 func show_dialogue(speaker: String, lines: Array, choices: Array, portrait_key: String = "") -> void:
 	_name_label.text = speaker
 	_name_tab.modulate.a = 1.0 if speaker != "" else 0.0
+	_portrait_key = portrait_key
 	var face := ArtLib.portrait(portrait_key) if portrait_key != "" else null
 	_portrait.texture = face
 	_portrait_frame.visible = face != null
@@ -144,8 +155,23 @@ func pick_choice(i: int) -> void:
 	choice_made.emit(str(c.get("action", "close")), str(c.get("arg", "")))
 
 
+## Portrait mood of a line: happy for exclamations and laughter, troubled for worry, else neutral.
+static func line_mood(line: String) -> String:
+	for w in ["걱정", "미안", "큰일", "어쩌", "속상", "…어", "곤란"]:
+		if line.contains(w):
+			return "sad"
+	for w in ["!", "헤헤", "하하", "좋아", "고마워"]:
+		if line.contains(w):
+			return "happy"
+	return "neutral"
+
+
 func _render() -> void:
 	_text_label.text = _lines[_index]
+	if _portrait_key != "":
+		var face := ArtLib.portrait(_portrait_key, line_mood(_lines[_index]))
+		if face != null:
+			_portrait.texture = face
 	UiKit.clear_children(_choice_box)
 	choice_buttons.clear()
 	var last := _index == _lines.size() - 1
@@ -154,6 +180,14 @@ func _render() -> void:
 		for i in _choices.size():
 			var b := UiKit.button("%d. %s" % [i + 1, _choices[i]["text"]], 300)
 			b.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			var slip := UiKit.paper("ui.slip")
+			if slip != null:
+				slip.content_margin_right = 48
+				b.add_theme_stylebox_override("normal", slip)
+				for st in [["hover", Color(1.08, 1.03, 0.9)], ["pressed", Color(0.88, 0.82, 0.74)], ["focus", Color(1.1, 1.0, 0.82)]]:
+					var tinted := UiKit.paper("ui.slip", 0, -1, st[1])
+					tinted.content_margin_right = 48
+					b.add_theme_stylebox_override(st[0], tinted)
 			b.pressed.connect(pick_choice.bind(i))
 			_choice_box.add_child(b)
 			choice_buttons.append(b)

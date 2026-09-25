@@ -61,6 +61,11 @@ func build(p_location_id: String, spawn_key: String, spawn_position = null) -> v
 	add_child(camera)
 	camera.make_current()
 	_update_camera()
+	# Painted places follow the player softly; the first frame starts in place.
+	if loc.has("art"):
+		camera.position_smoothing_enabled = true
+		camera.position_smoothing_speed = 7.0
+		camera.reset_smoothing.call_deferred()
 
 	var art: Dictionary = loc.get("art", {})
 	var evening: bool = Game.state.time_of_day == "evening"
@@ -92,7 +97,7 @@ func _build_art_sprites() -> void:
 	for d in loc.get("decor", []):
 		var key := str(d.get("art", ""))
 		if ArtLib.has(key) and ArtLib.sorts(key) and (not d.has("conditions") or Conditions.check(d["conditions"], Game.state, location_id)):
-			items.append([key, Geo.vec(d.get("art_pos", d.get("pos", [0, 0]))), float(d.get("art_scale", 1.0))])
+			items.append([key, Geo.vec(d.get("art_pos", d.get("pos", [0, 0]))), float(d.get("art_scale", 1.0)), Color(str(d.get("art_tint", "#ffffff")))])
 	for s in loc.get("signs", []):
 		if ArtLib.has(str(s.get("art", ""))) and ArtLib.sorts(s["art"]):
 			items.append([s["art"], Geo.vec(s["pos"]) + Vector2(0, 20), 1.0])
@@ -103,11 +108,16 @@ func _build_art_sprites() -> void:
 	for b in loc.get("buildings", []):
 		if ArtLib.has(str(b.get("art", ""))) and ArtLib.sorts(b["art"]):
 			items.append([b["art"], Vector2(Geo.vec(b["door"]).x, Geo.rect(b["rect"]).end.y), 1.0])
+	for g in loc.get("gates", []):
+		if ArtLib.has(str(g.get("art", ""))) and ArtLib.sorts(g["art"]):
+			items.append([g["art"], Geo.vec(g["pos"]) + Vector2(0, 16), 1.0])
 	for entry in items:
 		var sprite := ArtSprite.new()
 		sprite.key = entry[0]
 		sprite.position = entry[1]
 		sprite.art_scale = entry[2]
+		if entry.size() > 3:
+			sprite.tint = entry[3]
 		add_child(sprite)
 
 
@@ -200,9 +210,10 @@ func _refresh_item_lights() -> void:
 class ArtSprite extends Node2D:
 	var key := ""
 	var art_scale := 1.0
+	var tint := Color.WHITE
 
 	func _draw() -> void:
-		ArtLib.draw(self, key, Vector2.ZERO, art_scale)
+		ArtLib.draw(self, key, Vector2.ZERO, art_scale, tint)
 
 
 func _build_bounds() -> void:
@@ -325,7 +336,11 @@ func _physics_process(_delta: float) -> void:
 			_focus_marker.set_target(focused, npc_nodes)
 	if loc.has("art"):
 		for npc_id in npc_nodes:
-			npc_nodes[npc_id].set_name_visible(player.position.distance_to(npc_nodes[npc_id].position) < 220.0)
+			var npc: Node2D = npc_nodes[npc_id]
+			var d := player.position - npc.position
+			npc.set_name_visible(d.length() < 220.0)
+			# Residents nearby turn toward the player.
+			npc.face_toward(d if d.length() < 150.0 else Vector2.ZERO)
 
 
 func _process(_delta: float) -> void:

@@ -12,3 +12,6 @@ desktop.ini
 game/.godot/
 build/
 *.tmp
+
+# square art: cut sprites are rebuilt by tools/art/cut_square.sh
+art_src/square/cut/
