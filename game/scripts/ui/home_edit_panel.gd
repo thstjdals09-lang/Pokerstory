@@ -117,6 +117,8 @@ func confirm() -> void:
 		_status.text = "%s에 %s을(를) 놓았어요." % [Game.slot_name(selected_slot), Game.data.items[selected_item]["name"]]
 		selected_item = ""
 		selected_slot = ""
+	elif Game.last_commit_failed:
+		_status.text = "저장하지 못해서 놓지 않았어요. 다시 시도해 주세요."
 	refresh()
 
 
@@ -125,6 +127,8 @@ func store_selected() -> void:
 	if item_id != "" and Game.remove_placement(selected_slot):
 		_status.text = "%s을(를) 보관함으로 되돌렸어요." % Game.data.items[item_id]["name"]
 		selected_slot = ""
+	elif Game.last_commit_failed:
+		_status.text = "저장하지 못해서 그대로 두었어요. 다시 시도해 주세요."
 	refresh()
 
 

@@ -94,7 +94,7 @@ func test_story_runs_without_poker() -> void:
 	check_eq(_say(s, "npc_moa", "village_square", ["나중에"]), ["moa_first"], "first greeting comes first")
 	check_eq(_say(s, "npc_moa", "village_square", ["찾아볼게요"]), ["scn.missing_invitation"], "then the missing invitation")
 	check(s.get_flag("story.act1_started"), "act 1 started")
-	check_eq(_say(s, "obj:postbox_stamp_spot", "residential"), ["scn.postbox_discovery"], "postbox clue")
+	check_eq(_say(s, "obj:postbox_stamp_spot", "residential"), ["scn.postbox_discovery", "scn.postbox_envelope"], "postbox clue, envelope back to Moa")
 	_say(s, "obj:grove_sign_west", "grove")
 	check(not s.get_flag("story.clue_grove"), "one sign is not enough")
 	_say(s, "obj:grove_sign_east", "grove")

@@ -17,7 +17,7 @@
 | 설계 검토 03 / 경제 v0.2.2 | [검토 03 기록](docs/design/Project20_Design_Review_03.md) (승인됨) |
 | 설계 검토 04 | [검토 04 기록](docs/design/Project20_Design_Review_04.md) — R1·R2 승인, Gate 2 준비 |
 | 첫 플레이 프로토타입 | 검토 04 반영 및 자동 검증 완료 |
-| **콘텐츠 v0.3 (1~6단계)** | **브랜치 `feature/content-v0.3`에서 구현·자동 검증 완료 — [구현 기록과 cc01~cc12 보고](docs/dev/CONTENT_V0.3_IMPLEMENTATION_LOG.md).** 임시 도형 그래픽, 수동 완주 검수 대기 |
+| **콘텐츠 v0.3 (1~6단계) + v0.3.1 하드닝** | **main에 병합, 자동 검증 완료 — [구현 기록과 cc01~cc12 보고](docs/dev/CONTENT_V0.3_IMPLEMENTATION_LOG.md), [v0.3.1 하드닝](docs/dev/CONTENT_V0.3.1_HARDENING.md).** 임시 도형 그래픽, 오너 플레이 QA 대기 |
 
 첫 플레이에서 할 수 있는 것: 칩 40개로 시작 → 광장의 루미와 인사 → 등불(50칩)을 사려면 저녁 카드룸 포커(참가금 20, 승리 시 40 반환), 세라의 배달 의뢰(+30), 광장 아르바이트(+10, 반복 가능) 중 원하는 방법으로 칩 모으기 → 등불 구매·배치 → 루미가 등불을 알아봄 → 저장·이어하기(진행 중인 포커 판도 그대로 이어짐).
 개발 내용, 검증 결과, 명세와 다르게 구현한 부분: [docs/dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md)
@@ -31,7 +31,7 @@
 
 콘텐츠 v0.3에서는 마을 지구 5곳과 주민 16명, 3막 이야기와 후일담, 주민 사건·의뢰·아르바이트, 집 확장, 공공사업, 수집 도감, 포커 테이블 여러 종류와 축제 대회가 추가됩니다. 이야기는 포커를 한 판도 하지 않고 끝까지 진행할 수 있습니다.
 
-테스트: `tools/run_tests.sh` (Git Bash). 단위 테스트 94개와, 게임을 자동으로 조작하는 E2E 19개 시나리오(첫 플레이 경로 A~D, 콘텐츠 검수 cc01~cc12, 생활, 상호 반응)를 실행합니다.
+테스트: `tools/run_tests.sh` (Git Bash). 단위 테스트 102개와, 게임을 자동으로 조작하는 E2E 21개 시나리오(첫 플레이 경로 A~D, 콘텐츠 검수 cc01~cc12, 생활, 상호 반응, 저장 실패 되돌리기, 칩 주입 없는 장기 경제 측정)를 실행합니다.
 
 | 광장 | 교류 모임 | 수집 도감 |
 |---|---|---|
@@ -60,6 +60,7 @@
 | [dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md) | 구현 구조, 저장 형식, 검증 결과, 알려진 문제 |
 | [design/content_v0.3/](docs/design/content_v0.3/) | 콘텐츠 기획 팩 v0.3 (원본) |
 | [dev/CONTENT_V0.3_IMPLEMENTATION_LOG.md](docs/dev/CONTENT_V0.3_IMPLEMENTATION_LOG.md) | 콘텐츠 v0.3 구현 기록, 호환 결정, cc01~cc12 결과, 미완료 |
+| [dev/CONTENT_V0.3.1_HARDENING.md](docs/dev/CONTENT_V0.3.1_HARDENING.md) | 저장 트랜잭션, 칩 주입 없는 경제 측정, 대사 충실도 |
 | [preproduction/](docs/preproduction/) | 엔진·그래픽·시스템·워크플로 조사, 기획 결정 필요 사항 |
 | [CLAUDE.md](CLAUDE.md) | AI 개발 규칙 |
 

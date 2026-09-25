@@ -206,6 +206,14 @@ static func from_dict(d: Dictionary) -> PokerMatch:
 	return m
 
 
+## Puts back the in-hand progress (ability uses, results, mark) from a to_dict() snapshot, used when
+## saving that progress failed.
+func restore_progress(d: Dictionary) -> void:
+	_ability_uses = d.get("ability_uses", {}).duplicate()
+	ability_results = d.get("ability_results", {}).duplicate(true)
+	locked_index = int(d.get("locked_index", -1))
+
+
 static func _codes(cards: Array) -> Array:
 	var out: Array = []
 	for c in cards:

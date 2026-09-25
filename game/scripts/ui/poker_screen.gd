@@ -28,6 +28,8 @@ var _ability_text := ""
 var _notice := ""
 ## lucky_mark: the next card click marks that card instead of selecting it.
 var _marking := false
+## The showdown result could not be saved: nothing is paid yet; "다시 저장하기" retries the same result.
+var save_retry := false
 var _spectators: Array = []
 var _opp_hand_label: Label
 var _player_hand_label: Label
@@ -200,6 +202,7 @@ func _build_confirm_panel() -> void:
 func start(m: PokerMatch, spectators: Array = []) -> void:
 	match_ref = m
 	last_result = {}
+	save_retry = false
 	_ability = Game.match_ability(m)
 	_selected.clear()
 	_notice = ""
@@ -266,6 +269,10 @@ func refresh() -> void:
 			again_button.text = "한 판 더 (연습)"
 		else:
 			again_button.text = "한 판 더 (참가금 %d)" % stake if can_again else "칩 부족 (%d 필요)" % stake
+		result_leave_button.disabled = save_retry
+		if save_retry:
+			again_button.disabled = false
+			again_button.text = "다시 저장하기"
 
 
 func opponent_name() -> String:
@@ -376,6 +383,14 @@ func do_stand() -> void:
 func _finish() -> void:
 	_selected.clear()
 	last_result = Game.settle_match(match_ref)
+	save_retry = last_result.get("reason", "") == "save_failed"
+	if save_retry:
+		_result_title.text = "저장하지 못했어요"
+		_result_detail.text = "이번 판 결과를 저장하지 못해 아직 정산하지 않았어요.\n칩은 그대로예요. 같은 결과로 다시 저장해 주세요."
+		_result_line.text = ""
+		refresh()
+		again_button.grab_focus.call_deferred()
+		return
 	var key: String = last_result.get("outcome", PokerEconomy.outcome_key(match_ref.outcome))
 	_result_title.text = {"win": "승리!", "draw": "무승부", "lose": "아쉽게 졌어요"}[key] + (" (연습)" if last_result.get("practice", false) else "")
 	var paid_in := int(last_result.get("stake", 0))
@@ -413,6 +428,9 @@ func _finish() -> void:
 
 
 func _on_again() -> void:
+	if save_retry:
+		_finish()
+		return
 	var mode := match_ref.mode
 	var opponent := "" if mode == "tournament" else match_ref.opponent_id
 	var m := Game.create_poker_match(mode, opponent, match_ref.ability_id)
@@ -426,7 +444,10 @@ func _hide_confirm() -> void:
 
 func _confirm_leave() -> void:
 	_hide_confirm()
-	Game.fold_match(match_ref)
+	var r: Dictionary = Game.fold_match(match_ref)
+	if r.get("reason", "") == "save_failed":
+		show_notice("저장하지 못해서 자리에 그대로 있어요. 판은 계속 이어져요.")
+		return
 	exit_requested.emit()
 
 

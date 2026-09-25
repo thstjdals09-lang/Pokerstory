@@ -353,7 +353,8 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 	if not effects.is_empty():
 		var r: Dictionary = Game.run_effects(effects, str(c.get("once_key", "")))
 		if not r["ok"]:
-			hud.show_toast("칩이 %d개 부족해요." % int(r.get("need", 0)))
+			if r.get("reason", "") == "not_enough_chips":
+				hud.show_toast("칩이 %d개 부족해요." % int(r.get("need", 0)))
 			_back_to_world()
 			return
 	var action := str(c.get("action", "close"))
@@ -392,7 +393,7 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 				if done_text != "":
 					_show_system_dialogue(str(Game.data.projects[arg]["name"]), [done_text], [])
 					return
-			else:
+			elif fr.get("reason", "") != "save_failed":
 				hud.show_toast("칩이 %d개 부족해요." % int(fr.get("need", 0)) if fr.get("reason", "") == "not_enough_chips" else "지금은 후원할 수 없어요.")
 			_back_to_world()
 		"upgrade_home":
@@ -401,7 +402,8 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 				hud.show_toast("집을 넓혔어요!")
 				enter_location(world.location_id, "default", world.player.position, "집이 넓어졌어요")
 				return
-			hud.show_toast("칩이 %d개 부족해요." % int(hr.get("need", 0)) if hr.get("reason", "") == "not_enough_chips" else "아직 조건이 맞지 않아요.")
+			if hr.get("reason", "") != "save_failed":
+				hud.show_toast("칩이 %d개 부족해요." % int(hr.get("need", 0)) if hr.get("reason", "") == "not_enough_chips" else "아직 조건이 맞지 않아요.")
 			_back_to_world()
 		"start_job":
 			if Game.start_job(arg):
@@ -411,13 +413,16 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 			_shelve(arg)
 		"trade":
 			var tr: Dictionary = Game.trade(arg)
-			hud.show_toast("교환했어요!" if tr["ok"] else "교환에 필요한 물건이 없어요.")
+			if tr.get("reason", "") != "save_failed":
+				hud.show_toast("교환했어요!" if tr["ok"] else "교환에 필요한 물건이 없어요.")
 			_back_to_world()
 		"set_time":
 			_change_time(arg)
 		"wait_and_enter":
 			var parts := arg.split("|")
-			Game.set_time(parts[0])
+			if not Game.set_time(parts[0]):
+				_back_to_world()
+				return
 			enter_location(parts[1], parts[2])
 		"poker_loadout":
 			_start_poker_with(arg)
@@ -490,7 +495,9 @@ func _open_rest() -> void:
 
 ## Changes the time of day and reloads the current place so lighting and residents follow.
 func _change_time(time: String) -> void:
-	Game.set_time(time)
+	if not Game.set_time(time):
+		_back_to_world()
+		return
 	var pos: Vector2 = world.player.position
 	enter_location(world.location_id, "default", pos, "저녁이 되었어요" if time == "evening" else "아침이 밝았어요")
 
@@ -677,7 +684,8 @@ func _start_poker_with(arg: String) -> void:
 		return
 	var m: PokerMatch = Game.create_poker_match(mode, opponent, ability)
 	if m == null:
-		hud.show_toast("지금은 자리에 앉을 수 없어요.")
+		if not Game.last_commit_failed:
+			hud.show_toast("지금은 자리에 앉을 수 없어요.")
 		_back_to_world()
 		return
 	set_mode("poker")
@@ -778,7 +786,7 @@ func _maybe_start_e2e() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--e2e="):
 			var scenario := arg.get_slice("=", 1)
-			var script_path := "res://tests/e2e/content_e2e.gd" if scenario.begins_with("cc") or scenario in ["story", "life", "react"] else "res://tests/e2e/first_play_e2e.gd"
+			var script_path := "res://tests/e2e/content_e2e.gd" if scenario.begins_with("cc") or scenario in ["story", "life", "react", "savefail", "economy"] else "res://tests/e2e/first_play_e2e.gd"
 			var driver: Node = load(script_path).new()
 			driver.main = self
 			add_child(driver)

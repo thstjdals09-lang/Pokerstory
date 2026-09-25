@@ -159,3 +159,10 @@ func test_mode_ability_and_mark_survive_a_restart() -> void:
 		old.erase(k)
 	var legacy := PokerMatch.from_dict(old)
 	check_eq([legacy.mode, legacy.stake, legacy.locked_index], ["homegame", -1, -1], "a v3 hand is the card-room home game")
+
+
+func test_public_history_survives_saving() -> void:
+	var s := GameState.new()
+	s.poker_history["npc_kyle"] = [{"discards": 2, "hand": "투페어", "outcome": "lose"}]
+	var back := GameState.from_dict(JSON.parse_string(JSON.stringify(s.to_dict())))
+	check_eq(back.poker_history["npc_kyle"], [{"discards": 2, "hand": "투페어", "outcome": "lose"}], "table history kept through a save")

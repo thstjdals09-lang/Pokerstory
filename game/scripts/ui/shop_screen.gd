@@ -89,6 +89,8 @@ func buy_item(item_id: String) -> void:
 	var item_name := str(Game.data.items[item_id]["name"])
 	if r["ok"]:
 		_message.text = "%s을(를) 샀어요! 집 보관함에서 꾸미기로 놓을 수 있어요." % item_name
+	elif r["reason"] == "save_failed":
+		_message.text = "저장하지 못해서 구매를 취소했어요. 칩과 물건은 그대로예요. 다시 시도해 주세요."
 	elif r["reason"] == "not_enough_chips":
 		_message.text = "칩이 %d개 부족해요. 카드룸 포커는 참가비 없이 언제든 할 수 있어요." % int(r["need"])
 	refresh()

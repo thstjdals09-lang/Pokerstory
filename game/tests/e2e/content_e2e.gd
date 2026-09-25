@@ -24,6 +24,12 @@ extends "res://tests/e2e/first_play_e2e.gd"
 ##   cc10   a v3 save mid-hand resumes and enters the new story; a damaged v3 save is refused
 ##   cc11   every one of the 65 items obtained in play (scenes, projects, tournament, shops,
 ##          trades), each placeable item shown in the house and each wearable worn
+##   savefail  v0.3.1: a failed save rolls back jobs, purchases, placement, requests, projects, house,
+##          trades, equipment, a one-time event, poker stake / fold / settlement and the tournament
+##          reward; each done again applies once, and the file on disk always matches the game
+##   economy  v0.3.1 long economy audit with real earnings only (no test_grant), no-poker and mixed
+##          runs from a new save to the lamp, house stage 3 and all 8 projects; writes
+##          user://economy_audit.json
 ##   react  cross-system reactions 2-10 caused in play (1 and 11-12 are in cc01)
 ##   cc12   declined scene offered again, act 2 scene missed at night then found by day, festival
 ##          skipped and slept through then held, festival repeated without a second memento
@@ -61,6 +67,10 @@ func run(scenario: String) -> void:
 			await _cc12()
 		"react":
 			await _react()
+		"savefail":
+			await _savefail()
+		"economy":
+			await _economy()
 		_:
 			_check(false, "unknown scenario " + scenario)
 	_finish()
@@ -711,7 +721,7 @@ func _life() -> void:
 # --- cc08: poker opponents, abilities, modes and the tournament ----------------------------------
 
 ## After a table or invitation opened the setup: picks the opponent (when asked) and the ability.
-func _pick_loadout(mode: String, opponent: String, ability: String, deck: String = "win") -> void:
+func _pick_loadout(mode: String, opponent: String, ability: String, deck: String = "win", expect_table: bool = true) -> void:
 	Game.debug_deck_queue = [DECKS[deck]]
 	await _read_to_choices()
 	var first := "%s|%s|" % [mode, opponent]
@@ -720,7 +730,8 @@ func _pick_loadout(mode: String, opponent: String, ability: String, deck: String
 			await _choose_arg("poker_loadout", first)
 			break
 	await _choose_arg("poker_loadout", "%s|%s|%s" % [mode, opponent, ability])
-	_check_eq(main.ui_mode, "poker", "%s hand against %s started" % [mode, opponent])
+	if expect_table:
+		_check_eq(main.ui_mode, "poker", "%s hand against %s started" % [mode, opponent])
 
 
 ## Plays the dealt hand by standing and checks the per-hand bookkeeping.
@@ -1433,6 +1444,512 @@ func _react() -> void:
 	await _close_any()
 	await _shot("react_tea")
 	_check_ledger()
+
+
+# --- savefail: a failed save rolls the change back (v0.3.1) ------------------------------------
+
+func _state_key() -> String:
+	var d: Dictionary = Game.state.to_dict()
+	d.erase("player_position")
+	d.erase("current_scene")
+	return JSON.stringify(d)
+
+
+## Makes the next save fail and remembers the state and the save file as they are now.
+func _arm() -> Array:
+	Game.debug_fail_saves = 1
+	return [_state_key(), FileAccess.get_file_as_string(Game.save_path)]
+
+
+func _rolled_back(before: Array, label: String) -> void:
+	_check_eq(Game.debug_fail_saves, 0, label + ": the save was attempted")
+	_check(Game.last_commit_failed, label + ": reported as rolled back")
+	_check_eq(_state_key(), before[0], label + ": state exactly as before")
+	_check_eq(FileAccess.get_file_as_string(Game.save_path), before[1], label + ": save file untouched")
+
+
+func _savefail() -> void:
+	await _new_game("저장")
+	Game.state.set_flag("tutorial_done")
+	main.tutorial.visible = false
+	for a in Game.data.abilities:
+		if not Game.state.abilities_unlocked.has(a):
+			Game.state.abilities_unlocked.append(a)
+	Game.save_game()
+	# Odd job: the last pickup is undone, unpaid; picking it up again pays once.
+	await _start_job()
+	var spots: Array = Game.job.remaining()
+	await _collect_spot(spots[0])
+	await _collect_spot(spots[1])
+	var b := _arm()
+	await _collect_spot(spots[2])
+	_rolled_back(b, "job")
+	_check(Game.job != null and Game.job.remaining() == [spots[2]], "job: last spot back on the ground")
+	await _collect_spot(spots[2])
+	_check_eq(Game.state.chips_balance, 50, "job: paid once (40 + 10)")
+	# Purchase.
+	await _open_shop_via("npc_sera", "sera_shop")
+	b = _arm()
+	main.shop.buy_buttons[LAMP].pressed.emit()
+	await _frames(1)
+	_rolled_back(b, "purchase")
+	_check(main.shop._message.text.contains("저장하지 못해서"), "purchase: shop says so")
+	main.shop.buy_buttons[LAMP].pressed.emit()
+	await _frames(1)
+	_check_eq([Game.state.owned_count(LAMP), Game.state.chips_balance], [1, 0], "purchase: once")
+	main.shop.close()
+	await _frames(2)
+	# Placement and storage.
+	await _travel("player_home")
+	await _go_to("home_edit", "home_decorate")
+	await _press("interact")
+	main.home_edit.item_buttons[LAMP].pressed.emit()
+	main.home_edit.slot_buttons["slot_window"].pressed.emit()
+	b = _arm()
+	main.home_edit.confirm_button.pressed.emit()
+	await _frames(1)
+	_rolled_back(b, "place")
+	_check(main.home_edit._status.text.contains("저장하지 못해서"), "place: panel says so")
+	main.home_edit.confirm_button.pressed.emit()
+	await _frames(1)
+	_check(Game.state.is_item_placed(LAMP), "place: placed on retry")
+	main.home_edit.slot_buttons["slot_window"].pressed.emit()
+	b = _arm()
+	main.home_edit.store_button.pressed.emit()
+	await _frames(1)
+	_rolled_back(b, "store")
+	_check(Game.state.is_item_placed(LAMP), "store: still placed")
+	main.home_edit.close_button.pressed.emit()
+	await _frames(2)
+	# Request accept and completion with its reward.
+	await _talk_npc("npc_sera")
+	await _choose_arg("dialogue", "sera_quest_offer")
+	b = _arm()
+	await _choose_arg("accept_quest", "quest.sera_delivery")
+	_rolled_back(b, "accept")
+	await _talk_npc("npc_sera")
+	await _choose_arg("dialogue", "sera_quest_offer")
+	await _choose_arg("accept_quest", "quest.sera_delivery")
+	_check_eq(QuestBook.state_of(Game.state, "quest.sera_delivery"), QuestBook.ACTIVE, "accept: on retry")
+	await _talk_npc("npc_lumi")
+	await _read_to_choices()
+	b = _arm()
+	await _choose("complete_quest")
+	await _close_any()
+	_rolled_back(b, "request")
+	_check_eq(QuestBook.state_of(Game.state, "quest.sera_delivery"), QuestBook.ACTIVE, "request: still to deliver")
+	await _finish_task("quest.sera_delivery", 0)
+	_check_eq(_ledger_count("quest:quest.sera_delivery"), 1, "request: paid once")
+	# Project funding and the house (chips from a visible test line, not part of the economy audit).
+	_grant_test_chips(400)
+	Game.state.set_flag("story.act1_started")
+	await _use("project_board", "community_hall")
+	b = _arm()
+	await _choose_arg("fund_project", "board_restoration")
+	await _close_any()
+	_rolled_back(b, "project")
+	await _fund("board_restoration")
+	_check_eq(_ledger_count("project:board_restoration"), 1, "project: paid once")
+	await _use("home_blueprint", "player_home")
+	await _read_to_choices()
+	b = _arm()
+	await _choose("upgrade_home")
+	await _close_any()
+	_rolled_back(b, "house")
+	await _upgrade_home(1)
+	_check_eq(_ledger_count("home:home_cozy"), 1, "house: paid once")
+	# Trade and equipment.
+	await _open_shop_via("npc_sera", "sera_shop")
+	for i in 2:
+		main.shop.buy_buttons["item.furniture.01_01"].pressed.emit()
+		await _frames(1)
+	main.shop.close()
+	await _frames(2)
+	Game.state.projects["square_seating"] = "complete"  # the stall opens with two projects
+	await _use("swap_stall", "market")
+	b = _arm()
+	await _choose_arg("trade", "trade_stools")
+	_rolled_back(b, "trade")
+	await _use("swap_stall", "market")
+	await _choose_arg("trade", "trade_stools")
+	_check_eq([Game.state.owned_count("item.furniture.01_01"), Game.state.owned_count("item.card_back.02_06")], [0, 1], "trade: once")
+	await _open_menu_collection("card_back")
+	b = _arm()
+	main.menu.equip_buttons["item.card_back.02_06"].pressed.emit()
+	await _frames(1)
+	_rolled_back(b, "equip")
+	main.menu.equip_buttons["item.card_back.02_06"].pressed.emit()
+	await _frames(1)
+	_check_eq(Game.state.equipped.get("card_back", ""), "item.card_back.02_06", "equip: on retry")
+	main.menu.resume_button.pressed.emit()
+	await _frames(2)
+	# One-time event reward.
+	for npc in ["npc_ella", "npc_ona", "npc_kyle", "npc_moa"]:
+		Game.state.relation(npc)["met"] = true
+	Game.save_game()
+	await _rest_until("evening")
+	await _travel("grove")
+	b = _arm()
+	await _use("lantern_path_marker", "grove")
+	await _close_any()
+	_rolled_back(b, "event")
+	_check_eq(Game.state.owned_count("item.memento.08_08"), 0, "event: no memento yet")
+	await _use("lantern_path_marker", "grove")
+	await _close_any()
+	await _use("lantern_path_marker", "grove")
+	await _close_any()
+	_check_eq(Game.state.owned_count("item.memento.08_08"), 1, "event: memento once")
+	# Poker: stake, fold, settlement with retry, tournament reward.
+	await _travel("card_room")
+	var chips0: int = Game.state.chips_balance
+	await _talk_until_choice("npc_lumi", "start_poker")
+	b = _arm()
+	await _choose_arg("start_poker", "")
+	await _pick_loadout("homegame", "", "ability.star_sense", "win", false)
+	_check_eq(main.ui_mode, "world", "stake: no table")
+	_rolled_back(b, "stake")
+	await _talk_until_choice("npc_lumi", "start_poker")
+	await _choose_arg("start_poker", "")
+	await _pick_loadout("homegame", "", "ability.star_sense")
+	_check_eq(Game.state.chips_balance, chips0 - 20, "stake: once")
+	b = _arm()
+	main.poker.leave_button.pressed.emit()
+	await _frames(1)
+	main.poker.confirm_leave_button.pressed.emit()
+	await _frames(2)
+	_rolled_back(b, "fold")
+	_check_eq(main.ui_mode, "poker", "fold: still at the table")
+	b = _arm()
+	main.poker.stand_button.pressed.emit()
+	await _frames(2)
+	_rolled_back(b, "settle")
+	_check(main.poker.save_retry and main.poker.result_leave_button.disabled, "settle: retry offered, leaving blocked")
+	_check_eq(Game.state.pending_poker_stake, 20, "settle: the stake is still on the table")
+	main.poker.again_button.pressed.emit()
+	await _frames(2)
+	_check(not main.poker.save_retry, "settle: saved on retry")
+	_check_eq(Game.state.chips_balance, chips0 + 20, "settle: paid once (+40 on a 20 stake)")
+	_check_eq(_ledger_count("poker_payout_win"), 1, "settle: one payout line")
+	await _leave_table()
+	for f in ["story.act3_started", "story.festival_ready", "story.act3_complete"]:
+		Game.state.set_flag(f)
+	Game.state.tournament["stage"] = 2
+	Game.save_game()
+	await _travel("village_square")
+	await _use("festival_booth", "village_square")
+	await _choose_arg("start_poker", "tournament|")
+	await _pick_loadout("tournament", "npc_kyle", "ability.star_sense")
+	b = _arm()
+	main.poker.stand_button.pressed.emit()
+	await _frames(2)
+	_rolled_back(b, "tournament")
+	_check_eq(Game.state.owned_count("item.card_back.08_06"), 0, "tournament: no reward yet")
+	main.poker.again_button.pressed.emit()
+	await _frames(2)
+	_check_eq(Game.state.owned_count("item.card_back.08_06"), 1, "tournament: reward once")
+	await _leave_table()
+	# What is on disk matches what is in memory.
+	var disk: Dictionary = SaveSystem.load_state(Game.save_path)["state"].to_dict()
+	var mem: Dictionary = Game.state.to_dict()
+	for k in ["player_position", "current_scene"]:
+		disk.erase(k)
+		mem.erase(k)
+	_check_eq(JSON.stringify(disk), JSON.stringify(mem), "save file equals the game state")
+	_check_ledger()
+
+
+func _talk_until_choice(npc: String, action: String) -> void:
+	for t in 5:
+		await _talk_npc(npc)
+		await _read_to_choices()
+		if main.dialogue._choices.any(func(c): return c.get("action", "") == action):
+			return
+		await _close_any()
+	_check(false, "%s never offered %s" % [npc, action])
+
+
+# --- economy: long progression with real earnings only (v0.3.1) ---------------------------------
+# One new save per run, no test_grant: the same Game actions the screens call (jobs, requests,
+# episodes, story dialogue, shop, projects, house, poker). Policy: advance the story whenever
+# possible, take every request and episode as it opens, buy the next unlocked goal as soon as it is
+# affordable, otherwise earn with odd jobs in rotation (plaza, letters, shelves, lanterns). The mixed
+# run also plays one card-room hand before each job while it has 20 chips (seeded decks).
+
+const ECON_GOALS := [
+	["lamp", ""], ["project", "board_restoration"], ["home", "1"], ["project", "postbox_garden"],
+	["project", "lantern_path"], ["project", "square_seating"], ["project", "guest_cottage"],
+	["project", "market_awning"], ["home", "2"], ["project", "card_room_extension"], ["home", "3"],
+	["project", "festival_decor"],
+]
+const ECON_JOBS := ["job.plaza_cleanup", "job.post_delivery", "job.shop_shelving", "job.lantern_check"]
+
+var _econ := {}
+var _econ_rng := RandomNumberGenerator.new()
+
+
+func _economy() -> void:
+	var results := {"no_poker": await _econ_run(false, 2031)}
+	for seed in [2031, 7, 99, 404, 1234]:
+		results["mixed_%d" % seed] = await _econ_run(true, seed)
+	var f := FileAccess.open("user://economy_audit.json", FileAccess.WRITE)
+	f.store_string(JSON.stringify(results, "  "))
+	f.close()
+	print("[economy] " + JSON.stringify(results))
+
+
+func _econ_run(mixed: bool, seed: int) -> Dictionary:
+	await _new_game("경제")
+	Game.state.set_flag("tutorial_done")
+	main.tutorial.visible = false
+	_econ = {"jobs": {}, "job_runs": 0, "requests": 0, "episodes": 0, "poker_hands": 0, "scenes": 0, "rests": 0, "milestones": {}}
+	_econ_rng.seed = seed
+	# A new player walks around and greets everyone once (no chips involved).
+	for npc in Game.data.npc_order:
+		if not Game.state.has_met(npc):
+			_api_say(npc)
+	var goals := ECON_GOALS.duplicate(true)
+	var steps := 0
+	while not goals.is_empty() and steps < 3000:
+		steps += 1
+		_econ_story()
+		_econ_tasks()
+		var bought := false
+		for g in goals:
+			if not _econ_unlocked(g):
+				continue
+			if _econ_cost(g) <= Game.state.chips_balance:
+				_econ_buy(g)
+				goals.erase(g)
+				bought = true
+			break
+		if bought:
+			continue
+		if mixed and Game.can_join_poker():
+			_econ_poker()
+		_econ_job(ECON_JOBS[_econ["job_runs"] % ECON_JOBS.size()])
+	_econ_story()
+	_check(goals.is_empty(), "%s: every goal reached with real earnings (%s left)" % ["mixed" if mixed else "no poker", goals])
+	_check_eq(_ledger_count("test_grant"), 0, "no test_grant line")
+	_check_ledger()
+	if not mixed:
+		_check_eq(Game.state.poker_hands_completed, 0, "no-poker run played no hand")
+	_check(Game.state.get_flag("story.postgame"), "story finished along the way")
+	_econ["final"] = _econ_snapshot()
+	return _econ
+
+
+func _econ_snapshot() -> Dictionary:
+	var earned := 0
+	var spent := 0
+	var poker_net := 0
+	for e in Game.state.chips_ledger:
+		var d := int(e["delta"])
+		if d > 0:
+			earned += d
+		else:
+			spent -= d
+		if str(e["reason"]).begins_with("poker_"):
+			poker_net += d
+	return {
+		"job_runs": _econ["job_runs"], "jobs": _econ["jobs"].duplicate(), "requests": _econ["requests"],
+		"episodes": _econ["episodes"], "poker_hands": _econ["poker_hands"], "story_scenes": _econ["scenes"],
+		"rests": _econ["rests"], "earned": earned, "spent": spent, "poker_net": poker_net,
+		"balance": Game.state.chips_balance, "projects": Game.state.projects.size(), "home_stage": Game.state.home_stage,
+		"act": _econ_act(),
+	}
+
+
+func _econ_act() -> String:
+	for f in ["story.postgame", "story.act3_complete", "story.act2_complete", "story.act1_complete", "story.prologue_complete"]:
+		if Game.state.get_flag(f):
+			return f
+	return "start"
+
+
+func _econ_milestone(name: String) -> void:
+	if not _econ["milestones"].has(name):
+		_econ["milestones"][name] = _econ_snapshot()
+
+
+func _econ_unlocked(g: Array) -> bool:
+	match g[0]:
+		"lamp":
+			return true
+		"project":
+			return Game.project_status(g[1]) == "available"
+		"home":
+			return Game.state.home_stage == int(g[1]) - 1 and Conditions.check(Game.home_stage_def(int(g[1])).get("unlock", {}), Game.state)
+	return false
+
+
+func _econ_cost(g: Array) -> int:
+	match g[0]:
+		"lamp":
+			return Game.data.item_price(LAMP)
+		"project":
+			return int(Game.data.projects[g[1]]["cost"])
+		"home":
+			return int(Game.home_stage_def(int(g[1]))["cost"])
+	return 0
+
+
+func _econ_buy(g: Array) -> void:
+	match g[0]:
+		"lamp":
+			_check(Game.buy_item(LAMP)["ok"], "lamp bought")
+			_check(Game.place_item("slot_window", LAMP), "lamp placed")
+			_econ_milestone("lamp")
+		"project":
+			_check(Game.fund_project(g[1])["ok"], g[1] + " funded")
+			if Game.state.projects.size() == Game.data.project_order.size():
+				_econ_milestone("all_projects")
+		"home":
+			_check(Game.upgrade_home()["ok"], "house stage " + g[1])
+			_econ_milestone("home_" + g[1])
+
+
+func _econ_job(job_id: String) -> void:
+	if not Game.start_job(job_id):
+		return
+	var run: PlazaJob = Game.job
+	match run.job_type:
+		"collect":
+			for spot in run.remaining():
+				Game.collect_job_spot(spot)
+		"deliver":
+			Game.job_step("deliver", run.recipient)
+		"shelve":
+			for i in 3:
+				Game.job_step("shelve", run.next_shelf_good())
+	_check(Game.job == null, job_id + " finished")
+	_econ["job_runs"] += 1
+	_econ["jobs"][job_id] = int(_econ["jobs"].get(job_id, 0)) + 1
+
+
+## One card-room hand: the player replaces cards by the same public rule the residents use.
+func _econ_poker() -> void:
+	Game.debug_deck_queue = [Deck.shuffled(_econ_rng.randi()).codes()]
+	var m: PokerMatch = Game.create_poker_match("homegame")
+	if m == null:
+		return
+	m.player_draw(PokerAI.choose_discards(m.player_hand.duplicate(), m.max_discards))
+	_check(Game.settle_match(m)["ok"], "hand settled")
+	_econ["poker_hands"] += 1
+
+
+func _econ_tasks() -> void:
+	for id in Game.data.quest_order:
+		var q: Dictionary = Game.data.quests[id]
+		if not Game.quest_available(id):
+			continue
+		if not Game.accept_quest(id):
+			continue
+		var arg: String = id + ("|0" if q.get("options", []).size() > 0 else "")
+		if Game.complete_quest(arg)["ok"]:
+			_econ["requests" if q.get("kind", "quest") == "quest" else "episodes"] += 1
+
+
+func _econ_set_time(t: String) -> void:
+	if Game.state.time_of_day != t:
+		Game.set_time(t)
+		_econ["rests"] += 1
+
+
+func _speaker_loc(speaker: String) -> String:
+	if speaker.begins_with("obj:"):
+		return _location_of(speaker.substr(4))
+	return str(Game.npc_place(speaker).get("loc", ""))
+
+
+## Talks through the data dialogue with the same effects the screens apply; `picks` choose by text,
+## otherwise a plain goodbye. Returns the first entry id.
+func _api_say(speaker: String, picks: Array = []) -> String:
+	var loc := _speaker_loc(speaker)
+	var entry: Dictionary = Game.resolve_entry(speaker, loc)
+	var first := str(entry.get("id", ""))
+	var queue := picks.duplicate()
+	var n := 0
+	while not entry.is_empty() and n < 8:
+		n += 1
+		var eff: Array = []
+		for fl in entry.get("set_flags", []):
+			eff.append({"type": "flag", "flag": fl})
+		eff.append_array(entry.get("effects", []))
+		if not eff.is_empty() or entry.get("once", false):
+			Game.run_effects(eff, DialogueResolver.once_key(entry) if entry.get("once", false) else "")
+		var choices: Array = entry.get("choices", []).filter(func(c): return Conditions.check(c.get("conditions", {}), Game.state, loc))
+		if choices.is_empty():
+			break
+		var want: String = queue.pop_front() if not queue.is_empty() else ""
+		var chosen: Dictionary = {}
+		for c in choices:
+			if want != "" and str(c["text"]).contains(want):
+				chosen = c
+				break
+		if chosen.is_empty():
+			for c in choices:
+				if c.get("action", "") == "close" and c.get("effects", []).is_empty():
+					chosen = c
+					break
+		if chosen.is_empty():
+			chosen = choices[0]
+		Game.run_effects(chosen.get("effects", []), str(chosen.get("once_key", "")))
+		entry = DialogueResolver.find(Game.data.dialogue, chosen["arg"]) if chosen.get("action", "") == "dialogue" else {}
+	_econ["scenes"] += 1
+	return first
+
+
+func _api_say_until(speaker: String, want: String, picks: Array = []) -> void:
+	for i in 6:
+		if str(Game.resolve_entry(speaker, _speaker_loc(speaker)).get("id", "")) == want:
+			_api_say(speaker, picks)
+			return
+		_api_say(speaker)
+
+
+func _econ_story() -> void:
+	var s: GameState = Game.state
+	if not s.get_flag("intro_met_lumi"):
+		_api_say("npc_lumi")
+	if s.is_item_placed(LAMP) and not s.get_flag("lumi_lamp_reaction_seen"):
+		_econ_set_time("day")
+		_api_say_until("npc_lumi", "lumi_lamp_reaction")
+	if s.get_flag("story.prologue_complete") and not s.get_flag("story.act1_started"):
+		_econ_set_time("day")
+		_api_say_until("npc_moa", "scn.missing_invitation", ["찾아볼게요"])
+	if s.get_flag("story.act1_started") and not s.get_flag("story.act1_complete"):
+		if not s.get_flag("story.clue_postbox"):
+			_api_say("obj:postbox_stamp_spot")
+		if not s.get_flag("story.clue_grove"):
+			_api_say("obj:grove_sign_west")
+			_api_say("obj:grove_sign_east")
+		_api_say_until("obj:card_room_board", "scn.board_reopening", ["포커를 몰라도", "좋아요"])
+	if s.get_flag("story.act2_started") and not s.get_flag("story.act2_complete"):
+		_econ_set_time("day")
+		if not s.get_flag("story.act2_heard_lumi"):
+			_api_say_until("npc_lumi", "scn.lumi_view")
+		if not s.get_flag("story.act2_heard_kyle"):
+			_api_say_until("npc_kyle", "scn.kyle_view")
+		if not s.get_flag("story.act2_prep_done"):
+			_api_say_until("npc_rira", "scn.tea_prep_offer", ["찻집 모임"])
+			for i in 3:
+				_api_say("obj:tea_chair_%d" % (i + 1))
+			_api_say_until("npc_rira", "scn.tea_prep_done")
+		_api_say_until("npc_lumi", "scn.two_tables_argument_lumi", ["둘 다", "좋아요"])
+	if s.get_flag("story.act3_started") and not s.get_flag("story.festival_ready"):
+		_econ_set_time("day")
+		if not s.contributions.has("prep:juno"):
+			_api_say_until("npc_juno", "scn.festival_prep_juno", ["장식"])
+		if not s.contributions.has("prep:spectate"):
+			_api_say_until("npc_moa", "scn.festival_prep_moa", ["관전"])
+		if s.contributions.size() >= 3:
+			_api_say_until("obj:hall_meeting", "scn.festival_meeting", ["하트"])
+	if s.get_flag("story.festival_ready") and not s.get_flag("story.act3_complete"):
+		_econ_set_time("evening")
+		_api_say_until("obj:festival_booth", "scn.fourleaf_evening", ["관전", "좋은 저녁"])
+	if s.get_flag("story.act3_complete") and not s.get_flag("story.postgame"):
+		_econ_set_time("day")
+		_api_say_until("npc_lumi", "scn.postgame_lumi")
 
 
 # --- helpers ------------------------------------------------------------------------------

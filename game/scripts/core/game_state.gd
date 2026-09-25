@@ -222,6 +222,15 @@ func to_dict() -> Dictionary:
 	}
 
 
+## Puts this state back to a snapshot taken with to_dict() (StateTransaction rollback). The object
+## stays the same, so everything holding Game.state sees the restored values.
+func restore(d: Dictionary) -> void:
+	var fresh := GameState.from_dict(d)
+	for prop in get_property_list():
+		if prop["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE:
+			set(prop["name"], fresh.get(prop["name"]))
+
+
 ## Builds a state from a dictionary that is already at SAVE_VERSION. JSON numbers arrive as floats.
 static func from_dict(d: Dictionary) -> GameState:
 	var s := GameState.new()
@@ -304,7 +313,7 @@ static func from_dict(d: Dictionary) -> GameState:
 	for npc in hist:
 		var rows: Array = []
 		for h in hist[npc]:
-			rows.append({"discards": int(h.get("discards", 0)), "category": int(h.get("category", 0))})
+			rows.append({"discards": int(h.get("discards", 0)), "hand": str(h.get("hand", "")), "outcome": str(h.get("outcome", ""))})
 		s.poker_history[str(npc)] = rows
 	var t: Dictionary = d.get("tournament", {})
 	s.tournament = {"stage": clampi(int(t.get("stage", 0)), 0, 3), "rewarded": bool(t.get("rewarded", false))}

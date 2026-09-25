@@ -31,6 +31,10 @@ var state: GameState = null
 var save_path := DEFAULT_SAVE_PATH
 ## Test hook: card-code lists used (in order) as stacked decks before falling back to random decks.
 var debug_deck_queue: Array = []
+## Test hook: the next N saves fail (save-failure rollback tests).
+var debug_fail_saves := 0
+## True when the last persistent change was rolled back because its save failed.
+var last_commit_failed := false
 ## Seed of the most recent random deck, printed so a hand can be reproduced.
 var last_deck_seed := 0
 ## The odd job in progress (not saved), or null.
@@ -103,12 +107,34 @@ func load_game() -> Dictionary:
 func save_game() -> bool:
 	if state == null:
 		return false
+	if debug_fail_saves > 0:
+		# Test hook: the next N saves fail as if the disk refused the write.
+		debug_fail_saves -= 1
+		push_warning("Save failed (injected for a test)")
+		toast_requested.emit("저장에 실패했어요.")
+		return false
 	var err := SaveSystem.save(state, save_path)
 	if err != OK:
 		push_error("Save failed: %s" % error_string(err))
 		toast_requested.emit("저장에 실패했어요.")
 		return false
 	return true
+
+
+## Runs one persistent change together with its save (StateTransaction). On a failed save the state
+## is back to how it was, `undo_session` restores session objects changed along with it (job
+## progress, the poker hand object), and the player is told to try again.
+func _commit(change: Callable, undo_session: Callable = Callable()) -> Dictionary:
+	var r := StateTransaction.run(state, change, save_game)
+	last_commit_failed = r.get("reason", "") == "save_failed"
+	if last_commit_failed:
+		if undo_session.is_valid():
+			undo_session.call()
+		toast_requested.emit("저장하지 못해서 방금 한 일을 되돌렸어요. 다시 시도해 주세요.")
+		state_changed.emit()
+	elif r.get("ok", false) and not r.get("skipped", false):
+		state_changed.emit()
+	return r
 
 
 func end_session() -> void:
@@ -133,14 +159,14 @@ func set_location(location_id: String) -> void:
 
 ## Sets the given flags; saves only if something changed.
 func apply_flags(flag_names: Array) -> void:
-	var changed := false
-	for f in flag_names:
-		if not state.get_flag(f):
-			state.set_flag(f)
-			changed = true
-	if changed:
-		save_game()
-		state_changed.emit()
+	var change := func() -> Dictionary:
+		var changed := false
+		for f in flag_names:
+			if not state.get_flag(f):
+				state.set_flag(f)
+				changed = true
+		return {"ok": true, "skipped": not changed}
+	_commit(change)
 
 
 ## Placeholder values for dialogue and goal text.
@@ -265,21 +291,25 @@ func create_poker_match(mode: String = "homegame", opponent: String = "", abilit
 	if opponent == "":
 		opponent = default_opponent(mode)
 	var stake := poker_stake(mode)
-	if stake > 0 and not PokerEconomy.place_stake(state, poker_economy()):
-		return null
-	var m := _deal_match()
-	m.mode = mode
-	m.opponent_id = opponent
-	m.persona = str(data.opponents.get(opponent, {}).get("persona", "steady"))
-	var aid := str(data.ability_aliases.get(ability_id, ability_id))
-	m.ability_id = aid if state.abilities_unlocked.has(aid) else str(poker_rules().get("player_ability", data.poker.get("player_ability", "")))
-	m.stake = stake
-	m.place = state.current_scene
-	# The stake and the dealt cards are saved together, so a restart resumes this exact hand.
-	state.poker_in_progress = m.to_dict()
-	save_game()
-	state_changed.emit()
-	return m
+	var box := {}
+	# The stake and the dealt cards are saved together, so a restart resumes this exact hand;
+	# if that save fails there is no hand and no stake.
+	var change := func() -> Dictionary:
+		if stake > 0 and not PokerEconomy.place_stake(state, poker_economy()):
+			return {"ok": false}
+		var m := _deal_match()
+		m.mode = mode
+		m.opponent_id = opponent
+		m.persona = str(data.opponents.get(opponent, {}).get("persona", "steady"))
+		var aid := str(data.ability_aliases.get(ability_id, ability_id))
+		m.ability_id = aid if state.abilities_unlocked.has(aid) else str(poker_rules().get("player_ability", data.poker.get("player_ability", "")))
+		m.stake = stake
+		m.place = state.current_scene
+		state.poker_in_progress = m.to_dict()
+		box["m"] = m
+		return {"ok": true}
+	var r := _commit(change)
+	return box["m"] if r["ok"] else null
 
 
 func _deal_match() -> PokerMatch:
@@ -298,31 +328,33 @@ func _deal_match() -> PokerMatch:
 func use_poker_ability(m: PokerMatch, ability: Dictionary, context: Dictionary = {}) -> Dictionary:
 	var ctx := context.duplicate()
 	ctx["history"] = state.poker_history.get(match_opponent(m), [])
-	var result := m.use_ability(ability, ctx)
-	if result["ok"]:
-		state.poker_in_progress = m.to_dict()
-		save_game()
-	return result
+	var before := m.to_dict()
+	var change := func() -> Dictionary:
+		var result := m.use_ability(ability, ctx)
+		if result["ok"]:
+			state.poker_in_progress = m.to_dict()
+		return result
+	return _commit(change, func(): m.restore_progress(before))
 
 
 ## Pays out a finished hand once, then saves. Practice hands settle without chips.
 func settle_match(m: PokerMatch) -> Dictionary:
 	var key := PokerEconomy.outcome_key(m.outcome)
-	if m.mode == "practice":
-		if m.settled or m.phase != PokerMatch.Phase.SHOWDOWN:
-			return {"ok": false}
-		m.settled = true
-		state.poker_in_progress = {}
-		save_game()
-		state_changed.emit()
-		return {"ok": true, "outcome": key, "stake": 0, "payout": 0, "net": 0, "practice": true, "balance": state.chips_balance}
-	var result := PokerEconomy.settle(state, m, poker_economy())
-	if result["ok"]:
-		_after_hand(m, result)
-		state.poker_in_progress = {}
-		save_game()
-		state_changed.emit()
-	return result
+	# If the settlement cannot be saved nothing is paid and the hand stays unsettled; the table
+	# offers to save again (the same showdown, never a new deal).
+	var change := func() -> Dictionary:
+		if m.mode == "practice":
+			if m.settled or m.phase != PokerMatch.Phase.SHOWDOWN:
+				return {"ok": false}
+			m.settled = true
+			state.poker_in_progress = {}
+			return {"ok": true, "outcome": key, "stake": 0, "payout": 0, "net": 0, "practice": true, "balance": state.chips_balance}
+		var result := PokerEconomy.settle(state, m, poker_economy())
+		if result["ok"]:
+			_after_hand(m, result)
+			state.poker_in_progress = {}
+		return result
+	return _commit(change, func(): m.settled = false)
 
 
 ## What a finished (paid) hand leaves behind: public table history, the hand count with this
@@ -363,19 +395,19 @@ func _after_hand(m: PokerMatch, result: Dictionary) -> void:
 ## Leaving the table before the showdown: the hand is folded and the stake is not returned.
 ## A practice hand simply ends.
 func fold_match(m: PokerMatch) -> Dictionary:
-	var result: Dictionary
-	if m.mode == "practice":
-		if m.settled or m.phase != PokerMatch.Phase.DRAW:
-			return {"ok": false}
-		m.settled = true
-		result = {"ok": true, "stake": 0}
-	else:
-		result = PokerEconomy.fold(state, m)
-	if result["ok"]:
-		state.poker_in_progress = {}
-		save_game()
-		state_changed.emit()
-	return result
+	var change := func() -> Dictionary:
+		var result: Dictionary
+		if m.mode == "practice":
+			if m.settled or m.phase != PokerMatch.Phase.DRAW:
+				return {"ok": false}
+			m.settled = true
+			result = {"ok": true, "stake": 0}
+		else:
+			result = PokerEconomy.fold(state, m)
+		if result["ok"]:
+			state.poker_in_progress = {}
+		return result
+	return _commit(change, func(): m.settled = false)
 
 
 func opponent_line(npc: String, key: String) -> String:
@@ -385,12 +417,13 @@ func opponent_line(npc: String, key: String) -> String:
 
 # --- time of day -------------------------------------------------------------
 
-func set_time(time: String) -> void:
+func set_time(time: String) -> bool:
 	if time != "day" and time != "evening":
-		return
-	state.time_of_day = time
-	save_game()
-	state_changed.emit()
+		return false
+	var change := func() -> Dictionary:
+		state.time_of_day = time
+		return {"ok": true}
+	return _commit(change)["ok"]
 
 
 # --- quests ------------------------------------------------------------------
@@ -404,13 +437,13 @@ func quest_available(quest_id: String) -> bool:
 func accept_quest(quest_id: String) -> bool:
 	if not data.quests.has(quest_id) or not Conditions.check(data.quests[quest_id].get("unlock", {}), state):
 		return false
-	if not QuestBook.accept(state, quest_id):
-		return false
-	if state.tracked_quest == "" or QuestBook.state_of(state, state.tracked_quest) != QuestBook.ACTIVE:
-		state.tracked_quest = quest_id
-	save_game()
-	state_changed.emit()
-	return true
+	var change := func() -> Dictionary:
+		if not QuestBook.accept(state, quest_id):
+			return {"ok": false}
+		if state.tracked_quest == "" or QuestBook.state_of(state, state.tracked_quest) != QuestBook.ACTIVE:
+			state.tracked_quest = quest_id
+		return {"ok": true}
+	return _commit(change)["ok"]
 
 
 ## Completes an active task (arg "id" or "id|option").
@@ -419,12 +452,13 @@ func complete_quest(arg: String) -> Dictionary:
 	var option := int(arg.get_slice("|", 1)) if arg.contains("|") else -1
 	if not data.quests.has(quest_id):
 		return {"ok": false}
-	var result := QuestBook.complete(state, data.quests[quest_id], option)
-	if result["ok"]:
-		if state.tracked_quest == quest_id:
+	var change := func() -> Dictionary:
+		var r := QuestBook.complete(state, data.quests[quest_id], option)
+		if r["ok"] and state.tracked_quest == quest_id:
 			state.tracked_quest = _first_active_quest()
-		save_game()
-		state_changed.emit()
+		return r
+	var result := _commit(change)
+	if result["ok"]:
 		for m in result.get("messages", []):
 			toast_requested.emit(m)
 	return result
@@ -452,15 +486,8 @@ func start_job(job_id: String) -> bool:
 func job_step(kind: String, value: String) -> Dictionary:
 	if job == null:
 		return {"ok": false}
-	var result: Dictionary = job.deliver(state, value) if kind == "deliver" else job.shelve(state, value)
-	if not result["ok"]:
-		return result
-	if result["done"]:
-		job = null
-		save_game()
-	job_changed.emit()
-	state_changed.emit()
-	return result
+	var run: PlazaJob = job
+	return _job_step(func() -> Dictionary: return run.deliver(state, value) if kind == "deliver" else run.shelve(state, value))
 
 
 ## Collects one spot. Pays the reward only when the last spot is collected.
@@ -468,14 +495,29 @@ func job_step(kind: String, value: String) -> Dictionary:
 func collect_job_spot(spot_id: String) -> Dictionary:
 	if job == null:
 		return {"ok": false}
-	var result := job.collect(state, spot_id)
-	if not result["ok"]:
-		return result
-	if result["done"]:
+	var run: PlazaJob = job
+	return _job_step(func() -> Dictionary: return run.collect(state, spot_id))
+
+
+## One job step. Steps before the last change only the session's job; the last step pays and is
+## saved as one unit with the payment (on a failed save the last step is undone, unpaid).
+func _job_step(step: Callable) -> Dictionary:
+	var run: PlazaJob = job
+	var collected_before := run.collected.duplicate()
+	var change := func() -> Dictionary:
+		var r: Dictionary = step.call()
+		if r["ok"] and not r["done"]:
+			r["skipped"] = true
+		return r
+	var undo := func():
+		run.collected = collected_before
+		run.rewarded = false
+	var result := _commit(change, undo)
+	if result["ok"] and result.get("done", false):
 		job = null
-		save_game()
-	job_changed.emit()
-	state_changed.emit()
+	if result["ok"] or result.get("reason", "") == "save_failed":
+		job_changed.emit()
+		state_changed.emit()
 	return result
 
 
@@ -498,11 +540,8 @@ func buy_item(item_id: String) -> Dictionary:
 	var price := data.item_price(item_id)
 	if state.chips_balance < price:
 		return {"ok": false, "reason": "not_enough_chips", "need": price - state.chips_balance}
-	if not state.purchase(item_id, price):
-		return {"ok": false, "reason": "failed"}
-	save_game()
-	state_changed.emit()
-	return {"ok": true}
+	var change := func() -> Dictionary: return {"ok": state.purchase(item_id, price), "reason": "failed"}
+	return _commit(change)
 
 
 const RIVALRY_PER_HAND := 5
@@ -536,29 +575,22 @@ func place_item(slot_id: String, item_id: String) -> bool:
 			known_slot = known_slot or s["id"] == slot_id
 	if not known_slot or not is_placeable(item_id):
 		return false
-	if not state.place_item(slot_id, item_id):
-		return false
-	save_game()
-	state_changed.emit()
-	return true
+	var change := func() -> Dictionary: return {"ok": state.place_item(slot_id, item_id)}
+	return _commit(change)["ok"]
 
 
 func remove_placement(slot_id: String) -> bool:
-	if not state.remove_placement(slot_id):
-		return false
-	save_game()
-	state_changed.emit()
-	return true
+	var change := func() -> Dictionary: return {"ok": state.remove_placement(slot_id)}
+	return _commit(change)["ok"]
 
 
 # --- content v0.3: effects, residents, dialogue ----------------------------------
 
 ## Runs data effects (at most once per non-empty key) and saves. Returns Effects.apply's result.
 func run_effects(effects: Array, key: String = "") -> Dictionary:
-	var r := Effects.apply(state, effects, key)
-	if r["ok"] and not r["skipped"]:
-		save_game()
-		state_changed.emit()
+	var change := func() -> Dictionary: return Effects.apply(state, effects, key)
+	var r := _commit(change)
+	if r["ok"] and not r.get("skipped", false):
 		for m in r["messages"]:
 			toast_requested.emit(m)
 	return r
@@ -747,13 +779,13 @@ func trade(trade_id: String) -> Dictionary:
 		var need := int(t.get("give_count", 1))
 		if state.owned_count(t["give"]) < need:
 			return {"ok": false, "reason": "missing"}
-		for i in need:
-			state._take_from_storage(t["give"])
-		state.grant_item(t["get"])
-		state.events_done["trade:" + trade_id] = true
-		save_game()
-		state_changed.emit()
-		return {"ok": true}
+		var change := func() -> Dictionary:
+			for i in need:
+				state._take_from_storage(t["give"])
+			state.grant_item(t["get"])
+			state.events_done["trade:" + trade_id] = true
+			return {"ok": true}
+		return _commit(change)
 	return {"ok": false, "reason": "unknown"}
 
 
@@ -761,16 +793,15 @@ func trade(trade_id: String) -> Dictionary:
 func track_quest(quest_id: String) -> bool:
 	if QuestBook.state_of(state, quest_id) != QuestBook.ACTIVE:
 		return false
-	state.tracked_quest = quest_id
-	save_game()
-	state_changed.emit()
-	return true
+	var change := func() -> Dictionary:
+		state.tracked_quest = quest_id
+		return {"ok": true}
+	return _commit(change)["ok"]
 
 
-func unequip(category: String) -> void:
-	state.equipped.erase(category)
-	save_game()
-	state_changed.emit()
+func unequip(category: String) -> bool:
+	var change := func() -> Dictionary: return {"ok": state.equipped.erase(category)}
+	return _commit(change)["ok"]
 
 
 func equip(item_id: String) -> bool:
@@ -778,10 +809,10 @@ func equip(item_id: String) -> bool:
 	var cat := str(item.get("category", ""))
 	if not DataDB.EQUIP_CATEGORIES.has(cat) or state.owned_count(item_id) <= 0:
 		return false
-	state.equipped[cat] = item_id
-	save_game()
-	state_changed.emit()
-	return true
+	var change := func() -> Dictionary:
+		state.equipped[cat] = item_id
+		return {"ok": true}
+	return _commit(change)["ok"]
 
 
 func item_color(item_id: String, fallback: Color) -> Color:
