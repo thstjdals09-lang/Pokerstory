@@ -12,7 +12,7 @@ var _moved := 0.0
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_panel = UiKit.panel(Color(0.23, 0.16, 0.12, 0.92), 14)
+	_panel = UiKit.panel(UiKit.PAPER, 14)
 	# Sits above the interaction prompt so it never covers the player or residents.
 	_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_panel.offset_top = -176
@@ -23,7 +23,7 @@ func _ready() -> void:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 16)
 	_panel.add_child(row)
-	_text = UiKit.wrap_label("", 18, Color("#fff3d6"))
+	_text = UiKit.wrap_label("", 18, UiKit.TEXT)
 	_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(_text)
 	var skip := UiKit.button("건너뛰기", 110, false)

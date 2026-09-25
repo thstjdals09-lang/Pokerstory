@@ -191,9 +191,8 @@ func _draw_art() -> void:
 	var breath := 1.0 + sin(_t * 2.2) * 0.012
 	draw_set_transform(Vector2(0, 16), 0.0, Vector2(1.0, 0.35))
 	draw_circle(Vector2.ZERO, 17.0 if not hover else 12.0, Color(0, 0, 0, 0.22))
-	draw_set_transform(Vector2(0, 16 + lift), 0.0, Vector2(1.0, breath))
-	ArtLib.draw(self, ArtLib.pose(art_key, _pose), Vector2.ZERO, 1.0, Color.WHITE, _flip)
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	ArtLib.draw(self, ArtLib.pose(art_key, _pose), Vector2(0, 16 + lift), 1.0, Color.WHITE, _flip, 0.0, breath)
 	_draw_marker(_sprite_top() - 40.0)
 
 

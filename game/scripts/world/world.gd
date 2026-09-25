@@ -75,6 +75,7 @@ func build(p_location_id: String, spawn_key: String, spawn_position = null) -> v
 		canvas_modulate.color = Color(tint) if tint != "" else EVENING_TINT
 		add_child(canvas_modulate)
 	_build_lights(evening)
+	_build_ambience(evening)
 	_focus_marker = FocusMarker.new()
 	_focus_marker.z_index = 40
 	add_child(_focus_marker)
@@ -139,6 +140,91 @@ func _build_lights(evening: bool) -> void:
 	_refresh_item_lights()
 	if not Game.state_changed.is_connected(_refresh_item_lights):
 		Game.state_changed.connect(_refresh_item_lights)
+
+
+## Painted places come alive a little (location art "ambience"): petals drift from blossom trees by
+## day, fireflies float in the evening (above the evening tint, so they glow), water sparkles.
+func _build_ambience(evening: bool) -> void:
+	var amb: Dictionary = loc.get("art", {}).get("ambience", {})
+	if amb.is_empty():
+		return
+	if not evening:
+		for p in amb.get("petals", []):
+			var petals := _particles(Geo.vec(p), 5, 7.0, _dot_texture(Vector2i(7, 4)), Color("#f7c3cf"))
+			petals.emission_shape = CPUParticles2D.EMISSION_SHAPE_SPHERE
+			petals.emission_sphere_radius = 36.0
+			petals.direction = Vector2(1, 0.4)
+			petals.spread = 40.0
+			petals.gravity = Vector2(0, 9)
+			petals.initial_velocity_min = 8.0
+			petals.initial_velocity_max = 22.0
+			petals.angular_velocity_min = -90.0
+			petals.angular_velocity_max = 90.0
+			petals.scale_amount_min = 1.2
+			petals.scale_amount_max = 2.0
+	for p in amb.get("sparkles", []):
+		var sp := _particles(Geo.vec(p), 10, 1.1, ArtLib.light_texture(), Color(1, 1, 1, 0.9))
+		sp.direction = Vector2.UP
+		sp.spread = 35.0
+		sp.gravity = Vector2(0, 90)
+		sp.initial_velocity_min = 40.0
+		sp.initial_velocity_max = 70.0
+		sp.scale_amount_min = 0.015
+		sp.scale_amount_max = 0.03
+		var add := CanvasItemMaterial.new()
+		add.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		sp.material = add
+	if evening and amb.get("fireflies", false):
+		var glow := CanvasLayer.new()
+		glow.layer = 1
+		glow.follow_viewport_enabled = true
+		add_child(glow)
+		var size := Geo.vec(loc["size"])
+		var ff := _particles(size / 2.0, 36, 6.0, ArtLib.light_texture(), Color("#ffe89a"))
+		remove_child(ff)
+		glow.add_child(ff)
+		ff.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+		ff.emission_rect_extents = size / 2.0
+		ff.direction = Vector2.UP
+		ff.spread = 180.0
+		ff.gravity = Vector2.ZERO
+		ff.initial_velocity_min = 4.0
+		ff.initial_velocity_max = 14.0
+		ff.scale_amount_min = 0.05
+		ff.scale_amount_max = 0.09
+		var ramp := Gradient.new()
+		ramp.set_color(0, Color(1, 1, 1, 0))
+		ramp.set_color(1, Color(1, 1, 1, 0))
+		ramp.add_point(0.3, Color(1, 1, 1, 0.9))
+		ramp.add_point(0.7, Color(1, 1, 1, 0.6))
+		ff.color_ramp = ramp
+		var glow_mat := CanvasItemMaterial.new()
+		glow_mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		ff.material = glow_mat
+
+
+func _particles(at: Vector2, amount: int, lifetime: float, tex: Texture2D, color: Color) -> CPUParticles2D:
+	var p := CPUParticles2D.new()
+	p.position = at
+	p.amount = amount
+	p.lifetime = lifetime
+	p.texture = tex
+	p.color = color
+	p.preprocess = lifetime
+	p.z_index = 5
+	add_child(p)
+	return p
+
+
+## A small soft oval, for petals.
+static func _dot_texture(sz: Vector2i) -> Texture2D:
+	var img := Image.create(sz.x, sz.y, false, Image.FORMAT_RGBA8)
+	var c := Vector2(sz) / 2.0
+	for y in sz.y:
+		for x in sz.x:
+			var d := Vector2((x + 0.5 - c.x) / c.x, (y + 0.5 - c.y) / c.y).length()
+			img.set_pixel(x, y, Color(1, 1, 1, clampf(1.2 - d, 0.0, 1.0)))
+	return ImageTexture.create_from_image(img)
 
 
 func _lights_for(key: String, at: Vector2) -> void:
@@ -211,9 +297,21 @@ class ArtSprite extends Node2D:
 	var key := ""
 	var art_scale := 1.0
 	var tint := Color.WHITE
+	var _sway := 0.0
+	var _t := 0.0
+
+	func _ready() -> void:
+		_sway = ArtLib.sway(key)
+		_t = position.x * 0.013 + position.y * 0.007
+		set_process(_sway > 0.0)
+
+	func _process(delta: float) -> void:
+		_t += delta
+		queue_redraw()
 
 	func _draw() -> void:
-		ArtLib.draw(self, key, Vector2.ZERO, art_scale, tint)
+		var lean := (sin(_t * 1.4) * 0.7 + sin(_t * 2.3) * 0.3) * _sway if _sway > 0.0 else 0.0
+		ArtLib.draw(self, key, Vector2.ZERO, art_scale, tint, false, lean)
 
 
 func _build_bounds() -> void:

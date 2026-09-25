@@ -16,6 +16,7 @@ extends Node
 ##   reject          unreadable saves
 ## Visual slice 01 (screenshots with --shots, windowed):
 ##   slice           the first-play path through square, card room and home, one shot per beat
+##   tour            walks the square by day and by evening (for a --write-movie capture)
 
 const DECKS := {
 	# Deal order is player, opponent, player, ... then draws. See tests/unit/test_poker_match.gd.
@@ -61,6 +62,8 @@ func run(scenario: String) -> void:
 			await _reject()
 		"slice":
 			await _slice()
+		"tour":
+			await _tour()
 		_:
 			_check(false, "unknown scenario " + scenario)
 	_finish()
@@ -632,6 +635,46 @@ func _slice() -> void:
 	await _press("interact")
 	await _shot("17_lumi_reaction")
 	await _close_dialogue()
+
+
+# --- SQUARE ART: a short walk around the square, day then evening ------------------------------
+
+func _tour() -> void:
+	await _new_game("단비")
+	main.tutorial.skip_tutorial()
+	await _frames(20)
+	for p in [Vector2(800, 780), Vector2(1000, 650), Vector2(1060, 460), Vector2(880, 420), Vector2(640, 470), Vector2(560, 640), Vector2(760, 720)]:
+		await _walk_to(p)
+	await _frames(30)
+	Game.set_time("evening")
+	main.enter_location(main.world.location_id, "default", main.world.player.position, "저녁이 되었어요")
+	await _wait_world("village_square")
+	await _frames(40)
+	for p in [Vector2(900, 700), Vector2(1060, 560), Vector2(1260, 470), Vector2(1260, 440)]:
+		await _walk_to(p)
+	await _frames(60)
+	_check(main.world.location_id == "village_square", "tour stayed in the square")
+
+
+## Walks the player toward `target` with real input (gives up after a few seconds).
+func _walk_to(target: Vector2) -> void:
+	for i in 400:
+		var d: Vector2 = target - main.world.player.position
+		for a in ["move_left", "move_right", "move_up", "move_down"]:
+			Input.action_release(a)
+		if d.length() < 12.0:
+			break
+		if d.x < -6.0:
+			Input.action_press("move_left")
+		elif d.x > 6.0:
+			Input.action_press("move_right")
+		if d.y < -6.0:
+			Input.action_press("move_up")
+		elif d.y > 6.0:
+			Input.action_press("move_down")
+		await get_tree().physics_frame
+	for a in ["move_left", "move_right", "move_up", "move_down"]:
+		Input.action_release(a)
 
 
 # --- helpers ---------------------------------------------------------------------

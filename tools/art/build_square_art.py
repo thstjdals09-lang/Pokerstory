@@ -68,24 +68,24 @@ for key, src, h, ax, ay, pts in [
 PROPS = [
     # key, source, display (h or ('w', n)), anchor x, anchor y, extra
     ('sq.gate', 'raw/gate.png', 130, 0.5, 0.97, {'lights': [(0.3, -0.62, 70, 0.8)]}),
-    ('sq.fountain', 'raw/fountain.png', 190, 0.5, 0.70, {}),
-    ('sq.lamp', 'cut/sheet_street_0.png', 118, 0.5, 0.98, {'lights': [(0, -0.84, 130, 0.8)]}),
+    ('sq.fountain', 'raw/fountain.png', 156, 0.5, 0.66, {}),
+    ('sq.lamp', 'cut/sheet_street_0.png', 118, 0.5, 0.98, {'lights': [(0, -0.84, 140, 1.0)]}),
     ('sq.bench', 'cut/sheet_street_1.png', ('w', 84), 0.5, 0.92, {}),
     ('sq.board', 'cut/sheet_street_2.png', 122, 0.5, 0.97, {}),
     ('sq.signpost', 'cut/sheet_street_3.png', 90, 0.5, 0.97, {}),
-    ('sq.tree', 'cut/sheet_plants_0.png', 160, 0.5, 0.96, {}),
-    ('sq.tree_blossom', 'cut/sheet_plants_1.png', 160, 0.5, 0.96, {}),
-    ('sq.bush', 'cut/sheet_plants_2.png', 58, 0.5, 0.92, {}),
-    ('sq.planter', 'cut/sheet_plants_3.png', ('w', 130), 0.5, 0.9, {}),
+    ('sq.tree', 'cut/sheet_plants_0.png', 160, 0.5, 0.96, {'sway': 0.03}),
+    ('sq.tree_blossom', 'cut/sheet_plants_1.png', 160, 0.5, 0.96, {'sway': 0.03}),
+    ('sq.bush', 'cut/sheet_plants_2.png', 58, 0.5, 0.92, {'sway': 0.025}),
+    ('sq.planter', 'cut/sheet_plants_3.png', ('w', 130), 0.5, 0.9, {'sway': 0.012}),
     ('sq.booth', 'cut/sheet_misc_0.png', 140, 0.5, 0.95, {}),
     ('sq.crates', 'cut/sheet_misc_1.png', 62, 0.5, 0.95, {}),
     ('sq.pot', 'cut/sheet_misc_2.png', 54, 0.5, 0.95, {}),
     ('sq.aframe', 'cut/sheet_misc_3.png', 56, 0.5, 0.96, {}),
     # objects that appear with story progress
     ('sq.card_table', 'cut/sheet_story_0.png', ('w', 120), 0.5, 0.72, {}),
-    ('sq.bunting', 'cut/sheet_story_1.png', ('w', 300), 0.5, 0.97, {}),
+    ('sq.bunting', 'cut/sheet_story_1.png', ('w', 300), 0.5, 0.97, {'sway': 0.02}),
     ('sq.welcome', 'cut/sheet_story_2.png', ('w', 96), 0.5, 0.96, {}),
-    ('sq.flag', 'cut/sheet_story_3.png', 120, 0.3, 0.98, {}),
+    ('sq.flag', 'cut/sheet_story_3.png', 120, 0.3, 0.98, {'sway': 0.06}),
 ]
 for key, src, disp, ax, ay, extra in PROPS:
     im = load(src)
@@ -93,6 +93,8 @@ for key, src, disp, ax, ay, extra in PROPS:
     d = sprite(key[3:], size, ax, ay, sort=True)
     if 'lights' in extra:
         d['lights'] = lights(size, extra['lights'])
+    if 'sway' in extra:
+        d['sway'] = extra['sway']  # wind lean in radians (engine: ArtLib.sway)
     S[key] = d
 
 # --- characters: five poses (front, front walking, side, side walking, back); side poses face right

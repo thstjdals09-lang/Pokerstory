@@ -15,3 +15,4 @@ build/
 
 # square art: cut sprites are rebuilt by tools/art/cut_square.sh
 art_src/square/cut/
+captures/

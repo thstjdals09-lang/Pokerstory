@@ -810,12 +810,12 @@
   "sq.fountain": {
    "path": "res://assets/art/square/final/fountain.png",
    "size": [
-    189,
-    190
+    155,
+    156
    ],
    "anchor": [
-    94,
-    133
+    78,
+    103
    ],
    "sort": true
   },
@@ -834,8 +834,8 @@
     [
      0,
      -99,
-     130,
-     0.8
+     140,
+     1.0
     ]
    ]
   },
@@ -885,7 +885,8 @@
     68,
     154
    ],
-   "sort": true
+   "sort": true,
+   "sway": 0.03
   },
   "sq.tree_blossom": {
    "path": "res://assets/art/square/final/tree_blossom.png",
@@ -897,7 +898,8 @@
     70,
     154
    ],
-   "sort": true
+   "sort": true,
+   "sway": 0.03
   },
   "sq.bush": {
    "path": "res://assets/art/square/final/bush.png",
@@ -909,7 +911,8 @@
     32,
     53
    ],
-   "sort": true
+   "sort": true,
+   "sway": 0.025
   },
   "sq.planter": {
    "path": "res://assets/art/square/final/planter.png",
@@ -921,7 +924,8 @@
     65,
     80
    ],
-   "sort": true
+   "sort": true,
+   "sway": 0.012
   },
   "sq.booth": {
    "path": "res://assets/art/square/final/booth.png",
@@ -1419,7 +1423,8 @@
     150,
     230
    ],
-   "sort": true
+   "sort": true,
+   "sway": 0.02
   },
   "sq.welcome": {
    "path": "res://assets/art/square/final/welcome.png",
@@ -1443,7 +1448,8 @@
     19,
     118
    ],
-   "sort": true
+   "sort": true,
+   "sway": 0.06
   }
  },
  "_comment_square": "Square art (direction B, hand-painted 2D): sq.* and the char.* / ui.* entries come from tools/art/build_square_art.py. Character poses: key (front), key@front1 (walking), key@side0 / @side1 (facing right), key@back0. \"portraits\": neutral / happy / sad."

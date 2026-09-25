@@ -65,7 +65,7 @@
       800,
       560
      ],
-     "r": 54,
+     "r": 64,
      "solid": true,
      "art": "sq.fountain"
     },
@@ -642,6 +642,267 @@
       1060
      ],
      "note": "square art: soft filler"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      292,
+      356
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      392,
+      356
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      752,
+      326
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      848,
+      326
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      1212,
+      378
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      1308,
+      378
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      302,
+      958
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.pot",
+     "pos": [
+      398,
+      958
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      200,
+      660
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      260,
+      690
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.planter",
+     "pos": [
+      230,
+      730
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      980,
+      400
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.planter",
+     "pos": [
+      1080,
+      410
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      1330,
+      700
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      1390,
+      680
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.planter",
+     "pos": [
+      1380,
+      740
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      430,
+      860
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.planter",
+     "pos": [
+      470,
+      900
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.crates",
+     "pos": [
+      520,
+      850
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      900,
+      880
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      960,
+      910
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.planter",
+     "pos": [
+      930,
+      960
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      1350,
+      880
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      1420,
+      940
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.crates",
+     "pos": [
+      1060,
+      860
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      680,
+      280
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.bush",
+     "pos": [
+      920,
+      270
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.planter",
+     "pos": [
+      560,
+      300
+     ],
+     "note": "square art: density filler (visual only)"
+    },
+    {
+     "type": "art",
+     "art": "sq.planter",
+     "pos": [
+      1040,
+      300
+     ],
+     "note": "square art: density filler (visual only)"
     }
    ],
    "buildings": [
@@ -912,7 +1173,34 @@
    ],
    "art": {
     "plate": "sq.ground",
-    "evening_tint": "#5f5f8f"
+    "evening_tint": "#56629c",
+    "ambience": {
+     "petals": [
+      [
+       560,
+       0
+      ],
+      [
+       90,
+       330
+      ],
+      [
+       560,
+       810
+      ],
+      [
+       1480,
+       670
+      ]
+     ],
+     "sparkles": [
+      [
+       800,
+       470
+      ]
+     ],
+     "fireflies": true
+    }
    }
   },
   "player_home": {

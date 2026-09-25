@@ -80,16 +80,23 @@ static func portrait(key: String, mood: String = "neutral") -> Texture2D:
 	return at
 
 
-## Draws `key` with its anchor on `pos`. `flip` mirrors it horizontally around the anchor.
-static func draw(ci: CanvasItem, key: String, pos: Vector2, scale: float = 1.0, tint: Color = Color.WHITE, flip: bool = false) -> void:
+## Draws `key` with its anchor on `pos`. `flip` mirrors it horizontally around the anchor, `skew`
+## leans it from the anchor (wind), `squash` scales it vertically from the anchor (breathing).
+static func draw(ci: CanvasItem, key: String, pos: Vector2, scale: float = 1.0, tint: Color = Color.WHITE, flip: bool = false,
+		skew: float = 0.0, squash: float = 1.0) -> void:
 	var t := texture(key)
 	if t == null:
 		return
 	var sz := size(key) * scale
 	var an := anchor(key) * scale
-	ci.draw_set_transform(pos, 0.0, Vector2(-1.0 if flip else 1.0, 1.0))
+	ci.draw_set_transform_matrix(Transform2D(0.0, Vector2(-1.0 if flip else 1.0, squash), skew, pos))
 	ci.draw_texture_rect(t, Rect2(-an, sz), false, tint)
 	ci.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
+## Wind sway amount of a sprite (art.json "sway", a skew in radians); 0 for still ones.
+static func sway(key: String) -> float:
+	return float(def(key).get("sway", 0.0))
 
 
 ## Draws `key` stretched into `rect` (rugs, beds, shelves placed by a data rect).
