@@ -29,12 +29,18 @@ var input_enabled := false:
 		if player:
 			player.input_enabled = value
 var _last_player_pos := Vector2.ZERO
+## Painted places seen from a 3/4 camera (location art "tilt", e.g. 0.62): the ground is drawn
+## squashed vertically while buildings, props and characters stand upright. Gameplay positions
+## stay in the data's own coordinates; only the drawing is projected.
+var _tilt := 1.0
 var _pickup_view: Node2D
 
 
 func build(p_location_id: String, spawn_key: String, spawn_position = null) -> void:
 	location_id = p_location_id
 	loc = Game.data.locations[location_id]
+	_tilt = clampf(float(loc.get("art", {}).get("tilt", 1.0)), 0.3, 1.0)
+	scale = Vector2(1.0, _tilt)
 	# Characters and tall props depth-sort by their feet; the painted ground stays underneath.
 	y_sort_enabled = true
 	view = LocationView.new()
@@ -79,6 +85,7 @@ func build(p_location_id: String, spawn_key: String, spawn_position = null) -> v
 	_focus_marker = FocusMarker.new()
 	_focus_marker.z_index = 40
 	add_child(_focus_marker)
+	_stand_upright()
 	_pickup_view = PickupView.new()
 	_pickup_view.z_index = -5
 	add_child(_pickup_view)
@@ -142,6 +149,23 @@ func _build_lights(evening: bool) -> void:
 		Game.state_changed.connect(_refresh_item_lights)
 
 
+## Under a tilted world, everything that stands (sprites, characters, marker, labels) is scaled back
+## up so only the ground is foreshortened. Characters also take the place's "char_scale".
+func _stand_upright() -> void:
+	var char_scale := float(loc.get("art", {}).get("char_scale", 1.0))
+	player.art_scale = char_scale
+	for id in npc_nodes:
+		npc_nodes[id].art_scale = char_scale
+	if _tilt >= 1.0:
+		return
+	var up := Vector2(1.0, 1.0 / _tilt)
+	for c in get_children():
+		if c is ArtSprite or c == player or c == _focus_marker or npc_nodes.values().has(c):
+			c.scale = up
+	for l in view.find_children("*", "Label", true, false):
+		l.scale = up
+
+
 ## Painted places come alive a little (location art "ambience"): petals drift from blossom trees by
 ## day, fireflies float in the evening (above the evening tint, so they glow), water sparkles.
 func _build_ambience(evening: bool) -> void:
@@ -179,7 +203,7 @@ func _build_ambience(evening: bool) -> void:
 		glow.layer = 1
 		glow.follow_viewport_enabled = true
 		add_child(glow)
-		var size := Geo.vec(loc["size"])
+		var size := Geo.vec(loc["size"]) * Vector2(1.0, _tilt)
 		var ff := _particles(size / 2.0, 36, 6.0, ArtLib.light_texture(), Color("#ffe89a"))
 		remove_child(ff)
 		glow.add_child(ff)
@@ -404,6 +428,10 @@ func _add_circle_body(center: Vector2, radius: float) -> void:
 	var shape := CollisionShape2D.new()
 	var circle := CircleShape2D.new()
 	circle.radius = radius
+	if _tilt < 1.0:
+		# Circles cannot squash: keep it round on screen, between the footprint's width and depth.
+		body.scale = Vector2(1.0, 1.0 / _tilt)
+		circle.radius = radius * (1.0 + _tilt) / 2.0
 	shape.shape = circle
 	body.add_child(shape)
 	add_child(body)
@@ -451,11 +479,16 @@ func _update_camera() -> void:
 	var view_size := get_viewport_rect().size
 	var size := Geo.vec(loc["size"])
 	var target := player.position
+	# In place units the screen is taller by 1 / tilt; tall roofs may show above the top edge.
+	var visible := Vector2(view_size.x, view_size.y / _tilt)
+	var top := -float(loc.get("art", {}).get("view_margin_top", 0.0)) / _tilt
 	for axis in 2:
-		if size[axis] <= view_size[axis]:
-			target[axis] = size[axis] / 2.0
+		var lo := visible[axis] / 2.0 + (top if axis == 1 else 0.0)
+		var hi := size[axis] - visible[axis] / 2.0
+		if hi <= lo:
+			target[axis] = (lo + hi) / 2.0
 		else:
-			target[axis] = clampf(target[axis], view_size[axis] / 2.0, size[axis] - view_size[axis] / 2.0)
+			target[axis] = clampf(target[axis], lo, hi)
 	camera.position = target
 
 

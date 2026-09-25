@@ -106,6 +106,11 @@ func _draw() -> void:
 		else:
 			_draw_interior_shell(size)
 	elif ArtLib.has(str(art.get("plate", ""))):
+		# Grass continues past the edge but dimmed, so where you can walk reads at a glance.
+		if ArtLib.has(str(art.get("beyond", ""))):
+			var far := Rect2(Vector2(-600, -900), size + Vector2(1200, 1800))
+			ArtLib.draw_tiled(self, art["beyond"], far)
+			draw_rect(far, Color(0.1, 0.12, 0.08, 0.45))
 		# One painted ground for the whole place (paths and plaza are part of the painting).
 		ArtLib.draw_fit(self, art["plate"], Rect2(Vector2.ZERO, size))
 	elif ArtLib.has(str(art.get("ground", ""))):

@@ -94,7 +94,8 @@
      "art_pos": [
       600,
       740
-     ]
+     ],
+     "solid": true
     },
     {
      "type": "flowers",
@@ -108,7 +109,8 @@
      "art_pos": [
       1020,
       740
-     ]
+     ],
+     "solid": true
     },
     {
      "type": "tree",
@@ -509,7 +511,9 @@
      "pos": [
       240,
       372
-     ]
+     ],
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -517,7 +521,9 @@
      "pos": [
       520,
       360
-     ]
+     ],
+     "solid": true,
+     "r": 18
     },
     {
      "type": "art",
@@ -525,7 +531,9 @@
      "pos": [
       760,
       334
-     ]
+     ],
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -533,7 +541,9 @@
      "pos": [
       1330,
       392
-     ]
+     ],
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -542,7 +552,9 @@
       150,
       640
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -551,7 +563,9 @@
       470,
       640
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -560,7 +574,9 @@
       1340,
       640
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -569,7 +585,9 @@
       1420,
       300
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -578,7 +596,9 @@
       230,
       470
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -587,7 +607,9 @@
       980,
       310
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -596,7 +618,9 @@
       640,
       360
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -605,7 +629,9 @@
       1030,
       1060
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -614,7 +640,9 @@
       560,
       1060
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -623,7 +651,9 @@
       1560,
       900
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -632,7 +662,9 @@
       40,
       300
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -641,7 +673,9 @@
       300,
       1060
      ],
-     "note": "square art: soft filler"
+     "note": "square art: soft filler",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -650,7 +684,9 @@
       292,
       356
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -659,7 +695,9 @@
       392,
       356
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -668,7 +706,9 @@
       752,
       326
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -677,7 +717,9 @@
       848,
       326
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -686,7 +728,9 @@
       1212,
       378
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -695,7 +739,9 @@
       1308,
       378
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -704,7 +750,9 @@
       302,
       958
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -713,7 +761,9 @@
       398,
       958
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 10
     },
     {
      "type": "art",
@@ -722,7 +772,9 @@
       200,
       660
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -731,7 +783,9 @@
       260,
       690
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -740,7 +794,9 @@
       230,
       730
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 26
     },
     {
      "type": "art",
@@ -749,7 +805,9 @@
       980,
       400
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -758,7 +816,9 @@
       1080,
       410
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 26
     },
     {
      "type": "art",
@@ -767,7 +827,9 @@
       1330,
       700
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -776,7 +838,9 @@
       1390,
       680
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -785,7 +849,9 @@
       1380,
       740
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 26
     },
     {
      "type": "art",
@@ -794,7 +860,9 @@
       430,
       860
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -803,7 +871,9 @@
       470,
       900
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 26
     },
     {
      "type": "art",
@@ -812,7 +882,9 @@
       520,
       850
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 18
     },
     {
      "type": "art",
@@ -821,7 +893,9 @@
       900,
       880
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -830,7 +904,9 @@
       960,
       910
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -839,7 +915,9 @@
       930,
       960
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 26
     },
     {
      "type": "art",
@@ -848,7 +926,9 @@
       1350,
       880
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -857,7 +937,9 @@
       1420,
       940
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -866,7 +948,9 @@
       1060,
       860
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 18
     },
     {
      "type": "art",
@@ -875,7 +959,9 @@
       680,
       280
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -884,7 +970,9 @@
       920,
       270
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 20
     },
     {
      "type": "art",
@@ -893,7 +981,9 @@
       560,
       300
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 26
     },
     {
      "type": "art",
@@ -902,7 +992,9 @@
       1040,
       300
      ],
-     "note": "square art: density filler (visual only)"
+     "note": "square art: density filler (visual only)",
+     "solid": true,
+     "r": 26
     }
    ],
    "buildings": [
@@ -1200,7 +1292,11 @@
       ]
      ],
      "fireflies": true
-    }
+    },
+    "tilt": 0.62,
+    "char_scale": 1.35,
+    "view_margin_top": 150,
+    "beyond": "sq.grass_tile"
    }
   },
   "player_home": {

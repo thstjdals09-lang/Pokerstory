@@ -11,6 +11,11 @@ var _name_label: Label
 var _art := ""
 var _walk := 0.0
 var _moving := false
+## Drawing scale of the art (the place's "char_scale").
+var art_scale := 1.0:
+	set(value):
+		art_scale = value
+		queue_redraw()
 
 
 func _ready() -> void:
@@ -54,7 +59,7 @@ func _physics_process(_delta: float) -> void:
 func _draw() -> void:
 	if _art != "":
 		draw_set_transform(Vector2(0, 16), 0.0, Vector2(1.0, 0.35))
-		draw_circle(Vector2.ZERO, 17.0, Color(0, 0, 0, 0.22))
+		draw_circle(Vector2.ZERO, 17.0 * art_scale, Color(0, 0, 0, 0.22))
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 		var bob := -absf(sin(_walk)) * 3.0 if _moving else 0.0
 		var step := _moving and sin(_walk) > 0.0
@@ -66,7 +71,7 @@ func _draw() -> void:
 		# Side poses face right; the art flips for the left.
 		var key := ArtLib.pose(_art, pose)
 		var flip := facing.x < -0.2 if key != _art else false
-		ArtLib.draw(self, key, Vector2(0, 16 + bob), 1.0, Color.WHITE, flip)
+		ArtLib.draw(self, key, Vector2(0, 16 + bob), art_scale, Color.WHITE, flip)
 		return
 	draw_circle(Vector2(0, 11), RADIUS * 0.9, Color(0, 0, 0, 0.2))
 	draw_circle(Vector2.ZERO, RADIUS + 3, Color.WHITE)

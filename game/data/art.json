@@ -1450,6 +1450,18 @@
    ],
    "sort": true,
    "sway": 0.06
+  },
+  "sq.grass_tile": {
+   "path": "res://assets/art/square/final/grass_tile.png",
+   "size": [
+    256,
+    256
+   ],
+   "anchor": [
+    0,
+    0
+   ],
+   "tile": true
   }
  },
  "_comment_square": "Square art (direction B, hand-painted 2D): sq.* and the char.* / ui.* entries come from tools/art/build_square_art.py. Character poses: key (front), key@front1 (walking), key@side0 / @side1 (facing right), key@back0. \"portraits\": neutral / happy / sad."

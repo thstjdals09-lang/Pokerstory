@@ -18,6 +18,13 @@ var _t := 0.0
 var _activity: Label = null
 ## Visual slice: sprite key from look.art (data/art.json); empty -> greybox shapes.
 var art_key := ""
+## Drawing scale of the art (the place's "char_scale").
+var art_scale := 1.0:
+	set(value):
+		art_scale = value
+		if _name_label != null and art_key != "":
+			_name_label.position = Vector2(-90, 20)
+		queue_redraw()
 ## Pose toward the player ("" front, "side" (flipped when left), "back"); set by World.
 var _pose := ""
 var _flip := false
@@ -56,7 +63,7 @@ func set_name_visible(v: bool) -> void:
 
 
 func _sprite_top() -> float:
-	return 16.0 - ArtLib.anchor(art_key).y
+	return 16.0 - ArtLib.anchor(art_key).y * art_scale
 
 
 ## What the resident is doing right now ("책 읽는 중"), shown under the name. Empty hides it.
@@ -190,9 +197,9 @@ func _draw_art() -> void:
 	# A gentle breath for everyone standing still.
 	var breath := 1.0 + sin(_t * 2.2) * 0.012
 	draw_set_transform(Vector2(0, 16), 0.0, Vector2(1.0, 0.35))
-	draw_circle(Vector2.ZERO, 17.0 if not hover else 12.0, Color(0, 0, 0, 0.22))
+	draw_circle(Vector2.ZERO, (17.0 if not hover else 12.0) * art_scale, Color(0, 0, 0, 0.22))
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	ArtLib.draw(self, ArtLib.pose(art_key, _pose), Vector2(0, 16 + lift), 1.0, Color.WHITE, _flip, 0.0, breath)
+	ArtLib.draw(self, ArtLib.pose(art_key, _pose), Vector2(0, 16 + lift), art_scale, Color.WHITE, _flip, 0.0, breath)
 	_draw_marker(_sprite_top() - 40.0)
 
 

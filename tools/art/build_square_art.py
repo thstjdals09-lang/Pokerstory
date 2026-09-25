@@ -53,6 +53,19 @@ g = Image.open(os.path.join(SRC, 'raw', 'ground_plate.png')).convert('RGB')
 g.resize((2048, 1408), Image.LANCZOS).save(os.path.join(SQ, 'final', 'ground.png'), optimize=True)
 S['sq.ground'] = {'path': RES + 'ground.png', 'size': [1600, 1100], 'anchor': [0, 0]}
 
+# --- grass beyond the square's edge: the grass swatch made seamless (half-shifted blend)
+from PIL import ImageChops, ImageFilter
+sw = Image.open(os.path.join(SRC, 'raw', 'sw_grass.png')).convert('RGB').resize((512, 512), Image.LANCZOS)
+shifted = ImageChops.offset(sw, 256, 256)
+mask = Image.new('L', (512, 512))
+mpx = mask.load()
+for yy in range(512):
+    for xx in range(512):
+        dd = max(abs(xx - 256), abs(yy - 256)) / 256.0
+        mpx[xx, yy] = int(255 * (1.0 if dd < 0.55 else max(0.0, 1 - (dd - 0.55) / 0.3)))
+Image.composite(sw, shifted, mask.filter(ImageFilter.GaussianBlur(6))).save(os.path.join(SQ, 'final', 'grass_tile.png'), optimize=True)
+S['sq.grass_tile'] = {'path': RES + 'grass_tile.png', 'size': [256, 256], 'anchor': [0, 0], 'tile': True}
+
 # --- buildings: anchor = the door on the ground line (door.x, rect bottom)
 for key, src, h, ax, ay, pts in [
     ('sq.bld_shop', 'raw/bld_shop.png', 341, 0.62, 0.97, [(-0.42, -0.2, 110, 1.0), (-0.3, -0.62, 70, 0.7), (0.05, -0.68, 70, 0.7)]),
