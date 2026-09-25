@@ -18,11 +18,11 @@
   },
   {
    "id": "item.furniture.01_01",
-   "name": "낡은 원목 스툴 · 1번 문양",
+   "name": "광장 원목 스툴",
    "category": "furniture",
    "price": 20,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "세라 가게 창고에서 나온 반질반질한 스툴. 카드룸이 처음 열렸을 때 쓰던 의자래요.",
    "placeholder": {
     "shape": "stool",
     "color": "#e07a5f"
@@ -30,11 +30,11 @@
   },
   {
    "id": "item.furniture.01_02",
-   "name": "하트 쿠션 · 1번 문양",
+   "name": "하트 자수 쿠션",
    "category": "furniture",
    "price": 30,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "손님용으로 들여놓던 쿠션. 하트는 옛 문양으로 '돌봄'이라는 뜻이에요.",
    "placeholder": {
     "shape": "cushion",
     "color": "#e07a5f"
@@ -42,11 +42,11 @@
   },
   {
    "id": "item.decor.01_03",
-   "name": "네잎 벽걸이 · 1번 문양",
+   "name": "네잎 벽걸이",
    "category": "decor",
    "price": 25,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "네 문양을 한 줄로 엮은 벽걸이. 이 마을 집집마다 하나씩은 걸려 있어요.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#e07a5f"
@@ -54,11 +54,11 @@
   },
   {
    "id": "item.decor.01_04",
-   "name": "등불 꽃병 · 1번 문양",
+   "name": "불씨 꽃병",
    "category": "decor",
    "price": 35,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "세라의 작은 불씨를 넣으면 꽃잎이 은은하게 빛나는 꽃병.",
    "placeholder": {
     "shape": "vase",
     "color": "#e07a5f"
@@ -66,11 +66,11 @@
   },
   {
    "id": "item.clothing.01_05",
-   "name": "밤산책 외투 · 1번 문양",
+   "name": "밤산책 외투",
    "category": "clothing",
    "price": 45,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "테오가 제일 먼저 권하는 외투. '편하면 됐어.'",
    "placeholder": {
     "shape": "coat",
     "color": "#e07a5f"
@@ -78,11 +78,11 @@
   },
   {
    "id": "item.card_back.01_06",
-   "name": "별무늬 카드 뒷면 · 1번 문양",
+   "name": "별무늬 카드 뒷면",
    "category": "card_back",
    "price": 40,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "렌의 교환대에서 제일 흔한 무늬. 흔해도 렌은 이걸 제일 좋아해요. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#e07a5f"
@@ -90,11 +90,11 @@
   },
   {
    "id": "item.chip_style.01_07",
-   "name": "조약돌 칩 장식 · 1번 문양",
+   "name": "조약돌 칩",
    "category": "chip_style",
    "price": 40,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "둔치 조약돌처럼 동글동글한 칩 표시. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#e07a5f"
@@ -102,11 +102,11 @@
   },
   {
    "id": "item.memento.01_08",
-   "name": "옛날 축제 우표 · 1번 문양",
+   "name": "숲길 문양 기록",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "숲길 안내판에서 찾은 옛 문양 기록.",
+   "description": "숲길 안내판 두 개를 이어 읽고 찾아낸 옛 문양 기록. 클로버는 '우연히 온 사람의 자리'.",
    "placeholder": {
     "shape": "stamp",
     "color": "#e07a5f"
@@ -114,11 +114,11 @@
   },
   {
    "id": "item.furniture.02_01",
-   "name": "낡은 원목 스툴 · 2번 문양",
+   "name": "찻집 옆자리 의자",
    "category": "furniture",
    "price": 25,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "리라 찻집 의자와 같은 모양. 앉으면 보리차 향이 날 것만 같아요.",
    "placeholder": {
     "shape": "stool",
     "color": "#f2cc8f"
@@ -126,11 +126,11 @@
   },
   {
    "id": "item.furniture.02_02",
-   "name": "하트 쿠션 · 2번 문양",
+   "name": "우편함 벤치 방석",
    "category": "furniture",
    "price": 35,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "노아가 우편함 앞 벤치에 깔아 두던 방석과 같은 천.",
    "placeholder": {
     "shape": "cushion",
     "color": "#f2cc8f"
@@ -138,11 +138,11 @@
   },
   {
    "id": "item.decor.02_03",
-   "name": "네잎 벽걸이 · 2번 문양",
+   "name": "옛 우표 액자",
    "category": "decor",
    "price": 30,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "노아가 모은 옛 우표를 끼우는 액자. 번진 소인까지 그대로예요.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#f2cc8f"
@@ -150,11 +150,11 @@
   },
   {
    "id": "item.decor.02_04",
-   "name": "등불 꽃병 · 2번 문양",
+   "name": "사회자 리본",
    "category": "decor",
    "price": 40,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "주노가 행사 때 다는 리본과 같은 색. 걸어 두면 괜히 박수를 치고 싶어져요.",
    "placeholder": {
     "shape": "vase",
     "color": "#f2cc8f"
@@ -162,11 +162,11 @@
   },
   {
    "id": "item.clothing.02_05",
-   "name": "밤산책 외투 · 2번 문양",
+   "name": "남은 천 목도리",
    "category": "clothing",
    "price": 50,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "테오가 자투리 천으로 만든 목도리. 한쪽 끝 무늬만 살짝 달라요.",
    "placeholder": {
     "shape": "coat",
     "color": "#f2cc8f"
@@ -174,11 +174,11 @@
   },
   {
    "id": "item.card_back.02_06",
-   "name": "별무늬 카드 뒷면 · 2번 문양",
+   "name": "출처가 적힌 카드 뒷면",
    "category": "card_back",
    "price": 45,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "스툴 두 개와 바꾼 카드 뒷면. 렌이 뒷면 구석에 교환 날짜를 적어 줬어요. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#f2cc8f"
@@ -186,11 +186,11 @@
   },
   {
    "id": "item.chip_style.02_07",
-   "name": "조약돌 칩 장식 · 2번 문양",
+   "name": "쿠션 교환 칩",
    "category": "chip_style",
    "price": 45,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "쿠션 두 개와 바꾼 칩 장식. 렌 말로는 '쿠션처럼 폭신한 행운'. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#f2cc8f"
@@ -198,11 +198,11 @@
   },
   {
    "id": "item.memento.02_08",
-   "name": "옛날 축제 우표 · 2번 문양",
+   "name": "'모두 환영' 우표",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "카드룸 게시판에 '모두 환영'을 적은 날의 기념 우표.",
+   "description": "카드룸 게시판에 '모두 환영'을 적은 날, 모아가 찍어 준 기념 우표.",
    "placeholder": {
     "shape": "stamp",
     "color": "#f2cc8f"
@@ -210,11 +210,11 @@
   },
   {
    "id": "item.furniture.03_01",
-   "name": "낡은 원목 스툴 · 3번 문양",
+   "name": "회관 장부 책상",
    "category": "furniture",
    "price": 30,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "마을 회관에서 쓰던 작은 책상. 미리의 반듯한 글씨 자국이 남아 있어요.",
    "placeholder": {
     "shape": "stool",
     "color": "#81b29a"
@@ -222,11 +222,11 @@
   },
   {
    "id": "item.furniture.03_02",
-   "name": "하트 쿠션 · 3번 문양",
+   "name": "객실 손님 의자",
    "category": "furniture",
    "price": 40,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "방문객 객실 의자와 한 벌. 처음 온 사람도 편히 앉도록 등받이가 낮아요.",
    "placeholder": {
     "shape": "cushion",
     "color": "#81b29a"
@@ -234,11 +234,11 @@
   },
   {
    "id": "item.decor.03_03",
-   "name": "네잎 벽걸이 · 3번 문양",
+   "name": "문양 스케치 액자",
    "category": "decor",
    "price": 35,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "엘라가 옛 기록에서 옮겨 그린 네 문양 스케치.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#81b29a"
@@ -246,11 +246,11 @@
   },
   {
    "id": "item.decor.03_04",
-   "name": "등불 꽃병 · 3번 문양",
+   "name": "버섯 등",
    "category": "decor",
    "price": 45,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "오나가 숲길에 켜는 버섯등과 같은 종류. 딱 필요한 만큼만 빛나요.",
    "placeholder": {
     "shape": "vase",
     "color": "#81b29a"
@@ -258,11 +258,11 @@
   },
   {
    "id": "item.clothing.03_05",
-   "name": "밤산책 외투 · 3번 문양",
+   "name": "찻집 앞치마",
    "category": "clothing",
    "price": 55,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "리라 찻집 앞치마와 같은 천. 차 얼룩에 강해요.",
    "placeholder": {
     "shape": "coat",
     "color": "#81b29a"
@@ -270,11 +270,11 @@
   },
   {
    "id": "item.card_back.03_06",
-   "name": "별무늬 카드 뒷면 · 3번 문양",
+   "name": "규칙판 무늬 뒷면",
    "category": "card_back",
    "price": 50,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "카일의 규칙판 테두리 무늬를 넣은 카드 뒷면. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#81b29a"
@@ -282,11 +282,11 @@
   },
   {
    "id": "item.chip_style.03_07",
-   "name": "조약돌 칩 장식 · 3번 문양",
+   "name": "불씨 칩",
    "category": "chip_style",
    "price": 50,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "세라의 불씨처럼 은은히 빛나는 칩 표시. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#81b29a"
@@ -294,11 +294,11 @@
   },
   {
    "id": "item.memento.03_08",
-   "name": "옛날 축제 우표 · 3번 문양",
+   "name": "두 테이블 우표",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "두 테이블이 함께 놓인 날의 기념 우표.",
+   "description": "물안개 둔치에서 두 테이블이 나란히 놓인 날의 기념 우표.",
    "placeholder": {
     "shape": "stamp",
     "color": "#81b29a"
@@ -306,11 +306,11 @@
   },
   {
    "id": "item.furniture.04_01",
-   "name": "낡은 원목 스툴 · 4번 문양",
+   "name": "게시판 목재 선반",
    "category": "furniture",
    "price": 35,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "카드룸 게시판을 고치고 남은 목재로 짠 선반.",
    "placeholder": {
     "shape": "stool",
     "color": "#3d8bb4"
@@ -318,11 +318,11 @@
   },
   {
    "id": "item.furniture.04_02",
-   "name": "하트 쿠션 · 4번 문양",
+   "name": "모임용 긴 의자",
    "category": "furniture",
    "price": 45,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "여럿이 나란히 앉는 긴 의자. 모임이 늘자 세라가 새로 들였어요.",
    "placeholder": {
     "shape": "cushion",
     "color": "#3d8bb4"
@@ -330,11 +330,11 @@
   },
   {
    "id": "item.decor.04_03",
-   "name": "네잎 벽걸이 · 4번 문양",
+   "name": "카드룸 등불 갓",
    "category": "decor",
    "price": 40,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "카드룸 테이블 위에 걸던 등불 갓. 테이블이 늘면서 하나가 남았어요.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#3d8bb4"
@@ -342,11 +342,11 @@
   },
   {
    "id": "item.decor.04_04",
-   "name": "등불 꽃병 · 4번 문양",
+   "name": "'모두 환영' 표지",
    "category": "decor",
    "price": 50,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "카드룸 게시판의 '모두 환영' 글씨를 본뜬 작은 표지.",
    "placeholder": {
     "shape": "vase",
     "color": "#3d8bb4"
@@ -354,11 +354,11 @@
   },
   {
    "id": "item.clothing.04_05",
-   "name": "밤산책 외투 · 4번 문양",
+   "name": "카드룸 조끼",
    "category": "clothing",
    "price": 60,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "저녁 모임 단골들이 즐겨 입는 조끼. 주머니에 칩이 쏙 들어가요.",
    "placeholder": {
     "shape": "coat",
     "color": "#3d8bb4"
@@ -366,11 +366,11 @@
   },
   {
    "id": "item.card_back.04_06",
-   "name": "별무늬 카드 뒷면 · 4번 문양",
+   "name": "우편 소인 뒷면",
    "category": "card_back",
    "price": 55,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "노아의 소인 도장을 본뜬 무늬. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#3d8bb4"
@@ -378,11 +378,11 @@
   },
   {
    "id": "item.chip_style.04_07",
-   "name": "조약돌 칩 장식 · 4번 문양",
+   "name": "도장 칩",
    "category": "chip_style",
    "price": 55,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "모아가 게시판 쪽지에 찍는 칩 도장 모양. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#3d8bb4"
@@ -390,11 +390,11 @@
   },
   {
    "id": "item.memento.04_08",
-   "name": "옛날 축제 우표 · 4번 문양",
+   "name": "축제 도우미 배지",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "축제 준비를 도운 사람에게 주는 우표.",
+   "description": "네잎 저녁제 정리를 끝까지 도운 사람에게 주는 배지.",
    "placeholder": {
     "shape": "stamp",
     "color": "#3d8bb4"
@@ -402,11 +402,11 @@
   },
   {
    "id": "item.furniture.05_01",
-   "name": "낡은 원목 스툴 · 5번 문양",
+   "name": "비비의 수리 스툴",
    "category": "furniture",
    "price": 40,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "비비가 다리를 세 번 고친 스툴. 이제는 절대 안 흔들려요.",
    "placeholder": {
     "shape": "stool",
     "color": "#9b72cf"
@@ -414,11 +414,11 @@
   },
   {
    "id": "item.furniture.05_02",
-   "name": "하트 쿠션 · 5번 문양",
+   "name": "공방 흔들의자",
    "category": "furniture",
    "price": 50,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "비비와 율이 구식과 신식 설계를 반씩 섞어 만든 흔들의자.",
    "placeholder": {
     "shape": "cushion",
     "color": "#9b72cf"
@@ -426,11 +426,11 @@
   },
   {
    "id": "item.decor.05_03",
-   "name": "네잎 벽걸이 · 5번 문양",
+   "name": "공방 공구 걸이",
    "category": "decor",
    "price": 45,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "비비 공방 벽에 걸린 것과 같은 걸이. 공구 대신 꽃을 걸어도 돼요.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#9b72cf"
@@ -438,11 +438,11 @@
   },
   {
    "id": "item.decor.05_04",
-   "name": "등불 꽃병 · 5번 문양",
+   "name": "수선한 벽시계",
    "category": "decor",
    "price": 55,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "멈췄던 시계를 비비가 고쳤어요. 가끔 1분씩 빨라요.",
    "placeholder": {
     "shape": "vase",
     "color": "#9b72cf"
@@ -450,11 +450,11 @@
   },
   {
    "id": "item.clothing.05_05",
-   "name": "밤산책 외투 · 5번 문양",
+   "name": "숲길 망토",
    "category": "clothing",
    "price": 65,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "숲길 밤공기를 막아 주는 얇은 망토. 색은 오나가 골랐대요.",
    "placeholder": {
     "shape": "coat",
     "color": "#9b72cf"
@@ -462,11 +462,11 @@
   },
   {
    "id": "item.card_back.05_06",
-   "name": "별무늬 카드 뒷면 · 5번 문양",
+   "name": "물안개 뒷면",
    "category": "card_back",
    "price": 60,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "둔치 물안개처럼 흐릿한 무늬. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#9b72cf"
@@ -474,11 +474,11 @@
   },
   {
    "id": "item.chip_style.05_07",
-   "name": "조약돌 칩 장식 · 5번 문양",
+   "name": "버섯 칩",
    "category": "chip_style",
    "price": 60,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "오나의 버섯등 색을 딴 칩 표시. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#9b72cf"
@@ -486,11 +486,11 @@
   },
   {
    "id": "item.memento.05_08",
-   "name": "옛날 축제 우표 · 5번 문양",
+   "name": "광장 벤치 명패",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "광장 벤치가 생긴 날의 기념 우표.",
+   "description": "광장 벤치에 붙인 후원자 명패의 작은 사본.",
    "placeholder": {
     "shape": "stamp",
     "color": "#9b72cf"
@@ -498,11 +498,11 @@
   },
   {
    "id": "item.furniture.06_01",
-   "name": "낡은 원목 스툴 · 6번 문양",
+   "name": "카드 정원 탁자",
    "category": "furniture",
    "price": 45,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "둔치 카드 정원 탁자의 작은 판. 둘이 마주 앉기 좋아요.",
    "placeholder": {
     "shape": "stool",
     "color": "#e8a0bf"
@@ -510,11 +510,11 @@
   },
   {
    "id": "item.furniture.06_02",
-   "name": "하트 쿠션 · 6번 문양",
+   "name": "마주 보는 의자 한 쌍",
    "category": "furniture",
    "price": 55,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "루미와 카일이 둔치에서 처음 나란히 앉았던 의자를 본떴대요.",
    "placeholder": {
     "shape": "cushion",
     "color": "#e8a0bf"
@@ -522,11 +522,11 @@
   },
   {
    "id": "item.decor.06_03",
-   "name": "네잎 벽걸이 · 6번 문양",
+   "name": "둔치 물안개 그림",
    "category": "decor",
    "price": 50,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "하루가 제일 좋아하는, 물안개 걷히기 직전의 둔치.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#e8a0bf"
@@ -534,11 +534,11 @@
   },
   {
    "id": "item.decor.06_04",
-   "name": "등불 꽃병 · 6번 문양",
+   "name": "지도 표식 액자",
    "category": "decor",
    "price": 60,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "엘라와 하루가 붙인 길 표식의 예비 한 장.",
    "placeholder": {
     "shape": "vase",
     "color": "#e8a0bf"
@@ -546,11 +546,11 @@
   },
   {
    "id": "item.clothing.06_05",
-   "name": "밤산책 외투 · 6번 문양",
+   "name": "도전자 재킷",
    "category": "clothing",
    "price": 70,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "친선 도전 날 입으면 어깨가 저절로 펴지는 재킷.",
    "placeholder": {
     "shape": "coat",
     "color": "#e8a0bf"
@@ -558,11 +558,11 @@
   },
   {
    "id": "item.card_back.06_06",
-   "name": "별무늬 카드 뒷면 · 6번 문양",
+   "name": "찻잔 뒷면",
    "category": "card_back",
    "price": 65,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "리라 찻집 찻잔 무늬를 넣은 뒷면. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#e8a0bf"
@@ -570,11 +570,11 @@
   },
   {
    "id": "item.chip_style.06_07",
-   "name": "조약돌 칩 장식 · 6번 문양",
+   "name": "라이벌 칩",
    "category": "chip_style",
    "price": 65,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "여러 판을 함께한 라이벌끼리 나눠 갖는다는 무늬. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#e8a0bf"
@@ -582,11 +582,11 @@
   },
   {
    "id": "item.memento.06_08",
-   "name": "옛날 축제 우표 · 6번 문양",
+   "name": "첫 저녁제 초대장",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "첫 네잎 저녁제의 기념 우표.",
+   "description": "첫 네잎 저녁제에 모두에게 보낸 초대장. 마지막까지 남은 한 장이에요.",
    "placeholder": {
     "shape": "stamp",
     "color": "#e8a0bf"
@@ -594,11 +594,11 @@
   },
   {
    "id": "item.furniture.07_01",
-   "name": "낡은 원목 스툴 · 7번 문양",
+   "name": "가림막 노점 좌판",
    "category": "furniture",
    "price": 50,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "장터 가림막 아래서 쓰던 좌판. 비 오는 날 장터 냄새가 나요.",
    "placeholder": {
     "shape": "stool",
     "color": "#c9a227"
@@ -606,11 +606,11 @@
   },
   {
    "id": "item.furniture.07_02",
-   "name": "하트 쿠션 · 7번 문양",
+   "name": "줄무늬 차양 의자",
    "category": "furniture",
    "price": 60,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "가림막과 같은 줄무늬 천을 씌운 의자.",
    "placeholder": {
     "shape": "cushion",
     "color": "#c9a227"
@@ -618,11 +618,11 @@
   },
   {
    "id": "item.decor.07_03",
-   "name": "네잎 벽걸이 · 7번 문양",
+   "name": "장터 줄무늬 천",
    "category": "decor",
    "price": 55,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "가림막을 만들고 남은 천. 벽에 걸면 방이 장터 같아져요.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#c9a227"
@@ -630,11 +630,11 @@
   },
   {
    "id": "item.decor.07_04",
-   "name": "등불 꽃병 · 7번 문양",
+   "name": "교환 앨범 선반",
    "category": "decor",
    "price": 65,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "렌의 교환 앨범을 세워 두는 선반. 출처 쪽지를 끼울 칸이 있어요.",
    "placeholder": {
     "shape": "vase",
     "color": "#c9a227"
@@ -642,11 +642,11 @@
   },
   {
    "id": "item.clothing.07_05",
-   "name": "밤산책 외투 · 7번 문양",
+   "name": "저녁제 나들이옷",
    "category": "clothing",
    "price": 75,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "테오가 '화려할 필요 없다'며 만든 편한 축제 옷.",
    "placeholder": {
     "shape": "coat",
     "color": "#c9a227"
@@ -654,11 +654,11 @@
   },
   {
    "id": "item.card_back.07_06",
-   "name": "별무늬 카드 뒷면 · 7번 문양",
+   "name": "가림막 줄무늬 뒷면",
    "category": "card_back",
    "price": 70,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "장터 가림막 줄무늬 그대로. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#c9a227"
@@ -666,11 +666,11 @@
   },
   {
    "id": "item.chip_style.07_07",
-   "name": "조약돌 칩 장식 · 7번 문양",
+   "name": "장터 동전 칩",
    "category": "chip_style",
    "price": 70,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "옛 장터 동전을 닮은 칩 표시. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#c9a227"
@@ -678,11 +678,11 @@
   },
   {
    "id": "item.memento.07_08",
-   "name": "옛날 축제 우표 · 7번 문양",
+   "name": "다음 날 아침의 쪽지",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "축제 다음 날 아침의 기념 우표.",
+   "description": "축제 다음 날 아침 루미가 건넨 쪽지. '다음 모임에도 와.'",
    "placeholder": {
     "shape": "stamp",
     "color": "#c9a227"
@@ -690,11 +690,11 @@
   },
   {
    "id": "item.furniture.08_01",
-   "name": "낡은 원목 스툴 · 8번 문양",
+   "name": "저녁제 부스 의자",
    "category": "furniture",
    "price": 55,
    "placeable": true,
-   "description": "오래 써서 반질반질해진 원목 스툴.",
+   "description": "첫 네잎 저녁제 부스에 놓였던 의자. 기둥에 누군가 이름을 새겼어요.",
    "placeholder": {
     "shape": "stool",
     "color": "#6d9dc5"
@@ -702,11 +702,11 @@
   },
   {
    "id": "item.furniture.08_02",
-   "name": "하트 쿠션 · 8번 문양",
+   "name": "관전석 벤치",
    "category": "furniture",
    "price": 65,
    "placeable": true,
-   "description": "하트 문양을 수놓은 포근한 쿠션.",
+   "description": "축제 관전석 벤치. 끝자리엔 하루가 끝까지 앉아 있었대요.",
    "placeholder": {
     "shape": "cushion",
     "color": "#6d9dc5"
@@ -714,11 +714,11 @@
   },
   {
    "id": "item.decor.08_03",
-   "name": "네잎 벽걸이 · 8번 문양",
+   "name": "저녁제 가랜드",
    "category": "decor",
    "price": 60,
    "placeable": true,
-   "description": "네 문양을 엮어 만든 벽걸이 장식.",
+   "description": "축제 날 광장에 걸렸던 가랜드 한 줄.",
    "placeholder": {
     "shape": "wall_hanging",
     "color": "#6d9dc5"
@@ -726,11 +726,11 @@
   },
   {
    "id": "item.decor.08_04",
-   "name": "등불 꽃병 · 8번 문양",
+   "name": "네잎 등불 기둥",
    "category": "decor",
    "price": 70,
    "placeable": true,
-   "description": "안에 작은 불빛을 넣을 수 있는 꽃병.",
+   "description": "축제 부스를 밝힌 등불 기둥의 작은 모형.",
    "placeholder": {
     "shape": "vase",
     "color": "#6d9dc5"
@@ -738,11 +738,11 @@
   },
   {
    "id": "item.clothing.08_05",
-   "name": "밤산책 외투 · 8번 문양",
+   "name": "네잎 예복",
    "category": "clothing",
    "price": 80,
    "placeable": false,
-   "description": "저녁 산책에 어울리는 가벼운 외투.",
+   "description": "특별한 저녁을 위한 한 벌. 소매 안쪽에 네 문양이 숨어 있어요.",
    "placeholder": {
     "shape": "coat",
     "color": "#6d9dc5"
@@ -750,11 +750,11 @@
   },
   {
    "id": "item.card_back.08_06",
-   "name": "별무늬 카드 뒷면 · 8번 문양",
+   "name": "네잎 저녁제 우승 뒷면",
    "category": "card_back",
    "price": 75,
    "placeable": false,
-   "description": "포커 카드 뒷면 무늬를 바꿔요. 족보나 확률에는 영향이 없어요.",
+   "description": "네잎 저녁제 대회 우승 기념. 어느 가게에서도 팔지 않아요. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "card",
     "color": "#6d9dc5"
@@ -762,11 +762,11 @@
   },
   {
    "id": "item.chip_style.08_07",
-   "name": "조약돌 칩 장식 · 8번 문양",
+   "name": "네잎 칩",
    "category": "chip_style",
    "price": 75,
    "placeable": false,
-   "description": "칩 표시 모양을 바꿔요. 칩 잔액과 정산에는 영향이 없어요.",
+   "description": "네 문양이 한 칩에 모두 들어간 장식. (보기만 바뀌어요. 족보·확률·정산과는 무관해요.)",
    "placeholder": {
     "shape": "chip",
     "color": "#6d9dc5"
@@ -774,11 +774,11 @@
   },
   {
    "id": "item.memento.08_08",
-   "name": "옛날 축제 우표 · 8번 문양",
+   "name": "하늘 등불 조각",
    "category": "memento",
    "price": 0,
    "placeable": true,
-   "description": "반딧불 산책로 등불 산책의 기념 우표.",
+   "description": "이웃 넷 이상과 함께 숲길에서 띄운 하늘 등불의 종이 조각.",
    "placeholder": {
     "shape": "stamp",
     "color": "#6d9dc5"

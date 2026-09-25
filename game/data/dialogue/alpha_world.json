@@ -20,7 +20,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "하하, 또 봐!",
      "action": "close"
     }
    ]
@@ -44,7 +44,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "수고해요",
      "action": "close"
     }
    ]
@@ -74,7 +74,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "다음 교환회 때!",
      "action": "close"
     }
    ]
@@ -104,7 +104,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "천천히 해요",
      "action": "close"
     }
    ]
@@ -134,7 +134,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "무리하지 마요",
      "action": "close"
     }
    ]
@@ -164,7 +164,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "간식 챙겨요",
      "action": "close"
     }
    ]
@@ -194,7 +194,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐요, 시아",
      "action": "close"
     }
    ]
@@ -224,7 +224,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "그럼 이만",
      "action": "close"
     }
    ]
@@ -254,7 +254,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "잘 부탁해요",
      "action": "close"
     }
    ]
@@ -284,7 +284,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "좋은 밤 보내",
      "action": "close"
     }
    ]
@@ -311,12 +311,19 @@
     }
    ],
    "lines": [
-    "초대해 줘서 왔어요! 문틀 봐 주러 왔다. 튼튼하군. 간식 있나?"
+    "(율이 문틀을 두드리며 들어온다.)",
+    "문틀 봐 주러 왔다. 초대받았으니까. 튼튼하군."
    ],
    "choices": [
     {
-     "text": "편하게 있다 가요",
-     "action": "close"
+     "text": "간식 먹고 가요",
+     "action": "dialogue",
+     "arg": "visit.yul_a"
+    },
+    {
+     "text": "집 구경시켜 줄게요",
+     "action": "dialogue",
+     "arg": "visit.yul_b"
     }
    ]
   },
@@ -329,7 +336,7 @@
     "met": "npc_yul"
    },
    "lines": [
-    "또 들렀다. 이 집 의자 편하다."
+    "또 들렀다. 이 집 의자는 편하다. 오래 앉아 있을 거다."
    ],
    "choices": [
     {
@@ -360,12 +367,19 @@
     }
    ],
    "lines": [
-    "초대해 줘서 왔어요! 집 구경 와도 된다고 해서 왔어요! 방문객 객실보다 훨씬 아늑해요!"
+    "(시아가 문 앞에서 두 번 노크한다.)",
+    "초대해 줘서 왔어요! 방문객 객실보다 훨씬 집 같아요."
    ],
    "choices": [
     {
-     "text": "편하게 있다 가요",
-     "action": "close"
+     "text": "차 한 잔 할래요?",
+     "action": "dialogue",
+     "arg": "visit.sia_a"
+    },
+    {
+     "text": "이 마을 어때요?",
+     "action": "dialogue",
+     "arg": "visit.sia_b"
     }
    ]
   },
@@ -378,7 +392,7 @@
     "met": "npc_sia"
    },
    "lines": [
-    "놀러 왔어요! 오늘은 그냥 앉아 있다 갈게요."
+    "놀러 왔어요! 오늘은 그냥 앉아 있다 갈게요. 집에 있는 기분이 좋아서요."
    ],
    "choices": [
     {
@@ -409,12 +423,19 @@
     }
    ],
    "lines": [
-    "초대해 줘서 왔어요! 차 배달 왔어요! 집에서 마시는 차는 찻집이랑 또 다르죠?"
+    "(리라가 보온병을 들고 들어온다.)",
+    "초대 고마워요! 차 배달 왔어요. 찻집 밖에서 차를 내리는 건 오랜만이에요."
    ],
    "choices": [
     {
-     "text": "편하게 있다 가요",
-     "action": "close"
+     "text": "창가에서 마셔요",
+     "action": "dialogue",
+     "arg": "visit.rira_a"
+    },
+    {
+     "text": "찻집 이야기 해 줘요",
+     "action": "dialogue",
+     "arg": "visit.rira_b"
     }
    ]
   },
@@ -427,7 +448,7 @@
     "met": "npc_rira"
    },
    "lines": [
-    "오늘은 새 찻잎 맛보러 왔어요. 당신 집 창가가 딱이에요."
+    "새 찻잎 맛보러 왔어요. 당신 집 창가가 딱이거든요."
    ],
    "choices": [
     {
@@ -458,12 +479,19 @@
     }
    ],
    "lines": [
-    "초대해 줘서 왔어요! 저, 저기… 놀러 와도 된다고 해서… 왔어요. 조용하고 좋아요."
+    "(하루가 문간에서 한참 망설이다 들어온다.)",
+    "초, 초대해 줘서… 왔어요. 여긴 조용해서 좋네요."
    ],
    "choices": [
     {
-     "text": "편하게 있다 가요",
-     "action": "close"
+     "text": "편하게 앉아요",
+     "action": "dialogue",
+     "arg": "visit.haru_a"
+    },
+    {
+     "text": "오늘 하루 어땠어요?",
+     "action": "dialogue",
+     "arg": "visit.haru_b"
     }
    ]
   },
@@ -476,7 +504,7 @@
     "met": "npc_haru"
    },
    "lines": [
-    "또 와 버렸어요… 여기선 말이 잘 나와요."
+    "또 와 버렸어요. 여기선 말이 잘 나와요."
    ],
    "choices": [
     {
@@ -507,12 +535,19 @@
     }
    ],
    "lines": [
-    "초대해 줘서 왔어요! 집 안에 문양 장식 있나 보러 왔어요! 없으면 제가 그려 드릴게요."
+    "(엘라가 책 한 권을 안고 들어온다.)",
+    "초대 고마워요! 집에 문양 장식이 있나 궁금했어요."
    ],
    "choices": [
     {
-     "text": "편하게 있다 가요",
-     "action": "close"
+     "text": "문양 이야기 해 줘요",
+     "action": "dialogue",
+     "arg": "visit.ella_a"
+    },
+    {
+     "text": "책 두고 가도 돼요",
+     "action": "dialogue",
+     "arg": "visit.ella_b"
     }
    ]
   },
@@ -525,7 +560,7 @@
     "met": "npc_ella"
    },
    "lines": [
-    "당신 집 책장에 제 책 한 권 꽂아 둬도 돼요?"
+    "당신 집 책장에 둔 책, 이어 읽으러 왔어요."
    ],
    "choices": [
     {
@@ -650,7 +685,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐, 루미!",
      "action": "close"
     }
    ]
@@ -673,7 +708,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "간식 챙겨요",
      "action": "close"
     }
    ]
@@ -696,7 +731,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "천천히 해요",
      "action": "close"
     }
    ]
@@ -719,7 +754,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "무리하지 마요",
      "action": "close"
     }
    ]
@@ -742,7 +777,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 올게요",
      "action": "close"
     }
    ]
@@ -765,7 +800,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "하하, 또 봐!",
      "action": "close"
     }
    ]
@@ -789,7 +824,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 올게요",
      "action": "close"
     }
    ]
@@ -813,7 +848,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "다음 교환회 때!",
      "action": "close"
     }
    ]
@@ -837,7 +872,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "그럼 이만",
      "action": "close"
     }
    ]
@@ -861,7 +896,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "차 잘 마셨어요",
      "action": "close"
     }
    ]
@@ -880,7 +915,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐, 루미!",
      "action": "close"
     }
    ]
@@ -899,7 +934,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "하하, 또 봐!",
      "action": "close"
     }
    ]
@@ -918,7 +953,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "알겠어요",
      "action": "close"
     }
    ]
@@ -959,6 +994,744 @@
     },
     {
      "text": "나중에",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.yul_a",
+   "npc": "npc_yul",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "간식? 그런 말은 빨리 해라. …이 집, 앉을 자리가 좋다."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.yul_b",
+   "npc": "npc_yul",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "벽 하나에 못 두 개. 선반 하나 더 걸 수 있겠다. 다음에 가져오지."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.yul_gift_seen",
+   "npc": "npc_yul",
+   "priority": 51,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_yul",
+    "placed_item": "item.furniture.05_02"
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_yul",
+     "amount": 2
+    }
+   ],
+   "lines": [
+    "흔들의자 잘 쓰고 있군. 삐걱거리면 말해라. 비비랑 같이 오겠다."
+   ],
+   "choices": [
+    {
+     "text": "잘 쓰고 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.sia_a",
+   "npc": "npc_sia",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "좋아요! 여행할 땐 남의 집 차가 제일 맛있었어요. 여기선 이웃 집 차네요."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.sia_b",
+   "npc": "npc_sia",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "처음엔 지나가려고 했어요. 근데 게시판에 '모두 환영'이 있더라고요. 그래서 남았어요."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.sia_gift_seen",
+   "npc": "npc_sia",
+   "priority": 51,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_sia",
+    "placed_item": "item.decor.06_04"
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_sia",
+     "amount": 2
+    }
+   ],
+   "lines": [
+    "제 지도 표식을 벽에 걸어 줬네요! 이제 여기가 표식 붙은 곳이에요."
+   ],
+   "choices": [
+    {
+     "text": "잘 쓰고 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.rira_a",
+   "npc": "npc_rira",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "창가 자리, 제 찻집이랑 방향이 같네요. 여기서도 햇살 차 맛이 나요."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.rira_b",
+   "npc": "npc_rira",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "찻집 이름이요? 원래 없었어요. 손님들이 '리라네'라고 불러서 그게 이름이 됐어요."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.rira_gift_seen",
+   "npc": "npc_rira",
+   "priority": 51,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_rira",
+    "owns_or_placed_item": "item.card_back.06_06"
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_rira",
+     "amount": 2
+    }
+   ],
+   "lines": [
+    "제 찻잔 무늬 카드 뒷면 쓰고 있죠? 카드룸에서 봤어요. 헤헤."
+   ],
+   "choices": [
+    {
+     "text": "잘 쓰고 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.haru_a",
+   "npc": "npc_haru",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "네… 이 의자, 둔치 데크 난간보다 훨씬 안심돼요."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.haru_b",
+   "npc": "npc_haru",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "물안개가 늦게 걷혔어요. 그래서 산책을 늦게 했고, 그래서 여기 늦게 왔어요. 괜찮죠?"
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.haru_gift_seen",
+   "npc": "npc_haru",
+   "priority": 51,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_haru",
+    "owns_or_placed_item": "item.chip_style.01_07"
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_haru",
+     "amount": 2
+    }
+   ],
+   "lines": [
+    "제가 준 조약돌 칩, 쓰고 있네요… 행운이 왔어요?"
+   ],
+   "choices": [
+    {
+     "text": "잘 쓰고 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.ella_a",
+   "npc": "npc_ella",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "이 집 창틀 모양, 옛 기록의 다이아 문양이랑 비슷해요. 손재주 있는 사람이 지었나 봐요."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.ella_b",
+   "npc": "npc_ella",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "정말요? 그럼 이 책은 여기 두고 갈게요. 다음에 와서 이어 읽을래요."
+   ],
+   "choices": [
+    {
+     "text": "천천히 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moment.rira_taeo",
+   "npc": "npc_rira",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "location": "tea_house",
+    "edge_phase": {
+     "rira_taeo": [
+      "bonded",
+      "reconciled"
+     ]
+    },
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "리라: 테오, 이 덮개 무늬 또 바꿨어?",
+    "테오: 안 바꿨어. 뒤집었어.",
+    "리라: …그게 바꾼 거잖아요!"
+   ],
+   "choices": [
+    {
+     "text": "(웃음을 참는다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moment.juno_miri",
+   "npc": "npc_miri",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "location": "community_hall",
+    "edge_phase": {
+     "juno_miri": [
+      "bonded",
+      "reconciled"
+     ]
+    },
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "미리: 개막 멘트 3분 12초. 12초 넘었어요.",
+    "주노: 그 12초에 감동이 들어 있었어!",
+    "미리: 감동은 2분 안에 넣어 주세요."
+   ],
+   "choices": [
+    {
+     "text": "(웃음을 참는다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moment.ren_kyle",
+   "npc": "npc_ren",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "location": "grove",
+    "edge_phase": {
+     "ren_kyle": [
+      "bonded",
+      "reconciled"
+     ]
+    },
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "렌: 카일, 교환할 때 '가치'는 누가 정해?",
+    "카일: …좋은 질문이다. 아직 답이 없다.",
+    "렌: 이겼다! 카일이 모르는 걸 찾았어!"
+   ],
+   "choices": [
+    {
+     "text": "(웃음을 참는다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moment.haru_ona",
+   "npc": "npc_ona",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "location": "grove",
+    "edge_phase": {
+     "haru_ona": [
+      "bonded",
+      "reconciled"
+     ]
+    },
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "오나: 하루, 오늘은 등 하나 꺼 볼래?",
+    "하루: 네? 무, 무서운데… 아, 별이다.",
+    "오나: 봐. 조금 어두워야 보이는 게 있어."
+   ],
+   "choices": [
+    {
+     "text": "(웃음을 참는다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moment.bibi_yul",
+   "npc": "npc_yul",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "location": "workshop",
+    "edge_phase": {
+     "bibi_yul": [
+      "bonded",
+      "reconciled"
+     ]
+    },
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "율: 이 다리는 신식이 낫다.",
+    "비비: 이 다리는… 구식이 오래가요.",
+    "율: 그럼 한쪽씩 하자. 삐걱거리는 쪽이 지는 거다."
+   ],
+   "choices": [
+    {
+     "text": "(웃음을 참는다)",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moment.lumi_kyle_post",
+   "npc": "npc_lumi",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "location": "card_room",
+    "flags_true": [
+     "story.postgame"
+    ]
+   },
+   "lines": [
+    "(카드룸 구석에서 루미와 카일이 종이 한 장을 두고 머리를 맞대고 있다.)",
+    "루미: 다음 저녁제 안내문, '누구나'를 맨 앞에 두자니까!",
+    "카일: 맨 앞은 '규칙은 한 장'이다. '누구나'는 두 번째… 아니, 같이 첫 줄에 쓰지."
+   ],
+   "choices": [
+    {
+     "text": "둘 다 좋다",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.haru_first_hand",
+   "npc": "npc_haru",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "met": "npc_haru"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_haru",
+     "id": "haru_first_hand"
+    }
+   ],
+   "lines": [
+    "저, 오늘 저녁 카드룸에서 첫 판 해 볼래요. 옆자리에 앉아 줄래요?",
+    "지면… 지면 뭐 어때요. 다들 다시 오잖아요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.sia_settled",
+   "npc": "npc_sia",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "met": "npc_sia"
+   },
+   "lines": [
+    "축제 때 만난 여행자분이 객실을 한 달 더 빌렸어요!",
+    "처음 온 사람이 머무는 걸 보는 게, 제가 여기 남은 이유 같아요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.miri_record",
+   "npc": "npc_miri",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "met": "npc_miri",
+    "projects_complete_min": 4
+   },
+   "lines": [
+    "공공사업 기록장을 정리했어요. 칸마다 도운 사람 이름이 있어요.",
+    "당신 이름이 제일 자주 나와요. 기록은 거짓말을 안 해요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.moa_board",
+   "npc": "npc_moa",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "met": "npc_moa"
+   },
+   "lines": [
+    "게시판에 새 쪽지가 붙었어요. '다음 저녁제엔 저도 뭔가 돕고 싶어요.' 모르는 글씨예요!",
+    "모르는 사람이 돕고 싶대요. 이게 제일 좋은 소식이에요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.nora_letter_player",
+   "npc": "npc_nora",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "met": "npc_nora",
+    "residents_met_min": 12
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.memento.07_08",
+     "once": "post:nora_letter"
+    }
+   ],
+   "lines": [
+    "당신 앞으로 편지가 왔어요. 보낸 사람은… 이 마을 모두예요.",
+    "'다음에도 와 줘.' 짧죠? 제일 많이 쓰인 말이에요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_board_restoration",
+   "npc": "npc_bibi",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "board_restoration",
+    "met": "npc_bibi"
+   },
+   "lines": [
+    "공방 연 지 꽤 됐네요. 게시판 고친 날 이후로 문 닫은 날이 없어요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_postbox_garden",
+   "npc": "npc_nora",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "postbox_garden",
+    "met": "npc_nora"
+   },
+   "lines": [
+    "화단 꽃이 두 번째로 피었어요. 편지 기다리는 사람이 늘어서 벤치를 하나 더 놓을까 해요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_guest_cottage",
+   "npc": "npc_sia",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "guest_cottage",
+    "met": "npc_sia"
+   },
+   "lines": [
+    "객실 방명록 두 번째 권이에요. 첫 장에 당신 이름을 먼저 적어 뒀어요."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_lantern_path",
+   "npc": "npc_ona",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "lantern_path",
+    "met": "npc_ona"
+   },
+   "lines": [
+    "등불 정비한 뒤로 밤 산책하는 사람이 늘었어. 별 보는 사람도."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_square_seating",
+   "npc": "npc_yul",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "square_seating",
+    "met": "npc_yul"
+   },
+   "lines": [
+    "광장 벤치, 앉은 자국이 생겼다. 좋은 벤치는 그렇게 된다."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_market_awning",
+   "npc": "npc_ren",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "market_awning",
+    "met": "npc_ren"
+   },
+   "lines": [
+    "비 오는 날 교환회가 제일 붐벼! 가림막 아래 다 모이거든."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_card_room_extension",
+   "npc": "npc_kyle",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "card_room_extension",
+    "met": "npc_kyle"
+   },
+   "lines": [
+    "연습 테이블에서 처음 칩을 쥔 사람이 벌써 다섯이다. 다 규칙판을 끝까지 읽었다."
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "post.project_festival_decor",
+   "npc": "npc_juno",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.postgame"
+    ],
+    "project_complete": "festival_decor",
+    "met": "npc_juno"
+   },
+   "lines": [
+    "축제 장식 떼지 말자고 투표했어! 만장일치! 미리도 손 들었어!"
+   ],
+   "choices": [
+    {
+     "text": "그러게요",
      "action": "close"
     }
    ]

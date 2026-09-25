@@ -1,0 +1,593 @@
+{
+ "_comment": "Content finishing: the giver answers the player's choice in their first personal episode.",
+ "entries": [
+  {
+   "id": "ep_back.npc_lumi.bond_01.0",
+   "npc": "npc_lumi",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_lumi.bond_01",
+    "flags_true": [
+     "choice:npc_lumi.bond_01:0"
+    ]
+   },
+   "lines": [
+    "창가라니, 지나가는 사람도 보라는 거지? 역시 너는 모임 체질이야."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_lumi.bond_01.1",
+   "npc": "npc_lumi",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_lumi.bond_01",
+    "flags_true": [
+     "choice:npc_lumi.bond_01:1"
+    ]
+   },
+   "lines": [
+    "탁자 위라… 차 마시면서 불빛 보는 거, 생각만 해도 좋다."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_moa.bond_01.0",
+   "npc": "npc_moa",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_moa.bond_01",
+    "flags_true": [
+     "choice:npc_moa.bond_01:0"
+    ]
+   },
+   "lines": [
+    "그림 쪽이요? 좋아요! 짝꿍 그림은 제가 그린 거예요. 헤헤."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_moa.bond_01.1",
+   "npc": "npc_moa",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_moa.bond_01",
+    "flags_true": [
+     "choice:npc_moa.bond_01:1"
+    ]
+   },
+   "lines": [
+    "짧은 문장이요? 다섯 줄로 줄이느라 사흘 걸렸거든요. 보람 있네요!"
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_kyle.bond_01.0",
+   "npc": "npc_kyle",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_kyle.bond_01",
+    "flags_true": [
+     "choice:npc_kyle.bond_01:0"
+    ]
+   },
+   "lines": [
+    "'한 번에 최대 세 장, 딱 한 번'으로 고쳤다. 숫자를 쓰니 짧아지는군."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_kyle.bond_01.1",
+   "npc": "npc_kyle",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_kyle.bond_01",
+    "flags_true": [
+     "choice:npc_kyle.bond_01:1"
+    ]
+   },
+   "lines": [
+    "'같은 족보면 남은 카드를 높은 순서로 비교'. 길어졌지만 틀린 해석은 없어졌다."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_nora.bond_01.0",
+   "npc": "npc_nora",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_nora.bond_01",
+    "flags_true": [
+     "choice:npc_nora.bond_01:0"
+    ]
+   },
+   "lines": [
+    "사흘 전 날짜였군요. 사흘이나 기다리게 했다니… 오늘 바로 가져다줄게요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_nora.bond_01.1",
+   "npc": "npc_nora",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_nora.bond_01",
+    "flags_true": [
+     "choice:npc_nora.bond_01:1"
+    ]
+   },
+   "lines": [
+    "'급함'이 접혀 있었다니. 급한 편지일수록 꼭 이렇게 숨어 있어요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_rira.bond_01.0",
+   "npc": "npc_rira",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_rira.bond_01",
+    "flags_true": [
+     "choice:npc_rira.bond_01:0"
+    ]
+   },
+   "lines": [
+    "창가요? 쪽지까지 있었다고요? 누가 쓴 걸까요… 액자에 넣어야겠어요!"
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_rira.bond_01.1",
+   "npc": "npc_rira",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_rira.bond_01",
+    "flags_true": [
+     "choice:npc_rira.bond_01:1"
+    ]
+   },
+   "lines": [
+    "난로 옆이군요. 거긴 테오가 늘 앉는 자리예요. 다들 테오 옆에 앉고 싶은가 봐요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_taeo.bond_01.0",
+   "npc": "npc_taeo",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_taeo.bond_01",
+    "flags_true": [
+     "choice:npc_taeo.bond_01:0"
+    ]
+   },
+   "lines": [
+    "줄무늬. 무난하지. 무난한 게 제일 어려운 거야."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_taeo.bond_01.1",
+   "npc": "npc_taeo",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_taeo.bond_01",
+    "flags_true": [
+     "choice:npc_taeo.bond_01:1"
+    ]
+   },
+   "lines": [
+    "꽃무늬 골랐어? …리라 주려던 거 들켰네."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_bibi.bond_01.0",
+   "npc": "npc_bibi",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_bibi.bond_01",
+    "flags_true": [
+     "choice:npc_bibi.bond_01:0"
+    ]
+   },
+   "lines": [
+    "이름이 새겨진 의자요? 그럼 이름 안 지워지게 조심해서 고칠게요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_bibi.bond_01.1",
+   "npc": "npc_bibi",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_bibi.bond_01",
+    "flags_true": [
+     "choice:npc_bibi.bond_01:1"
+    ]
+   },
+   "lines": [
+    "다리가 짧았군요. 새것도 아플 수 있어요. 오늘 맞춰 줄게요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_ella.bond_01.0",
+   "npc": "npc_ella",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_ella.bond_01",
+    "flags_true": [
+     "choice:npc_ella.bond_01:0"
+    ]
+   },
+   "lines": [
+    "스페이드가 용기라니! 저도 그 문장이 제일 좋았어요. 저한테도 필요하거든요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_ella.bond_01.1",
+   "npc": "npc_ella",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_ella.bond_01",
+    "flags_true": [
+     "choice:npc_ella.bond_01:1"
+    ]
+   },
+   "lines": [
+    "일기 쪽이군요. 그 박수 친 사람 중에 노아의 할머니가 있었대요. 신기하죠?"
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_haru.bond_01.0",
+   "npc": "npc_haru",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_haru.bond_01",
+    "flags_true": [
+     "choice:npc_haru.bond_01:0"
+    ]
+   },
+   "lines": [
+    "입구였군요… 매일 거기서 망설였어요. 오나한테 말해 볼게요. 제가 직접요!"
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_haru.bond_01.1",
+   "npc": "npc_haru",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_haru.bond_01",
+    "flags_true": [
+     "choice:npc_haru.bond_01:1"
+    ]
+   },
+   "lines": [
+    "난간이요? 그래서 늘 난간을 꽉 잡았나 봐요. 이제 이유를 알겠어요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_juno.bond_01.0",
+   "npc": "npc_juno",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_juno.bond_01",
+    "flags_true": [
+     "choice:npc_juno.bond_01:0"
+    ]
+   },
+   "lines": [
+    "'누구나 와도 돼요'로 바꿨어! 규칙은 와서 배우면 되지!"
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_juno.bond_01.1",
+   "npc": "npc_juno",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_juno.bond_01",
+    "flags_true": [
+     "choice:npc_juno.bond_01:1"
+    ]
+   },
+   "lines": [
+    "쉼표 일곱 개는 내 작품이었어… 세 줄로 나눴어. 반성 중!"
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_miri.bond_01.0",
+   "npc": "npc_miri",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_miri.bond_01",
+    "flags_true": [
+     "choice:npc_miri.bond_01:0"
+    ]
+   },
+   "lines": [
+    "색 세 가지. 좋아요. 초록은 공공, 주황은 축제, 파랑은 집. 이미 칠해 봤어요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_miri.bond_01.1",
+   "npc": "npc_miri",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_miri.bond_01",
+    "flags_true": [
+     "choice:npc_miri.bond_01:1"
+    ]
+   },
+   "lines": [
+    "그림이요? 제가 그림을 못 그려서… 엘라한테 부탁해 볼게요."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_ona.bond_01.0",
+   "npc": "npc_ona",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_ona.bond_01",
+    "flags_true": [
+     "choice:npc_ona.bond_01:0"
+    ]
+   },
+   "lines": [
+    "첫 번째 줄였어. 나방들이 섭섭해하겠지만, 별이 하나 돌아왔어."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_ona.bond_01.1",
+   "npc": "npc_ona",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_ona.bond_01",
+    "flags_true": [
+     "choice:npc_ona.bond_01:1"
+    ]
+   },
+   "lines": [
+    "두 번째? 하루 길목인데… 그래, 조금만 줄이고 발밑은 밝게 둘게."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_ren.bond_01.0",
+   "npc": "npc_ren",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_ren.bond_01",
+    "flags_true": [
+     "choice:npc_ren.bond_01:0"
+    ]
+   },
+   "lines": [
+    "이름 모를 사람이라… 이번 교환회 때 그 사람을 찾아봐야겠다!"
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_ren.bond_01.1",
+   "npc": "npc_ren",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_ren.bond_01",
+    "flags_true": [
+     "choice:npc_ren.bond_01:1"
+    ]
+   },
+   "lines": [
+    "돌려줄 거였대! 몇 년이나 지났는데… 카일한테 물어보면 누군지 알지도."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_yul.bond_01.0",
+   "npc": "npc_yul",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_yul.bond_01",
+    "flags_true": [
+     "choice:npc_yul.bond_01:0"
+    ]
+   },
+   "lines": [
+    "조약돌? 하루 짓이군. 고맙다고 해야겠다. 다리는 새로 깎는다."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ep_back.npc_yul.bond_01.1",
+   "npc": "npc_yul",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "quest_completed": "npc_yul.bond_01",
+    "flags_true": [
+     "choice:npc_yul.bond_01:1"
+    ]
+   },
+   "lines": [
+    "사탕 포장지… 내 거다. 간식 먹다 앉은 자리였다. 판자는 갈아 끼운다."
+   ],
+   "choices": [
+    {
+     "text": "그렇구나",
+     "action": "close"
+    }
+   ]
+  }
+ ]
+}

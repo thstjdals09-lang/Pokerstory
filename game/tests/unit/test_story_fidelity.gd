@@ -68,7 +68,10 @@ func test_act3_community_ending() -> void:
 	for c in open["choices"]:
 		var c_text := JSON.stringify(c)
 		if c.get("action", "") == "dialogue":
-			check_eq(str(c["arg"]), "scn.festival_end", "S9 %s reaches the shared ending" % c["text"])
+			# Each activity plays its own short scene, then reaches the same ending.
+			var branch := DialogueResolver.find(db.dialogue, str(c["arg"]))
+			var next: Array = branch.get("choices", []).map(func(b): return str(b.get("arg", "")))
+			check(str(c["arg"]) == "scn.festival_end" or next.has("scn.festival_end"), "S9 %s reaches the shared ending" % c["text"])
 			endings += 1
 		if c.get("action", "") == "start_poker":
 			check(c_text.contains("story.act3_complete"), "S9 entering the tournament ends act 3 without needing a win")

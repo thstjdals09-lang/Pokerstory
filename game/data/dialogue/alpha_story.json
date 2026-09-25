@@ -16,7 +16,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "잘 부탁해요",
      "action": "close"
     }
    ]
@@ -42,7 +42,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 올게요",
      "action": "close"
     }
    ]
@@ -61,7 +61,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "하하, 또 봐!",
      "action": "close"
     }
    ]
@@ -80,7 +80,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "차 잘 마셨어요",
      "action": "close"
     }
    ]
@@ -99,7 +99,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐요, 시아",
      "action": "close"
     }
    ]
@@ -127,7 +127,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "천천히 해요",
      "action": "close"
     }
    ]
@@ -155,7 +155,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "무리하지 마요",
      "action": "close"
     }
    ]
@@ -183,7 +183,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 얘기해요",
      "action": "close"
     }
    ]
@@ -211,7 +211,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "간식 챙겨요",
      "action": "close"
     }
    ]
@@ -239,7 +239,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "좋은 밤 보내",
      "action": "close"
     }
    ]
@@ -258,7 +258,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "하하, 또 봐!",
      "action": "close"
     }
    ]
@@ -277,7 +277,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "수고해요",
      "action": "close"
     }
    ]
@@ -296,7 +296,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "다음 교환회 때!",
      "action": "close"
     }
    ]
@@ -315,7 +315,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 들를게요",
      "action": "close"
     }
    ]
@@ -337,7 +337,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐, 루미!",
      "action": "close"
     }
    ]
@@ -359,7 +359,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "알겠어요",
      "action": "close"
     }
    ]
@@ -381,7 +381,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 올게요",
      "action": "close"
     }
    ]
@@ -403,7 +403,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐, 루미!",
      "action": "close"
     }
    ]
@@ -425,7 +425,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "알겠어요",
      "action": "close"
     }
    ]
@@ -447,7 +447,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 올게요",
      "action": "close"
     }
    ]
@@ -469,7 +469,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐, 루미!",
      "action": "close"
     }
    ]
@@ -491,7 +491,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "알겠어요",
      "action": "close"
     }
    ]
@@ -513,7 +513,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 올게요",
      "action": "close"
     }
    ]
@@ -535,7 +535,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "무리하지 마요",
      "action": "close"
     }
    ]
@@ -557,7 +557,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "그럼 이만",
      "action": "close"
     }
    ]
@@ -579,7 +579,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "좋은 밤 보내",
      "action": "close"
     }
    ]
@@ -601,7 +601,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 얘기해요",
      "action": "close"
     }
    ]
@@ -635,7 +635,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "차 잘 마셨어요",
      "action": "close"
     }
    ]
@@ -669,7 +669,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 얘기해요",
      "action": "close"
     }
    ]
@@ -703,7 +703,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "무리하지 마요",
      "action": "close"
     }
    ]
@@ -737,7 +737,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "알겠어요",
      "action": "close"
     }
    ]
@@ -771,7 +771,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 올게요",
      "action": "close"
     }
    ]
@@ -805,7 +805,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "수고해요",
      "action": "close"
     }
    ]
@@ -839,7 +839,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "하하, 또 봐!",
      "action": "close"
     }
    ]
@@ -873,7 +873,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐요, 시아",
      "action": "close"
     }
    ]
@@ -907,7 +907,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "또 봐, 루미!",
      "action": "close"
     }
    ]
@@ -936,7 +936,7 @@
    ],
    "choices": [
     {
-     "text": "또 봐요",
+     "text": "알겠어요",
      "action": "close"
     }
    ]

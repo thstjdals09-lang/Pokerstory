@@ -50,6 +50,8 @@ static func complete(state: GameState, quest: Dictionary, option: int = -1) -> D
 	if option >= 0 and option < options.size():
 		chosen = options[option]
 		effects.append_array(chosen.get("effects", []))
+		# The choice is remembered, so the giver can answer it later (content finishing).
+		effects.append({"type": "flag", "flag": "choice:%s:%d" % [quest_id, option]})
 	effects.append({"type": "flag", "flag": "done:" + quest_id})
 	var applied := Effects.apply(state, effects)
 	return {"ok": true, "reward": reward, "messages": applied.get("messages", []), "option": chosen}

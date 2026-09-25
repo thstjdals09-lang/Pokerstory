@@ -15,8 +15,9 @@
     ]
    },
    "lines": [
+    "(모아가 우편함 앞에서 빈 봉투를 뒤집어 보고 있다.)",
     "이번 모임의 초대장, 분명 여기에 두었는데 봉투만 남았어요.",
-    "누가 가져간 걸까요? 우편함이랑 숲길 쪽에서 봤다는 사람이 있었는데…"
+    "초대장이 없으면 처음 오는 사람은 모임이 있는지도 모를 거예요. 우편함 쪽이랑 숲길 쪽에서 봤다는 사람이 있었는데…"
    ],
    "choices": [
     {
@@ -295,9 +296,9 @@
     ]
    },
    "lines": [
-    "모아와 노아가 게시판 앞에서 기다리고 있어요.",
-    "노아: 도장이랑 문양 기록, 둘 다 찾았군요. 여기에 새로 적어 봐요.",
-    "모아: 뭐라고 쓸까요? 궁금한 게 있으면 먼저 물어봐요!"
+    "(카드룸 게시판 앞. 모아는 분필을, 노아는 옛 초대장을 들고 있다.)",
+    "노아: 도장이랑 문양 기록, 둘 다 찾았네요. 옛 초대장 끝줄이 이거였대요. '누구든, 우연히 온 사람도.'",
+    "모아: 새 초대장 대신 게시판에 크게 적을래요. 적기 전에, 궁금한 거 있으면 먼저 물어봐요!"
    ],
    "choices": [
     {
@@ -318,7 +319,8 @@
    "ref_only": true,
    "lines": [
     "모아: 물론이죠! 친구랑 와도, 포커를 몰라도, 구경만 해도 돼요.",
-    "게시판에 '모두 환영'이라고 크게 적었어요. 노아가 옛 우편함과 쉼터 기록을 정리하겠대요."
+    "(분필 소리. 게시판 한가운데에 '모두 환영'이 적힌다.)",
+    "노아: 이번엔 젖지 않게, 제가 우편함마다 한 장씩 넣어 둘게요."
    ],
    "choices": [
     {
@@ -399,8 +401,9 @@
     }
    },
    "lines": [
-    "게시판에 쪽지 붙인 거 봤어? 친목 모임을 늘려 달라고 쓴 게 나야.",
-    "이긴 사람만 오면, 처음 온 친구는 어디 앉지?"
+    "(루미가 게시판 쪽지를 떼었다가 다시 붙이고 있다.)",
+    "친목 모임 늘려 달라고 쓴 거 나야. 이긴 사람만 오면, 처음 온 친구는 어디 앉지?",
+    "카일 말도 틀린 건 아니야. 근데 규칙부터 들이밀면 처음 온 사람은 뒷걸음질 칠 것 같아."
    ],
    "effects": [
     {
@@ -434,7 +437,8 @@
    },
    "lines": [
     "규칙을 미리 알려 달라고 쓴 건 나다.",
-    "경기가 시작되면 누구에게나 같은 규칙이어야 하지."
+    "경기가 시작되면 누구에게나 같은 규칙이어야 하지.",
+    "루미가 모임을 아끼는 건 안다. 그러니 더 제대로 하고 싶은 거다."
    ],
    "effects": [
     {
@@ -885,7 +889,8 @@
    "ref_only": true,
    "lines": [
     "카일: 좋다. 어느 쪽으로 시작하든, 두 형식 모두 언제든 열려 있게 하지.",
-    "루미: 카드 정원에서는 도전 모임, 광장과 찻집에서는 교류 모임! 축제 준비 게시판도 새로 붙이자."
+    "루미: 그럼 카드 정원에선 도전 모임, 광장이랑 찻집에선 교류 모임! …우리 방금 싸운 거 맞아?",
+    "카일: 의견이 달랐을 뿐이다. 싸움은 아니었다."
    ],
    "choices": [
     {
@@ -1156,14 +1161,16 @@
     "time": "evening"
    },
    "lines": [
-    "주노: 여러분! 첫 네잎 저녁제를 시작합니다!",
-    "참가하지 않아도 괜찮아요. 관전하거나 준비를 도울 수도 있어요."
+    "(광장 가득 등불이 켜지고, 부스 앞에 주민들이 모여 있다.)",
+    "주노: 여러분! 첫 네잎 저녁제를 시작합니다! …와, 진짜 다 왔네?",
+    "미리: 오늘 온 사람은 제가 다 적고 있어요. 이긴 사람 칸은 없어요.",
+    "참가하지 않아도 괜찮아요. 관전하거나, 정리를 돕거나, 한 바퀴 돌며 인사만 해도 돼요."
    ],
    "choices": [
     {
      "text": "관전하기",
      "action": "dialogue",
-     "arg": "scn.festival_end",
+     "arg": "scn.fest_watch",
      "effects": [
       {
        "type": "flag",
@@ -1200,7 +1207,7 @@
     {
      "text": "정리 돕기",
      "action": "dialogue",
-     "arg": "scn.festival_end",
+     "arg": "scn.fest_help",
      "effects": [
       {
        "type": "flag",
@@ -1216,7 +1223,7 @@
     {
      "text": "모두와 인사하기",
      "action": "dialogue",
-     "arg": "scn.festival_end",
+     "arg": "scn.fest_greet",
      "effects": [
       {
        "type": "flag",
@@ -1231,8 +1238,11 @@
    "npc": "obj:festival_booth",
    "ref_only": true,
    "lines": [
-    "광장이 불빛과 웃음소리로 가득해요.",
-    "주노: 첫 네잎 저녁제, 모두 고마워요! 다음에도 언제든 열 수 있어요!"
+    "(마지막 판이 끝나고, 등불이 하나씩 낮아진다.)",
+    "주노: 첫 네잎 저녁제, 여기까지! 광장 부스에서 언제든 다시 열 수 있어요!",
+    "루미: 다음 모임엔 오늘 처음 온 얼굴들 자리부터 챙길래.",
+    "카일: 규칙대로 끝났다. 이런 저녁이라면 규칙을 더 짧게 써도 되겠군.",
+    "미리: 참석자 명단이 모자라서 뒷면까지 썼어요."
    ],
    "choices": [
     {
@@ -1713,6 +1723,416 @@
     {
      "text": "닫기",
      "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "scn.fourleaf_evening_heart",
+   "npc": "obj:festival_booth",
+   "priority": 73,
+   "conditions": {
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_heart"
+    ],
+    "flags_false": [
+     "story.act3_complete"
+    ],
+    "time": "evening"
+   },
+   "lines": [
+    "(광장 가득 등불이 켜지고, 부스 앞에 주민들이 모여 있다.)",
+    "주노: 여러분! 첫 네잎 저녁제를 시작합니다! …와, 진짜 다 왔네?",
+    "미리: 오늘 온 사람은 제가 다 적고 있어요. 이긴 사람 칸은 없어요.",
+    "무대 위 하트 깃발 아래서 리라가 찻잔을 돌린다. '돌봄'의 저녁이다.",
+    "참가하지 않아도 괜찮아요. 관전하거나, 정리를 돕거나, 한 바퀴 돌며 인사만 해도 돼요."
+   ],
+   "choices": [
+    {
+     "text": "관전하기",
+     "action": "dialogue",
+     "arg": "scn.fest_watch",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_watched"
+      }
+     ]
+    },
+    {
+     "text": "포커 대회 참가하기",
+     "action": "start_poker",
+     "arg": "tournament|",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.act3_complete"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.06_08"
+      },
+      {
+       "type": "chips",
+       "amount": 50,
+       "reason": "story:act3",
+       "once": "story_reward:act3"
+      },
+      {
+       "type": "flag",
+       "flag": "story.festival_played"
+      }
+     ],
+     "once_key": "evt:festival_first_tournament"
+    },
+    {
+     "text": "정리 돕기",
+     "action": "dialogue",
+     "arg": "scn.fest_help",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_helped"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.04_08",
+       "once": "evt:festival_help_memento"
+      }
+     ]
+    },
+    {
+     "text": "모두와 인사하기",
+     "action": "dialogue",
+     "arg": "scn.fest_greet",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_greeted"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scn.fourleaf_evening_clover",
+   "npc": "obj:festival_booth",
+   "priority": 73,
+   "conditions": {
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_clover"
+    ],
+    "flags_false": [
+     "story.act3_complete"
+    ],
+    "time": "evening"
+   },
+   "lines": [
+    "(광장 가득 등불이 켜지고, 부스 앞에 주민들이 모여 있다.)",
+    "주노: 여러분! 첫 네잎 저녁제를 시작합니다! …와, 진짜 다 왔네?",
+    "미리: 오늘 온 사람은 제가 다 적고 있어요. 이긴 사람 칸은 없어요.",
+    "클로버 깃발 아래 빈 의자가 하나 놓여 있다. 우연히 올 누군가의 자리다.",
+    "참가하지 않아도 괜찮아요. 관전하거나, 정리를 돕거나, 한 바퀴 돌며 인사만 해도 돼요."
+   ],
+   "choices": [
+    {
+     "text": "관전하기",
+     "action": "dialogue",
+     "arg": "scn.fest_watch",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_watched"
+      }
+     ]
+    },
+    {
+     "text": "포커 대회 참가하기",
+     "action": "start_poker",
+     "arg": "tournament|",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.act3_complete"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.06_08"
+      },
+      {
+       "type": "chips",
+       "amount": 50,
+       "reason": "story:act3",
+       "once": "story_reward:act3"
+      },
+      {
+       "type": "flag",
+       "flag": "story.festival_played"
+      }
+     ],
+     "once_key": "evt:festival_first_tournament"
+    },
+    {
+     "text": "정리 돕기",
+     "action": "dialogue",
+     "arg": "scn.fest_help",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_helped"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.04_08",
+       "once": "evt:festival_help_memento"
+      }
+     ]
+    },
+    {
+     "text": "모두와 인사하기",
+     "action": "dialogue",
+     "arg": "scn.fest_greet",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_greeted"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scn.fourleaf_evening_diamond",
+   "npc": "obj:festival_booth",
+   "priority": 73,
+   "conditions": {
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_diamond"
+    ],
+    "flags_false": [
+     "story.act3_complete"
+    ],
+    "time": "evening"
+   },
+   "lines": [
+    "(광장 가득 등불이 켜지고, 부스 앞에 주민들이 모여 있다.)",
+    "주노: 여러분! 첫 네잎 저녁제를 시작합니다! …와, 진짜 다 왔네?",
+    "미리: 오늘 온 사람은 제가 다 적고 있어요. 이긴 사람 칸은 없어요.",
+    "다이아 깃발 기둥은 비비가 짰다. 손재주의 저녁답게 흔들림 하나 없다.",
+    "참가하지 않아도 괜찮아요. 관전하거나, 정리를 돕거나, 한 바퀴 돌며 인사만 해도 돼요."
+   ],
+   "choices": [
+    {
+     "text": "관전하기",
+     "action": "dialogue",
+     "arg": "scn.fest_watch",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_watched"
+      }
+     ]
+    },
+    {
+     "text": "포커 대회 참가하기",
+     "action": "start_poker",
+     "arg": "tournament|",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.act3_complete"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.06_08"
+      },
+      {
+       "type": "chips",
+       "amount": 50,
+       "reason": "story:act3",
+       "once": "story_reward:act3"
+      },
+      {
+       "type": "flag",
+       "flag": "story.festival_played"
+      }
+     ],
+     "once_key": "evt:festival_first_tournament"
+    },
+    {
+     "text": "정리 돕기",
+     "action": "dialogue",
+     "arg": "scn.fest_help",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_helped"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.04_08",
+       "once": "evt:festival_help_memento"
+      }
+     ]
+    },
+    {
+     "text": "모두와 인사하기",
+     "action": "dialogue",
+     "arg": "scn.fest_greet",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_greeted"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scn.fourleaf_evening_spade",
+   "npc": "obj:festival_booth",
+   "priority": 73,
+   "conditions": {
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_spade"
+    ],
+    "flags_false": [
+     "story.act3_complete"
+    ],
+    "time": "evening"
+   },
+   "lines": [
+    "(광장 가득 등불이 켜지고, 부스 앞에 주민들이 모여 있다.)",
+    "주노: 여러분! 첫 네잎 저녁제를 시작합니다! …와, 진짜 다 왔네?",
+    "미리: 오늘 온 사람은 제가 다 적고 있어요. 이긴 사람 칸은 없어요.",
+    "스페이드 깃발 아래 카일의 규칙판. 첫 줄은 '구경만 해도 된다'.",
+    "참가하지 않아도 괜찮아요. 관전하거나, 정리를 돕거나, 한 바퀴 돌며 인사만 해도 돼요."
+   ],
+   "choices": [
+    {
+     "text": "관전하기",
+     "action": "dialogue",
+     "arg": "scn.fest_watch",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_watched"
+      }
+     ]
+    },
+    {
+     "text": "포커 대회 참가하기",
+     "action": "start_poker",
+     "arg": "tournament|",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.act3_complete"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.06_08"
+      },
+      {
+       "type": "chips",
+       "amount": 50,
+       "reason": "story:act3",
+       "once": "story_reward:act3"
+      },
+      {
+       "type": "flag",
+       "flag": "story.festival_played"
+      }
+     ],
+     "once_key": "evt:festival_first_tournament"
+    },
+    {
+     "text": "정리 돕기",
+     "action": "dialogue",
+     "arg": "scn.fest_help",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_helped"
+      },
+      {
+       "type": "item",
+       "item": "item.memento.04_08",
+       "once": "evt:festival_help_memento"
+      }
+     ]
+    },
+    {
+     "text": "모두와 인사하기",
+     "action": "dialogue",
+     "arg": "scn.fest_greet",
+     "effects": [
+      {
+       "type": "flag",
+       "flag": "story.festival_greeted"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scn.fest_watch",
+   "npc": "obj:festival_booth",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "(관전석 끝자리. 하루가 손을 흔든다.)",
+    "하루: 끝까지 볼 거예요. 오늘은 하나도 안 무서워요.",
+    "모아: 방금 주노 봤어요? 투페어를 깨고 크게 노렸어요! 졌지만 박수는 제일 컸어요."
+   ],
+   "choices": [
+    {
+     "text": "계속 둘러보기",
+     "action": "dialogue",
+     "arg": "scn.festival_end"
+    }
+   ]
+  },
+  {
+   "id": "scn.fest_help",
+   "npc": "obj:festival_booth",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "(부스 뒤편. 비비가 흔들리는 기둥을 붙잡고 있다.)",
+    "비비: 거기, 이쪽 좀 잡아 줘요. 됐다. 이제 안 흔들려요.",
+    "율: 의자 스무 개, 부서진 것 없음. 좋은 저녁이다."
+   ],
+   "choices": [
+    {
+     "text": "계속 둘러보기",
+     "action": "dialogue",
+     "arg": "scn.festival_end"
+    }
+   ]
+  },
+  {
+   "id": "scn.fest_greet",
+   "npc": "obj:festival_booth",
+   "priority": 0,
+   "ref_only": true,
+   "conditions": {},
+   "lines": [
+    "(광장을 한 바퀴 돌며 인사를 나눈다.)",
+    "시아: 저 여행자분, 내일 하루 더 묵겠대요!",
+    "노아: 답장 보낸 사람들이 다 왔어요. 한 명도 빠짐없이.",
+    "엘라: 깃발 자리 봤어요? 옛 기록에 적힌 자리랑 똑같아요!"
+   ],
+   "choices": [
+    {
+     "text": "계속 둘러보기",
+     "action": "dialogue",
+     "arg": "scn.festival_end"
     }
    ]
   }

@@ -440,9 +440,14 @@ func _finish() -> void:
 	var outcome := PokerEconomy.outcome_key(match_ref.outcome)
 	var said: Array = ["%s: \"%s\"" % [opponent_name(), Game.opponent_line(Game.match_opponent(match_ref), outcome)]]
 	var cheers: Array = Game.data.poker.get("spectator_lines", {}).get(outcome, [])
+	var own: Dictionary = Game.data.poker.get("spectator_lines_by_npc", {})
 	for i in _spectators.size():
-		if not cheers.is_empty():
-			said.append("%s: \"%s\"" % [Game.data.npc_name(_spectators[i]), cheers[i % cheers.size()]])
+		# Each onlooker reacts in their own voice when they have a line; otherwise a common cheer.
+		var line := str(own.get(_spectators[i], {}).get(outcome, ""))
+		if line == "" and not cheers.is_empty():
+			line = str(cheers[i % cheers.size()])
+		if line != "":
+			said.append("%s: \"%s\"" % [Game.data.npc_name(_spectators[i]), line])
 	_result_line.text = "\n".join(said)
 	refresh()
 	again_button.grab_focus.call_deferred()
