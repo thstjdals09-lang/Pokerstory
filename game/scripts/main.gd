@@ -30,6 +30,9 @@ var _fade: ColorRect
 var _caption: Label
 var _caption_tween: Tween = null
 var _dialogue_npc := ""
+var _last_entry := {}
+## True while a story scene shown right after a first greeting is open (tests use it).
+var continued_scene := false
 
 
 func _ready() -> void:
@@ -311,6 +314,8 @@ func _open_object_panel(id: String, target: Dictionary) -> void:
 
 func _show_entry(entry: Dictionary) -> void:
 	last_entry_id = str(entry.get("id", ""))
+	_last_entry = entry
+	continued_scene = false
 	var effects: Array = []
 	for f in entry.get("set_flags", []):
 		effects.append({"type": "flag", "flag": f})
@@ -381,7 +386,7 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 		"job_deliver":
 			var jr: Dictionary = Game.job_step("deliver", _dialogue_npc)
 			if jr["ok"]:
-				hud.show_toast("편지 전달 완료! 보수 칩 +%d" % int(jr["reward"]))
+				hud.show_toast("편지 전달 완료! 보수 칩 +%d  %s" % [int(jr["reward"]), str(jr.get("line", ""))])
 				_show_lines(_dialogue_npc, ["편지 고마워요! 잘 받았어요."], [])
 				return
 			_back_to_world()
@@ -440,6 +445,13 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 			if c.has("next"):
 				_show_entry(DialogueResolver.find(Game.data.dialogue, c["next"]))
 				return
+			# A first greeting flows straight into a story scene the resident has waiting.
+			if action == "close" and _last_entry.get("greeting", false) and world != null:
+				var waiting: Dictionary = Game.resolve_entry(_dialogue_npc, world.location_id)
+				if waiting.get("marker", false) and str(waiting.get("id", "")) != last_entry_id and int(waiting.get("priority", 0)) >= 60:
+					_show_entry(waiting)
+					continued_scene = true
+					return
 			_back_to_world()
 
 
@@ -517,6 +529,7 @@ func _open_job_board() -> void:
 		{"text": "다른 아르바이트 보기", "action": "board", "arg": "jobs"},
 		{"text": "주민들의 부탁 보기", "action": "board", "arg": "requests"},
 		{"text": "마을 소식 보기", "action": "board", "arg": "news"},
+		{"text": "요즘 할 수 있는 일", "action": "board", "arg": "todo"},
 		{"text": "포커 연습 한 판 (칩 없이)", "action": "start_poker", "arg": "practice|"},
 		{"text": "다음에 하기", "action": "close"},
 	])
@@ -543,6 +556,9 @@ func _open_board_page(page: String) -> void:
 				lines.append("지금 새로 들어온 부탁은 없어요.")
 		"news":
 			lines.append(Game.story_news())
+		"todo":
+			for t in Game.things_to_do():
+				lines.append("· " + t)
 	_show_system_dialogue("마을 게시판", ["\n".join(lines)], [{"text": "닫기", "action": "close"}])
 
 
@@ -551,7 +567,7 @@ func _collect_job_spot(spot_id: String) -> void:
 	if not result["ok"]:
 		return
 	if result["done"]:
-		hud.show_toast("아르바이트 완료! 보수 칩 +%d" % int(result["reward"]))
+		hud.show_toast("아르바이트 완료! 보수 칩 +%d  %s" % [int(result["reward"]), str(result.get("line", ""))])
 	else:
 		hud.show_toast("%d / %d" % [int(result["collected"]), int(result["total"])])
 
@@ -581,7 +597,7 @@ func _shelve(good: String) -> void:
 		_open_shelving()
 		return
 	if r["ok"] and r["done"]:
-		hud.show_toast("선반 정리 완료! 보수 칩 +%d" % int(r["reward"]))
+		hud.show_toast("선반 정리 완료! 보수 칩 +%d  %s" % [int(r["reward"]), str(r.get("line", ""))])
 		_back_to_world()
 		return
 	if r["ok"]:

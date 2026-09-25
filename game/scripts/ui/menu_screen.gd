@@ -253,7 +253,7 @@ func show_relations() -> void:
 		if not r["memories"].is_empty():
 			var names: Array = []
 			for m in r["memories"]:
-				names.append(str(Game.data.quests.get(m, {}).get("name", m)))
+				names.append(Game.memory_name(str(m)))
 			_book_list.add_child(UiKit.wrap_label("  기억: " + ", ".join(names), 14, UiKit.MUTED))
 
 

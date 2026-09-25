@@ -110,6 +110,7 @@ func _build_interactables() -> void:
 		node.position = Geo.vec(place["pos"])
 		add_child(node)
 		node.setup(def)
+		node.set_activity(str(place.get("activity", "")))
 		npc_nodes[npc_id] = node
 		uid += 1
 		interactables.append({

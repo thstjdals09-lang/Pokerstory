@@ -95,5 +95,8 @@ static func _apply_one(state: GameState, e: Dictionary, messages: Array) -> void
 			state.equipped[str(e["category"])] = str(e["item"])
 		"toast":
 			messages.append(str(e["text"]))
+		"poker_mentioned":
+			var r := state.relation(str(e["npc"]))
+			r["poker_talked"] = int(r["poker_hands"])
 		_:
 			push_error("Unknown effect type: %s" % e.get("type", ""))

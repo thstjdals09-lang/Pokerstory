@@ -345,6 +345,16 @@
       {
        "type": "toast",
        "text": "1막 완료! 새 이야기: 서로 다른 테이블"
+      },
+      {
+       "type": "chips",
+       "amount": 30,
+       "reason": "story:act1",
+       "once": "story_reward:act1"
+      },
+      {
+       "type": "toast",
+       "text": "모아가 모임 기금에서 사례를 보탰어요. 칩 +30"
       }
      ]
     }
@@ -904,6 +914,26 @@
       {
        "type": "toast",
        "text": "2막 완료! 새 이야기: 네잎 저녁제 — 게시판에서 기여 현황을 확인하세요"
+      },
+      {
+       "type": "chips",
+       "amount": 40,
+       "reason": "story:act2",
+       "once": "story_reward:act2"
+      },
+      {
+       "type": "toast",
+       "text": "루미와 카일이 모임 기금을 나눠 줬어요. 칩 +40"
+      },
+      {
+       "type": "memory",
+       "npc": "npc_lumi",
+       "id": "act2_mediation"
+      },
+      {
+       "type": "memory",
+       "npc": "npc_kyle",
+       "id": "act2_mediation"
       }
      ]
     }
@@ -1149,8 +1179,19 @@
       {
        "type": "item",
        "item": "item.memento.06_08"
+      },
+      {
+       "type": "chips",
+       "amount": 50,
+       "reason": "story:act3",
+       "once": "story_reward:act3"
+      },
+      {
+       "type": "flag",
+       "flag": "story.festival_played"
       }
-     ]
+     ],
+     "once_key": "evt:festival_first_tournament"
     },
     {
      "text": "정리 돕기",
@@ -1205,6 +1246,16 @@
       {
        "type": "toast",
        "text": "3막 완료! 집에서 자고 아침을 맞아 보세요"
+      },
+      {
+       "type": "chips",
+       "amount": 50,
+       "reason": "story:act3",
+       "once": "story_reward:act3"
+      },
+      {
+       "type": "toast",
+       "text": "마을 회관이 축제 도우미에게 사례했어요. 칩 +50"
       }
      ]
     }

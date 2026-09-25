@@ -367,6 +367,24 @@ func _after_hand(m: PokerMatch, result: Dictionary) -> void:
 	state.poker_history[opp] = hist.slice(maxi(0, hist.size() - 10))
 	var rel := state.relation(opp)
 	rel["poker_hands"] = int(rel["poker_hands"]) + 1
+	# Social memory (content alpha): the first hand together, the first win against them (a small
+	# one-time prize, never a consolation for losing), the tournament meeting, the mode's context.
+	var firsts: Array = [{"type": "memory", "npc": opp, "id": "poker_first"}]
+	if m.mode == "tournament":
+		firsts.append({"type": "memory", "npc": opp, "id": "poker_tournament"})
+	elif m.mode == "friendly_challenge":
+		firsts.append({"type": "memory", "npc": opp, "id": "poker_challenge"})
+	elif m.mode == "homegame" and m.place.begins_with("player_home"):
+		firsts.append({"type": "memory", "npc": opp, "id": "poker_house"})
+	if result["outcome"] == "win":
+		# Not during the first-play prologue: its approved economy (win +20 net, no bonuses) stays exact.
+		var bonus := int(poker_economy().get("first_win_bonus", 0)) if state.get_flag("story.act1_started") else 0
+		if bonus > 0:
+			firsts.append({"type": "chips", "amount": bonus, "reason": "poker_first_win:" + opp, "once": "poker_first_win:" + opp})
+			if not state.events_done.has("poker_first_win:" + opp):
+				result["first_win_bonus"] = bonus
+		firsts.append({"type": "memory", "npc": opp, "id": "poker_beat"})
+	Effects.apply(state, firsts)
 	Effects.apply(state, [
 		{"type": "rivalry", "npc": opp, "amount": RIVALRY_PER_HAND},
 		{"type": "contribution", "id": "poker:first"},
@@ -379,6 +397,12 @@ func _after_hand(m: PokerMatch, result: Dictionary) -> void:
 		if stage < seen.size():
 			state.set_flag(str(seen[stage]))
 		if result["outcome"] == "win":
+			var prizes: Array = poker_mode("tournament").get("round_prizes", [])
+			if stage < prizes.size() and int(prizes[stage]) > 0:
+				var key := "tournament_prize:%d" % stage
+				if not state.events_done.has(key):
+					result["round_prize"] = int(prizes[stage])
+				Effects.apply(state, [{"type": "chips", "amount": int(prizes[stage]), "reason": key, "once": key}])
 			stage += 1
 			if stage >= poker_mode("tournament").get("stages", []).size():
 				stage = 0
@@ -421,6 +445,8 @@ func set_time(time: String) -> bool:
 	if time != "day" and time != "evening":
 		return false
 	var change := func() -> Dictionary:
+		if state.time_of_day == "evening" and time == "day":
+			state.day_count += 1
 		state.time_of_day = time
 		return {"ok": true}
 	return _commit(change)["ok"]
@@ -508,6 +534,9 @@ func _job_step(step: Callable) -> Dictionary:
 		var r: Dictionary = step.call()
 		if r["ok"] and not r["done"]:
 			r["skipped"] = true
+		elif r["ok"]:
+			state.set_flag("job_done:" + run.job_id)
+			r["line"] = job_done_line(run.job_id)
 		return r
 	var undo := func():
 		run.collected = collected_before
@@ -818,6 +847,105 @@ func equip(item_id: String) -> bool:
 func item_color(item_id: String, fallback: Color) -> Color:
 	var ph: Dictionary = data.items.get(item_id, {}).get("placeholder", {})
 	return Color(str(ph["color"])) if ph.has("color") else fallback
+
+
+## A short line on finishing a job that follows the story (content alpha).
+func job_done_line(job_id: String) -> String:
+	return str(data.jobs.get(job_id, {}).get("done_lines", {}).get(Conditions.current_act(state), ""))
+
+
+## Readable name of a resident memory: a task name, or data/memories.json.
+func memory_name(id: String) -> String:
+	if data.quests.has(id):
+		return str(data.quests[id]["name"])
+	return str(data.memories.get(id, id))
+
+
+## A line said when sitting down (content alpha): depends on the table and on the history with
+## this opponent (first hand, after the player won, after the player lost, again). Public only.
+func poker_opening(m: PokerMatch) -> String:
+	var opp := match_opponent(m)
+	var o: Dictionary = data.opponents.get(opp, {})
+	var opens: Dictionary = o.get("open", {})
+	var line := ""
+	var hands := int(state.relation(opp)["poker_hands"])
+	var hist: Array = state.poker_history.get(opp, [])
+	if opens.has(m.mode) and hands > 0:
+		line = str(opens[m.mode])
+	elif hands == 0:
+		line = str(opens.get("first", ""))
+	elif not hist.is_empty() and str(hist[hist.size() - 1].get("outcome", "")) == "win":
+		line = str(opens.get("after_player_win", opens.get("again", "")))
+	elif not hist.is_empty() and str(hist[hist.size() - 1].get("outcome", "")) == "lose":
+		line = str(opens.get("after_player_loss", opens.get("again", "")))
+	else:
+		line = str(opens.get("again", ""))
+	var intro := str(poker_mode(m.mode).get("intro", ""))
+	var said := "%s: \"%s\"" % [data.npc_name(opp), line] if line != "" else ""
+	return " ".join([intro, said]).strip_edges()
+
+
+## Extra result lines: one-time prizes and what the table remembers.
+func poker_result_notes(m: PokerMatch, result: Dictionary) -> Array:
+	var notes: Array = []
+	var opp := match_opponent(m)
+	if result.has("first_win_bonus"):
+		notes.append("%s에게 처음 이겼어요! 기념 칩 +%d" % [data.npc_name(opp), int(result["first_win_bonus"])])
+	if result.has("round_prize"):
+		notes.append("대회 라운드 상금 +%d칩" % int(result["round_prize"]))
+	var hands := int(state.relation(opp)["poker_hands"])
+	if m.mode == "friendly_challenge" and hands > 1:
+		notes.append("%s와의 %d번째 승부" % [data.npc_name(opp), hands])
+	elif hands == 1 and m.mode != "practice":
+		notes.append("%s와 처음 함께한 판이에요." % data.npc_name(opp))
+	return notes
+
+
+## "What can I do now?" (content alpha, 12 postgame): not a checklist, just where life continues.
+func things_to_do() -> Array:
+	var out: Array = []
+	var news: Array = []
+	for npc in data.npc_order:
+		if not state.has_met(npc):
+			continue
+		for id in data.quest_order:
+			var q: Dictionary = data.quests[id]
+			if q.get("kind", "") == "episode" and str(q["giver"]) == npc and quest_available(id):
+				news.append(data.npc_name(npc))
+				break
+	var unmet := data.npc_order.filter(func(n): return not state.has_met(n)).size()
+	if unmet > 0:
+		out.append("아직 인사하지 못한 이웃이 %d명 있어요." % unmet)
+	if not news.is_empty():
+		out.append("이야기를 들려줄 이웃: " + ", ".join(news.slice(0, 4)) + (" 외 %d명" % (news.size() - 4) if news.size() > 4 else ""))
+	var reqs := data.quest_order.filter(func(id): return data.is_quest(id) and quest_available(id)).size()
+	if reqs > 0:
+		out.append("게시판에 새 부탁이 %d개 있어요." % reqs)
+	var close := 0
+	for npc in data.npc_order:
+		if state.has_met(npc) and int(state.relation(npc)["friendship"]) < 30:
+			close += 1
+	if close > 0:
+		out.append("더 가까워질 수 있는 이웃이 %d명 있어요. 이야기와 부탁, 방문이 쌓이면 달라져요." % close)
+	var rivals: Array = []
+	for npc in data.opponents:
+		if int(state.relation(npc)["poker_hands"]) > 0 and int(state.relation(npc)["poker_hands"]) < 3:
+			rivals.append(data.npc_name(npc))
+	if not rivals.is_empty():
+		out.append("다시 붙어 보자는 상대: " + ", ".join(rivals.slice(0, 3)))
+	var left := data.project_order.size() - state.projects.size()
+	if left > 0:
+		out.append("회관 공공사업이 %d개 남아 있어요." % left)
+	if not home_stage_def(state.home_stage + 1).is_empty():
+		out.append("집을 %s(으)로 넓힐 수 있어요." % str(home_stage_def(state.home_stage + 1)["name"]))
+	var found := state.collection.size()
+	if found < data.item_order.size():
+		out.append("수집 도감 %d / %d" % [found, data.item_order.size()])
+	if state.get_flag("story.act3_complete"):
+		out.append("네잎 저녁제는 저녁마다 광장 부스에서 다시 열 수 있어요." + ("" if state.tournament.get("rewarded", false) else " 대회 우승 기념품도 아직이에요."))
+	if out.is_empty():
+		out.append("마을은 오늘도 평소처럼 흘러가요. 가고 싶은 곳으로 가 보세요.")
+	return out
 
 
 ## Village news for the notice board: the next story step and festival contributions.

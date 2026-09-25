@@ -109,6 +109,13 @@ static func _migrate(data: Dictionary, from_version: int) -> Dictionary:
 			d["tournament"] = {"stage": 0, "rewarded": false}
 			d["tracked_quest"] = ""
 			return d
+		4:
+			# v4 -> v5 (content alpha): a day counter for village life. Relations gain
+			# "poker_talked" (read with a default), so nothing else changes.
+			var d := data.duplicate(true)
+			d["save_version"] = 5
+			d["day_count"] = 0
+			return d
 	return {}
 
 

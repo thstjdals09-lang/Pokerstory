@@ -1,0 +1,945 @@
+{
+ "_comment": "Content alpha: story foreshadowing, reactions, choice callbacks, festival memory.",
+ "entries": [
+  {
+   "id": "fore.nora_wet_envelope",
+   "npc": "npc_nora",
+   "priority": 29,
+   "once": true,
+   "conditions": {
+    "met": "npc_nora",
+    "act": "prologue"
+   },
+   "lines": [
+    "우편함에 젖은 봉투가 하나 들어왔어요. 받는 사람 칸이 번져서… 누구 건지 모르겠어요.",
+    "모임 게시판 쪽에서 날아왔나 봐요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "fore.moa_board",
+   "npc": "npc_moa",
+   "priority": 26,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "act": "prologue",
+    "flags_true": [
+     "lumi_lamp_reaction_seen"
+    ],
+    "flags_false": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "게시판에 붙여 둔 게… 어, 아니에요! 아무것도 아니에요!",
+    "(모아가 빈 핀을 만지작거린다.)"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.react_juno",
+   "npc": "npc_juno",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_juno",
+    "act": "act1"
+   },
+   "lines": [
+    "초대장이 사라졌다며?! 광장에 공지 붙일까? …모아가 부끄러워하려나."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.react_rira",
+   "npc": "npc_rira",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_rira",
+    "act": "act1"
+   },
+   "lines": [
+    "초대장 없이도 오는 손님은 있어요. 그래도 처음 온 사람은 초대장이 있어야 용기가 나죠."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.react_sia",
+   "npc": "npc_sia",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_sia",
+    "act": "act1"
+   },
+   "lines": [
+    "초대장이 없으면 저 같은 사람은 모임이 있는지도 몰라요. 꼭 찾아 주세요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.after_haru",
+   "npc": "npc_haru",
+   "priority": 29,
+   "once": true,
+   "conditions": {
+    "met": "npc_haru",
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_haru",
+     "id": "act1_welcome"
+    }
+   ],
+   "lines": [
+    "게시판에 '포커를 몰라도 괜찮아요'가 있었어요. …저, 가 봐도 될까요?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.after_bibi",
+   "npc": "npc_bibi",
+   "priority": 29,
+   "once": true,
+   "conditions": {
+    "met": "npc_bibi",
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_bibi",
+     "id": "act1_welcome"
+    }
+   ],
+   "lines": [
+    "게시판 나사… 다시 조였어요. 이번엔 안 떨어져요. '모두 환영'이니까요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.after_ella",
+   "npc": "npc_ella",
+   "priority": 29,
+   "once": true,
+   "conditions": {
+    "met": "npc_ella",
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_ella",
+     "id": "act1_welcome"
+    }
+   ],
+   "lines": [
+    "게시판에 클로버 그림도 그렸대요! 옛 뜻이 다시 쓰였어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.after_yul",
+   "npc": "npc_yul",
+   "priority": 29,
+   "once": true,
+   "conditions": {
+    "met": "npc_yul",
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_yul",
+     "id": "act1_welcome"
+    }
+   ],
+   "lines": [
+    "'모두 환영'이면 의자가 더 필요하다. 만들어야겠다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act1.after_ona",
+   "npc": "npc_ona",
+   "priority": 29,
+   "once": true,
+   "conditions": {
+    "met": "npc_ona",
+    "flags_true": [
+     "story.act1_complete"
+    ]
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_ona",
+     "id": "act1_welcome"
+    }
+   ],
+   "lines": [
+    "게시판 글씨, 밤에도 보이게 등 하나 달아 뒀어."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.view_juno",
+   "npc": "npc_juno",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_juno",
+    "act": "act2"
+   },
+   "lines": [
+    "난 루미 쪽이 좋아! 파티는 많을수록 좋잖아. …카일 말도 맞긴 한데."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.view_miri",
+   "npc": "npc_miri",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_miri",
+    "act": "act2"
+   },
+   "lines": [
+    "저는 카일 쪽에 조금 더 마음이 가요. 규칙이 적혀 있으면 기록하기 쉬우니까요. 루미 마음도 알고요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.view_ren",
+   "npc": "npc_ren",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_ren",
+    "act": "act2"
+   },
+   "lines": [
+    "넌 어느 쪽이야? 난 둘 다 가능한 교환회를 상상 중!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.view_sera",
+   "npc": "npc_sera",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_sera",
+    "act": "act2"
+   },
+   "lines": [
+    "둘 다 마을을 좋아해서 생긴 다툼이에요. 그런 다툼은 금방 풀려요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_friendly_lumi",
+   "npc": "npc_lumi",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_friendly"
+    ]
+   },
+   "lines": [
+    "그날 네가 '친목부터'라고 해 줘서 용기가 났어. 그런데 카일 규칙판도 모임 입구에 붙였다?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_friendly_kyle",
+   "npc": "npc_kyle",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_friendly"
+    ]
+   },
+   "lines": [
+    "친목부터라… 네 말대로 해 보니 새 사람이 규칙을 먼저 묻더군. 순서는 따라오는 거였다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_friendly_moa",
+   "npc": "npc_moa",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_friendly"
+    ]
+   },
+   "lines": [
+    "친목 모임 첫날, 규칙 질문이 제일 많았어요! 루미가 카일을 불러왔어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_rules_lumi",
+   "npc": "npc_lumi",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_rules"
+    ]
+   },
+   "lines": [
+    "규칙부터라고 했을 때 조금 서운했어. 근데 규칙을 알고 온 사람이 더 오래 앉아 있더라."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_rules_kyle",
+   "npc": "npc_kyle",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_rules"
+    ]
+   },
+   "lines": [
+    "규칙 설명부터 하자고 한 너 덕에 첫 모임이 매끄러웠다. 끝나고 루미가 모두 붙잡고 저녁을 먹었지."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_rules_moa",
+   "npc": "npc_moa",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_rules"
+    ]
+   },
+   "lines": [
+    "규칙판 앞에 줄이 생겼어요! 그런데 다 읽고 나서 다들 루미 쪽으로 가더라고요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_both_lumi",
+   "npc": "npc_lumi",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_both"
+    ]
+   },
+   "lines": [
+    "'둘 다'라니, 그게 제일 어려운 답인데 제일 맞았어. 요즘 우린 번갈아 가며 모임을 열어."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_both_kyle",
+   "npc": "npc_kyle",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_both"
+    ]
+   },
+   "lines": [
+    "둘 다라는 답은 규칙으로 쓰기 어렵다. …그래서 루미와 같이 썼다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act2.callback_both_moa",
+   "npc": "npc_moa",
+   "priority": 38,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "flags_true": [
+     "story.act2_complete",
+     "story.act2_choice_both"
+    ]
+   },
+   "lines": [
+    "요일마다 친목이랑 규칙 모임이 번갈아 열려요! 게시판이 꽉 찼어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.prep_bibi",
+   "npc": "npc_bibi",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_bibi",
+    "act": "act3",
+    "flags_false": [
+     "story.festival_ready"
+    ]
+   },
+   "lines": [
+    "축제 부스… 흔들리는 데 있으면 알려 줘요. 오늘 밤새 고칠 수 있어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.prep_taeo",
+   "npc": "npc_taeo",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_taeo",
+    "act": "act3",
+    "flags_false": [
+     "story.festival_ready"
+    ]
+   },
+   "lines": [
+    "천막 바느질 반쯤 했어. 반은 리라 수다 들으면서."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.prep_ona",
+   "npc": "npc_ona",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_ona",
+    "act": "act3",
+    "flags_false": [
+     "story.festival_ready"
+    ]
+   },
+   "lines": [
+    "축제 날 불빛 순서 정했어. 부스부터 켜고, 길은 마지막에."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.prep_ella",
+   "npc": "npc_ella",
+   "priority": 27,
+   "once": true,
+   "conditions": {
+    "met": "npc_ella",
+    "act": "act3",
+    "flags_false": [
+     "story.festival_ready"
+    ]
+   },
+   "lines": [
+    "무대 문양은 뭐가 될까요? 넷 다 좋은 뜻이라 고르기 어려울 거예요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.suit_heart",
+   "npc": "npc_rira",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "met": "npc_rira",
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_heart"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_rira",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_rira",
+     "id": "festival_suit"
+    }
+   ],
+   "lines": [
+    "무대가 하트 문양이었잖아요! 돌봄이라는 뜻, 찻집이랑 딱 맞아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.suit_clover",
+   "npc": "npc_ella",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "met": "npc_ella",
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_clover"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_ella",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_ella",
+     "id": "festival_suit"
+    }
+   ],
+   "lines": [
+    "클로버 무대! 우연히 온 사람을 위한 자리라는 뜻이 무대 위에 올라갔어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.suit_diamond",
+   "npc": "npc_bibi",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "met": "npc_bibi",
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_diamond"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_bibi",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_bibi",
+     "id": "festival_suit"
+    }
+   ],
+   "lines": [
+    "다이아 무대… 손재주라는 뜻이래요. 부스 만든 보람이 있어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "act3.suit_spade",
+   "npc": "npc_kyle",
+   "priority": 37,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "flags_true": [
+     "story.festival_ready",
+     "story.festival_suit_spade"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_kyle",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_kyle",
+     "id": "festival_suit"
+    }
+   ],
+   "lines": [
+    "스페이드 무대라. 도전이라는 뜻이지만, 누구나 해 볼 수 있는 도전이어야 한다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "fest.watched_moa",
+   "npc": "npc_moa",
+   "priority": 36,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "flags_true": [
+     "story.act3_complete",
+     "story.festival_watched"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_moa",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_moa",
+     "id": "festival_watched"
+    }
+   ],
+   "lines": [
+    "관전석 맨 앞에 앉아 줬죠! 박수 소리가 제일 컸어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "fest.helped_miri",
+   "npc": "npc_miri",
+   "priority": 36,
+   "once": true,
+   "conditions": {
+    "met": "npc_miri",
+    "flags_true": [
+     "story.act3_complete",
+     "story.festival_helped"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_miri",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_miri",
+     "id": "festival_helped"
+    }
+   ],
+   "lines": [
+    "정리 도와준 거 기록해 뒀어요. '마지막까지 남은 사람' 칸에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "fest.helped_juno",
+   "npc": "npc_juno",
+   "priority": 36,
+   "once": true,
+   "conditions": {
+    "met": "npc_juno",
+    "flags_true": [
+     "story.act3_complete",
+     "story.festival_helped"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_juno",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_juno",
+     "id": "festival_helped"
+    }
+   ],
+   "lines": [
+    "무대 정리까지 해 줬다며! 사회자로서 특별 감사 멘트 보낼게!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "fest.greeted_sia",
+   "npc": "npc_sia",
+   "priority": 36,
+   "once": true,
+   "conditions": {
+    "met": "npc_sia",
+    "flags_true": [
+     "story.act3_complete",
+     "story.festival_greeted"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_sia",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_sia",
+     "id": "festival_greeted"
+    }
+   ],
+   "lines": [
+    "축제 날 모두랑 인사했죠? 방문객들이 '그 사람 누구냐'고 물어봤어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "fest.greeted_lumi",
+   "npc": "npc_lumi",
+   "priority": 36,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "flags_true": [
+     "story.act3_complete",
+     "story.festival_greeted"
+    ]
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_lumi",
+     "amount": 3
+    },
+    {
+     "type": "memory",
+     "npc": "npc_lumi",
+     "id": "festival_greeted"
+    }
+   ],
+   "lines": [
+    "축제에서 한 명도 빠짐없이 인사하더라. 그거 모임 주최자가 할 일인데!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "fest.played_kyle",
+   "npc": "npc_kyle",
+   "priority": 36,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "flags_true": [
+     "story.act3_complete",
+     "story.festival_played"
+    ]
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_kyle",
+     "id": "festival_played"
+    }
+   ],
+   "lines": [
+    "축제 대회에 나왔더군. 결과보다, 규칙판을 끝까지 읽고 앉은 게 기억난다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  }
+ ]
+}

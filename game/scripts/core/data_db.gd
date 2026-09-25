@@ -18,6 +18,7 @@ const ROMANCE_STAGES := ["closed", "eligible", "dating", "committed"]
 const EFFECT_TYPES := [
 	"flag", "chips", "spend", "meet", "friendship", "rivalry", "memory", "item", "edge", "romance",
 	"contribution", "quest_start", "project", "home_stage", "unlock_ability", "equip", "toast",
+	"poker_mentioned",
 ]
 
 var items := {}
@@ -44,6 +45,8 @@ var project_order: Array = []
 var home := {}
 var edges := {}
 var story := {}
+## Resident memory id -> readable text (content alpha).
+var memories := {}
 
 
 ## Loads every data file and validates it. Returns a list of error messages (empty = OK).
@@ -96,6 +99,8 @@ func load_all(dir: String) -> Array:
 	for e in _read(dir + "/relations.json", errors).get("edges", []):
 		edges[e["id"]] = e
 	story = _read(dir + "/story.json", errors)
+	if FileAccess.file_exists(dir + "/memories.json"):
+		memories = _read(dir + "/memories.json", errors).get("memories", {})
 	# Stable priority order for dialogue: higher priority first, data order within a priority.
 	for i in dialogue.size():
 		dialogue[i]["_order"] = i

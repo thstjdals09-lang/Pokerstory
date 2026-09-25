@@ -11,7 +11,7 @@
    "id": "home_cozy",
    "stage": 1,
    "name": "아늑한 방",
-   "cost": 90,
+   "cost": 80,
    "slots": 8,
    "desc": "거실에 장식 자리가 5곳 늘어요 (총 8).",
    "unlock": {
@@ -30,7 +30,7 @@
    "id": "home_roomy",
    "stage": 2,
    "name": "넓은 집",
-   "cost": 180,
+   "cost": 150,
    "slots": 16,
    "desc": "작은 방이 생겨요 (자리 8곳 추가, 총 16).",
    "unlock": {
@@ -42,7 +42,7 @@
    "id": "home_gathering",
    "stage": 3,
    "name": "모임 공간",
-   "cost": 320,
+   "cost": 240,
    "slots": 24,
    "desc": "모임방이 생기고 친한 주민과 홈게임을 열 수 있어요 (자리 8곳 추가, 총 24).",
    "unlock": {

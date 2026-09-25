@@ -13,6 +13,9 @@ extends RefCounted
 ##   steady, keep_pairs: the rule above.
 ##   cautious, friendly: keep one more card (high card: replace 2; one pair: replace 2 kickers).
 ##   curious: chases fresh cards (high card: always replace 3, even with four of a suit).
+##   keep_pairs: a pair with an ace kicker keeps the ace (replaces 2).
+##   chaser: chases four to a flush or a straight (replaces 1), even from a small pair.
+##   showman: breaks a two pair to keep only the higher pair and draw 3 (a flashy mistake).
 
 
 ## Returns the sorted indices (0..4) of the cards to replace, at most `max_discards`.
@@ -22,6 +25,34 @@ static func choose_discards(own_hand: Array, max_discards: int = 3, persona: Str
 	if category >= HandEvaluator.Category.STRAIGHT:
 		return discards
 	var careful := persona == "cautious" or persona == "friendly"
+	if persona == "chaser" and category <= HandEvaluator.Category.ONE_PAIR:
+		var chase := _draw_to_flush_or_straight(own_hand, category)
+		if not chase.is_empty():
+			return chase
+	if persona == "showman" and category == HandEvaluator.Category.TWO_PAIR:
+		var counts2 := {}
+		for c in own_hand:
+			counts2[c.rank] = int(counts2.get(c.rank, 0)) + 1
+		var top := -1
+		for r in counts2:
+			if counts2[r] == 2 and r > top:
+				top = r
+		for i in own_hand.size():
+			if own_hand[i].rank != top:
+				discards.append(i)
+		return discards
+	if persona == "keep_pairs" and category == HandEvaluator.Category.ONE_PAIR:
+		var counts3 := {}
+		for c in own_hand:
+			counts3[c.rank] = int(counts3.get(c.rank, 0)) + 1
+		var has_ace_kicker := false
+		for c in own_hand:
+			has_ace_kicker = has_ace_kicker or (c.rank == 14 and counts3[14] == 1)
+		if has_ace_kicker:
+			for i in own_hand.size():
+				if counts3[own_hand[i].rank] == 1 and own_hand[i].rank != 14:
+					discards.append(i)
+			return discards
 	if category == HandEvaluator.Category.HIGH_CARD and (careful or persona == "curious"):
 		var order: Array = range(own_hand.size())
 		order.sort_custom(func(a, b): return own_hand[a].rank < own_hand[b].rank or (own_hand[a].rank == own_hand[b].rank and a < b))
@@ -70,3 +101,27 @@ static func choose_discards(own_hand: Array, max_discards: int = 3, persona: Str
 	if discards.size() > max_discards:
 		discards = discards.slice(0, max_discards)
 	return discards
+
+
+## Four cards to a flush, or four distinct ranks within a span of five (a straight draw):
+## the index of the odd card. Empty when there is no such draw. Own cards only.
+static func _draw_to_flush_or_straight(own_hand: Array, category: int) -> Array:
+	var suit_counts := {}
+	for c in own_hand:
+		suit_counts[c.suit] = int(suit_counts.get(c.suit, 0)) + 1
+	for s in suit_counts:
+		if suit_counts[s] == 4:
+			for i in own_hand.size():
+				if own_hand[i].suit != s:
+					return [i]
+	if category != HandEvaluator.Category.HIGH_CARD:
+		return []
+	for skip in own_hand.size():
+		var ranks: Array = []
+		for i in own_hand.size():
+			if i != skip:
+				ranks.append(own_hand[i].rank)
+		ranks.sort()
+		if ranks[3] - ranks[0] <= 4:
+			return [skip]
+	return []

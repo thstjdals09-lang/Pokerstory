@@ -11,6 +11,7 @@ var show_marker := false:
 		show_marker = value
 		queue_redraw()
 var _t := 0.0
+var _activity: Label = null
 
 
 func setup(def: Dictionary) -> void:
@@ -28,6 +29,16 @@ func setup(def: Dictionary) -> void:
 	label.size = Vector2(180, 20)
 	add_child(label)
 	queue_redraw()
+
+
+## What the resident is doing right now ("책 읽는 중"), shown under the name. Empty hides it.
+func set_activity(text: String) -> void:
+	if text == "":
+		return
+	_activity = WorldLabel.make(text, 12, Color("#ffe9b0"))
+	_activity.position = Vector2(-90, 22)
+	_activity.size = Vector2(180, 18)
+	add_child(_activity)
 
 
 func _process(delta: float) -> void:

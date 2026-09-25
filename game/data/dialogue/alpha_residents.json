@@ -1,0 +1,4533 @@
+{
+ "_comment": "Content alpha: resident habits, act lines, close-friend lines, gifts, poker memory, rivalry milestones, request follow-ups.",
+ "entries": [
+  {
+   "id": "lumi_habit",
+   "npc": "npc_lumi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_lumi",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘 저녁엔 누구 불러 볼까? 아직 한 번도 안 온 사람이 제일 궁금해."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_now_act1",
+   "npc": "npc_lumi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_lumi",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장이 사라졌다니, 모아 표정 봤어? 나까지 조마조마해."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_now_act2",
+   "npc": "npc_lumi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_lumi",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "카일이랑 나랑 생각이 다를 뿐이야. 싸우는 거 아니다? …아마도."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_now_act3",
+   "npc": "npc_lumi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_lumi",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 준비하니까 광장이 모임방 같아. 매일 이러면 좋겠다!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_now_postgame",
+   "npc": "npc_lumi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_lumi",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 뒤로 카드룸에 모르는 얼굴이 늘었어. 이름 외우느라 바빠!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_close_friend",
+   "npc": "npc_lumi",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_lumi",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_lumi": 25
+    }
+   },
+   "lines": [
+    "너랑 있으면 모임 여는 게 덜 떨려. 이거 비밀이야."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_after_festival",
+   "npc": "npc_lumi",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_lumi",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "누가 이겼는지 세는 사람은 이제 아무도 없어. 다음엔 누가 올지만 세지."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_friend_gift",
+   "npc": "npc_lumi",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "friendship_min": {
+     "npc_lumi": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.furniture.01_02"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_lumi",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "루미에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "이거 줄게. 우리 모임에서 제일 오래 쓴 방석이야."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_habit",
+   "npc": "npc_moa",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_moa",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "게시판 쪽지를 매일 새로 붙여요. 글씨가 번지면 다시 써요. 몇 번이고요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_now_act1",
+   "npc": "npc_moa",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_moa",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "봉투만 남은 초대장… 누가 읽고 다시 접어 둔 거라면 좋겠어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_now_act2",
+   "npc": "npc_moa",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_moa",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "루미 쪽지랑 카일 쪽지, 둘 다 게시판 한가운데 붙였어요. 공평하게요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_now_act3",
+   "npc": "npc_moa",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_moa",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "관전석 의자를 세어 봤는데요, 벌써 모자라요! 기쁜 걱정이에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_now_postgame",
+   "npc": "npc_moa",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_moa",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "요즘 게시판에 '구경 가도 돼요?'라는 쪽지가 제일 많아요. 당연히 되죠!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_close_friend",
+   "npc": "npc_moa",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_moa",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_moa": 25
+    }
+   },
+   "lines": [
+    "당신 이름은 게시판 맨 위에 적어 두고 싶어요. 제일 먼저 와 준 사람이니까요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_after_festival",
+   "npc": "npc_moa",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_moa",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 날 관전석에 앉았던 사람들이 이번엔 카드를 쥐어 보겠대요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_friend_gift",
+   "npc": "npc_moa",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "friendship_min": {
+     "npc_moa": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.chip_style.01_07"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_moa",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "모아에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "칩 모양 도장이에요! 당신 거라고 찍어 두세요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_habit",
+   "npc": "npc_sera",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sera",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "불씨 병은 하루에 한 번씩 닦아요. 안 그러면 빛이 흐려지거든요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_now_act1",
+   "npc": "npc_sera",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sera",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장 봉투, 우리 가게에서 판 거예요. 누가 샀는지는… 기억이 안 나네요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_now_act2",
+   "npc": "npc_sera",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sera",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "루미도 카일도 우리 가게 단골이에요. 둘 다 계산할 땐 똑같이 정중해요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_now_act3",
+   "npc": "npc_sera",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sera",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 등불 불씨를 미리 채워 두고 있어요. 모자라면 곤란하니까요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_now_postgame",
+   "npc": "npc_sera",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sera",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제가 끝나니 가게가 조용하네요. 이 조용함도 싫지 않아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_close_friend",
+   "npc": "npc_sera",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_sera",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_sera": 25
+    }
+   },
+   "lines": [
+    "당신이 오면 가게 불빛이 조금 밝아지는 것 같아요. 기분 탓이겠지만요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_after_festival",
+   "npc": "npc_sera",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_sera",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 때 불씨가 하나도 안 꺼졌대요. 오나가 잘 봐 줬어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_friend_gift",
+   "npc": "npc_sera",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_sera",
+    "friendship_min": {
+     "npc_sera": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.01_03"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_sera",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "세라에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "작은 등불 받침이에요. 등불 옆에 두면 빛이 오래가요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_habit",
+   "npc": "npc_kyle",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_kyle",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘은 교체 규칙 문장을 세 번 고쳤다. 아직 더 짧게 쓸 수 있다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_now_act1",
+   "npc": "npc_kyle",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_kyle",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장이 없으면 모임이 열렸는지도 모르는 사람이 생긴다. 규칙 이전의 문제군."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_now_act2",
+   "npc": "npc_kyle",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_kyle",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "루미의 뜻을 모르는 건 아니다. 다만 순서가 없으면 새 사람이 먼저 헤맨다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_now_act3",
+   "npc": "npc_kyle",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_kyle",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "대회 규칙판 초안을 썼다. 첫 줄은 '구경만 해도 된다'로 정했다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_now_postgame",
+   "npc": "npc_kyle",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_kyle",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "요즘은 규칙판보다 빈 의자를 먼저 본다. 누가 앉을지 궁금해서."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_close_friend",
+   "npc": "npc_kyle",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_kyle",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_kyle": 25
+    }
+   },
+   "lines": [
+    "네 질문은 늘 규칙을 한 줄씩 짧게 만든다. …고맙다는 뜻이다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_after_festival",
+   "npc": "npc_kyle",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_kyle",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "규칙판 옆 빈 자리에 오늘 처음 온 사람이 앉았다. 그걸로 됐다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_friend_gift",
+   "npc": "npc_kyle",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "friendship_min": {
+     "npc_kyle": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.card_back.03_06"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_kyle",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "카일에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "예전에 쓰던 카드 뒷면이다. 규칙판 무늬를 넣었지."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_habit",
+   "npc": "npc_nora",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_nora",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘 온 편지는 다섯 통이에요. 한 통은 주소가 '광장 벤치 앞'이었어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_now_act1",
+   "npc": "npc_nora",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_nora",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "봉투가 젖어서 돌아오는 일은 드물어요. 누군가 오래 들고 있었나 봐요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_now_act2",
+   "npc": "npc_nora",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_nora",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "루미랑 카일 둘 다 편지를 보냈더라고요. 서로에게요. 전하지는 못했대요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_now_act3",
+   "npc": "npc_nora",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_nora",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 초대장을 옛날 우표로 붙였어요. 받는 사람이 기억해 주면 좋겠어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_now_postgame",
+   "npc": "npc_nora",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_nora",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 답장이 아직도 와요. '다음에도 불러 주세요'가 제일 많아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_close_friend",
+   "npc": "npc_nora",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_nora",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_nora": 25
+    }
+   },
+   "lines": [
+    "당신 앞으로 온 편지는 제가 직접 가져다줄게요. 특별 배달이에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_after_festival",
+   "npc": "npc_nora",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_nora",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "기록장에 축제 날을 적었어요. '모두 왔다'고요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_friend_gift",
+   "npc": "npc_nora",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_nora",
+    "friendship_min": {
+     "npc_nora": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.02_03"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_nora",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "노아에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "옛 우표를 액자에 넣었어요. 당신 집 벽에 어울릴 거예요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_habit",
+   "npc": "npc_rira",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_rira",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘의 차는 보리차예요. 승부가 길어질 것 같은 날엔 꼭 이걸 내요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_now_act1",
+   "npc": "npc_rira",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_rira",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장이 없으니 찻집 손님이 반으로 줄었어요. 어서 찾아야 해요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_now_act2",
+   "npc": "npc_rira",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_rira",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "찻집에서 모임을 하면 이긴 사람도 진 사람도 같은 차를 마시잖아요. 그게 좋아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_now_act3",
+   "npc": "npc_rira",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_rira",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 찻잔을 백 개 닦았어요. 아니, 아흔아홉 개. 하나는 테오가 가져갔어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_now_postgame",
+   "npc": "npc_rira",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_rira",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 뒤로 처음 온 손님이 '그 찻집이죠?' 하고 찾아와요. 뿌듯해요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_close_friend",
+   "npc": "npc_rira",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_rira",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_rira": 25
+    }
+   },
+   "lines": [
+    "당신 차 취향은 이제 안 물어봐도 알아요. 오늘도 그걸로 드릴게요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_after_festival",
+   "npc": "npc_rira",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_rira",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 날 차가 모자랐대요. 다음엔 두 배로 끓일 거예요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_friend_gift",
+   "npc": "npc_rira",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_rira",
+    "friendship_min": {
+     "npc_rira": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.01_04"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_rira",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "리라에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "찻집에서 쓰던 작은 화병이에요. 꽃 한 송이면 충분해요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_habit",
+   "npc": "npc_taeo",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_taeo",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘은 단추 서른 개. 지루하다고? 난 좋아."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_now_act1",
+   "npc": "npc_taeo",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_taeo",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "봉투 천이 좋더라. 누가 버렸으면 내가 가졌을 텐데."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_now_act2",
+   "npc": "npc_taeo",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_taeo",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "루미 편도 카일 편도 안 들어. 둘 다 내 단골이라서."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_now_act3",
+   "npc": "npc_taeo",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_taeo",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 천막 무늬, 리라가 골랐어. 난 바느질만 해."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_now_postgame",
+   "npc": "npc_taeo",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_taeo",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 천막 다시 접었어. 다음에도 쓸 거라 조심해서."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_close_friend",
+   "npc": "npc_taeo",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_taeo",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_taeo": 25
+    }
+   },
+   "lines": [
+    "네 소매는 내가 책임질게. 다른 사람한테 맡기지 마."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_after_festival",
+   "npc": "npc_taeo",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_taeo",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 때 다들 편한 옷으로 왔더라. 그게 제일 보기 좋았어."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_friend_gift",
+   "npc": "npc_taeo",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_taeo",
+    "friendship_min": {
+     "npc_taeo": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.clothing.02_05"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_taeo",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "테오에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "남은 천으로 만든 목도리야. 공짜. 말 길게 하지 마."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_habit",
+   "npc": "npc_bibi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_bibi",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘은… 의자 다리 하나를 고쳤어요. 삐걱 소리가 사라졌어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_now_act1",
+   "npc": "npc_bibi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_bibi",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장 게시판… 나사가 헐거웠어요. 그래서 떨어졌을지도 몰라요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_now_act2",
+   "npc": "npc_bibi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_bibi",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "테이블 두 개를 나란히 놓을 수 있게… 다리 높이를 맞춰 뒀어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_now_act3",
+   "npc": "npc_bibi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_bibi",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 부스 뼈대는… 제가 짰어요. 흔들리면 말해 줘요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_now_postgame",
+   "npc": "npc_bibi",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_bibi",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 부스, 해체 안 하고 광장에 남겼어요. 또 쓸 거잖아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_close_friend",
+   "npc": "npc_bibi",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_bibi",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_bibi": 25
+    }
+   },
+   "lines": [
+    "당신이 준 쪽지… 공구함에 붙여 뒀어요. 볼 때마다 힘이 나요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_after_festival",
+   "npc": "npc_bibi",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_bibi",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "부스 기둥에 누군가 이름을 새겼어요… 지우지 않을 거예요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "bibi_friend_gift",
+   "npc": "npc_bibi",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_bibi",
+    "friendship_min": {
+     "npc_bibi": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.furniture.02_01"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_bibi",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "비비에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "작업대에서 남은 나무로… 스툴을 만들었어요. 가져가요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_habit",
+   "npc": "npc_ella",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ella",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘은 스페이드 뜻을 찾아봤어요. '도전'이래요. 무섭지 않은 도전이요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_now_act1",
+   "npc": "npc_ella",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ella",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "클로버 뜻이 초대장에 쓰여 있었을까요? 확인해 보고 싶어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_now_act2",
+   "npc": "npc_ella",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ella",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "옛 기록엔 친목 모임도, 규칙 모임도 다 있었대요. 신기하죠?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_now_act3",
+   "npc": "npc_ella",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ella",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "무대 장식 문양, 옛 기록대로라면 넷 다 좋은 뜻이에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_now_postgame",
+   "npc": "npc_ella",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ella",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 기록을 옛 문양 책 마지막 장에 붙였어요. 새 역사예요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_close_friend",
+   "npc": "npc_ella",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ella",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_ella": 25
+    }
+   },
+   "lines": [
+    "당신이랑 이야기하면 책에 없는 뜻을 자꾸 발견해요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_after_festival",
+   "npc": "npc_ella",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ella",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "'우연히 온 사람의 자리'가 이번 축제엔 꽉 찼대요. 클로버가 기뻐할 거예요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_friend_gift",
+   "npc": "npc_ella",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_ella",
+    "friendship_min": {
+     "npc_ella": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.03_03"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_ella",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "엘라에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "문양 스케치를 액자에 넣었어요. 선물이에요!"
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_habit",
+   "npc": "npc_haru",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_haru",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘은 물안개가 늦게 걷혔어요. 그래서 산책도 조금 늦게 했어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_now_act1",
+   "npc": "npc_haru",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_haru",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장이 있었어도… 저는 못 갔을 거예요. 아직은요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_now_act2",
+   "npc": "npc_haru",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_haru",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "규칙을 미리 알면… 저 같은 사람도 덜 떨릴 것 같아요. 카일 말이요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_now_act3",
+   "npc": "npc_haru",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_haru",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제에서 관전만 해도 된대요! 그럼… 가 볼까요?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_now_postgame",
+   "npc": "npc_haru",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_haru",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제에 갔어요! 관전석 끝자리였지만, 끝까지 있었어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_close_friend",
+   "npc": "npc_haru",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_haru",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_haru": 25
+    }
+   },
+   "lines": [
+    "당신이랑은… 말 더듬지 않고 얘기할 수 있어요. 신기해요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_after_festival",
+   "npc": "npc_haru",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_haru",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "다음 저녁 모임엔… 한 판 해 볼까 봐요. 진짜로요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_friend_gift",
+   "npc": "npc_haru",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_haru",
+    "friendship_min": {
+     "npc_haru": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.memento.01_08"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_haru",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "하루에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "둔치에서 주운 매끈한 돌이에요… 행운이 온대요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_habit",
+   "npc": "npc_juno",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_juno",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘의 광장 공지! 분수 물고기가 한 마리 늘었다! …아무도 안 궁금해?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_now_act1",
+   "npc": "npc_juno",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_juno",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장 실종 사건! 사회자로서 가만있을 수 없지!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_now_act2",
+   "npc": "npc_juno",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_juno",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "난 루미 편! …아, 편 가르면 안 된다고? 그럼 둘 다 편!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_now_act3",
+   "npc": "npc_juno",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_juno",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "개막 멘트 연습 중! '여러분!' …너무 짧나?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_now_postgame",
+   "npc": "npc_juno",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_juno",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "다음 저녁제 사회 원고 벌써 썼어! 첫 줄은 '또 와 줘서 고마워!'"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_close_friend",
+   "npc": "npc_juno",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_juno",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_juno": 25
+    }
+   },
+   "lines": [
+    "넌 내 멘트에 항상 박수 쳐 주잖아. 최고의 관객이야!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_after_festival",
+   "npc": "npc_juno",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_juno",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 박수 소리 녹음해 둘 걸 그랬어. 아직도 귀에 남아!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_friend_gift",
+   "npc": "npc_juno",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_juno",
+    "friendship_min": {
+     "npc_juno": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.02_04"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_juno",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "주노에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "사회자 리본이야! 축제 때 달던 거. 이제 네 거!"
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_habit",
+   "npc": "npc_miri",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_miri",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘 회관 장부는 오차 0칩이에요. 이런 날은 기분이 좋아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_now_act1",
+   "npc": "npc_miri",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_miri",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장 인쇄비는 이미 냈는데… 다시 찍으면 두 번 내는 거예요. 찾아야죠."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_now_act2",
+   "npc": "npc_miri",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_miri",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "규칙을 적어 두는 건 좋아요. 기록이니까요. 친목도 기록할 수 있으면 좋겠어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_now_act3",
+   "npc": "npc_miri",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_miri",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 비용표 완성! 누가 얼마 냈는지보다 누가 도왔는지 칸을 더 크게 만들었어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_now_postgame",
+   "npc": "npc_miri",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_miri",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 결산 끝났어요. 남은 돈은 없는데, 남은 사람은 많아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_close_friend",
+   "npc": "npc_miri",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_miri",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_miri": 25
+    }
+   },
+   "lines": [
+    "당신 이름은 기록장에 '믿을 수 있는 사람' 칸에 있어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_after_festival",
+   "npc": "npc_miri",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_miri",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "공공사업 기록장이 두꺼워졌어요. 다음 장도 비워 뒀어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "miri_friend_gift",
+   "npc": "npc_miri",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_miri",
+    "friendship_min": {
+     "npc_miri": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.furniture.03_01"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_miri",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "미리에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "회관에서 쓰던 오래된 장부 책장이에요. 필요 없대서 챙겼어요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_habit",
+   "npc": "npc_ona",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ona",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘 숲길 버섯등 셋이 깜빡였어. 졸린가 봐. 나처럼."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_now_act1",
+   "npc": "npc_ona",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ona",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "숲길 안내판, 밤에 보면 글씨가 반짝여. 옛날 사람들도 알았나 봐."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_now_act2",
+   "npc": "npc_ona",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ona",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "둔치 가는 길, 조금 밝게 해 둘게. 두 사람 다 잘 오라고."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_now_act3",
+   "npc": "npc_ona",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ona",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 날은 조금만 더 밝게. 딱 한 날만."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_now_postgame",
+   "npc": "npc_ona",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ona",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 날 별이 좀 가려졌어. 그래도 사람들이 별보다 반짝였으니까 괜찮아."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_close_friend",
+   "npc": "npc_ona",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ona",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_ona": 25
+    }
+   },
+   "lines": [
+    "너랑 있을 땐 불빛 안 봐도 편해. 이상하지?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_after_festival",
+   "npc": "npc_ona",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ona",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 등불 다 끄고 별 봤어. 오늘따라 많더라."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ona_friend_gift",
+   "npc": "npc_ona",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_ona",
+    "friendship_min": {
+     "npc_ona": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.decor.03_04"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_ona",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "오나에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "작은 버섯 등이야. 네 방 구석을 밝혀 줄 거야."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_habit",
+   "npc": "npc_ren",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ren",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘 교환대에 들어온 카드! 모서리에 커피 자국 있음. 사연 있어 보여!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_now_act1",
+   "npc": "npc_ren",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ren",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장도 수집품이야? 찾으면 복사본 하나만 줘!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_now_act2",
+   "npc": "npc_ren",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ren",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "카일한테 규칙 배우는 중이야. 교환에도 규칙이 있으면 싸움이 줄더라."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_now_act3",
+   "npc": "npc_ren",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ren",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 한정 카드 뒷면! 우승하면 준대! …난 못 받겠지만!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_now_postgame",
+   "npc": "npc_ren",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_ren",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 날 교환한 카드마다 '누구랑 바꿨는지' 적어 뒀어. 이게 진짜 보물이야."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_close_friend",
+   "npc": "npc_ren",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ren",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_ren": 25
+    }
+   },
+   "lines": [
+    "너랑 바꾼 카드는 교환 앨범 첫 장에 끼워 뒀어!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_after_festival",
+   "npc": "npc_ren",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_ren",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "다음 교환회 날짜 정했어! 날짜는… 네가 오는 날!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_friend_gift",
+   "npc": "npc_ren",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_ren",
+    "friendship_min": {
+     "npc_ren": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.card_back.01_06"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_ren",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "렌에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "중복 카드 뒷면이야! 너한테 제일 어울려."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_habit",
+   "npc": "npc_yul",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_yul",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘은 간식 두 번 먹었다. 일이 잘 풀리는 날이다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_now_act1",
+   "npc": "npc_yul",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_yul",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장보다 앉을 자리가 먼저다. …아니, 둘 다 필요하군."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_now_act2",
+   "npc": "npc_yul",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_yul",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "테이블이 두 개면 의자도 두 배다. 누가 이기든 나는 바쁘다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_now_act3",
+   "npc": "npc_yul",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_yul",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "관전석 의자 스무 개. 튼튼하다. 올라가서 뛰어도 된다. …뛰지는 마라."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_now_postgame",
+   "npc": "npc_yul",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_yul",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 의자, 광장에 몇 개 남겨 뒀다. 앉을 사람은 앉으라고."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_close_friend",
+   "npc": "npc_yul",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_yul",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_yul": 25
+    }
+   },
+   "lines": [
+    "너한테는 간식 나눠 준다. 원래 안 나눠 준다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_after_festival",
+   "npc": "npc_yul",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_yul",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제 날 부서진 의자 0개. 좋은 날이었다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_friend_gift",
+   "npc": "npc_yul",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_yul",
+    "friendship_min": {
+     "npc_yul": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.furniture.01_01"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_yul",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "율에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "작은 발받침이다. 오래 앉아도 다리가 안 아프다."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_habit",
+   "npc": "npc_sia",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sia",
+    "day_mod3": [
+     1
+    ]
+   },
+   "lines": [
+    "오늘은 길을 물어본 사람이 세 명이었어요. 셋 다 찻집으로 안내했어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_now_act1",
+   "npc": "npc_sia",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sia",
+    "day_mod3": [
+     2
+    ],
+    "act": "act1"
+   },
+   "lines": [
+    "초대장이 사라졌다고요? 저 같은 방문객은 그런 거 없으면 못 와요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_now_act2",
+   "npc": "npc_sia",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sia",
+    "day_mod3": [
+     2
+    ],
+    "act": "act2"
+   },
+   "lines": [
+    "처음 온 사람한테는… 친목이 먼저일까요, 규칙이 먼저일까요? 어려워요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_now_act3",
+   "npc": "npc_sia",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sia",
+    "day_mod3": [
+     2
+    ],
+    "act": "act3"
+   },
+   "lines": [
+    "축제 안내 쪽지를 방문객 객실에 붙였어요. 누구든 오라고요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_now_postgame",
+   "npc": "npc_sia",
+   "priority": 11,
+   "conditions": {
+    "met": "npc_sia",
+    "day_mod3": [
+     2
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "축제를 보러 왔던 여행자가 이 마을에 살고 싶대요! 제 첫 성공이에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_close_friend",
+   "npc": "npc_sia",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_sia",
+    "day_mod3": [
+     1
+    ],
+    "friendship_min": {
+     "npc_sia": 25
+    }
+   },
+   "lines": [
+    "당신은 처음부터 이 마을 사람 같았어요. 저도 그렇게 되고 싶어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_after_festival",
+   "npc": "npc_sia",
+   "priority": 12,
+   "conditions": {
+    "met": "npc_sia",
+    "day_mod3": [
+     0
+    ],
+    "act": "postgame"
+   },
+   "lines": [
+    "방문객 방명록이 한 권 다 찼어요! 새 권은 당신이 첫 장 써 줄래요?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_friend_gift",
+   "npc": "npc_sia",
+   "priority": 39,
+   "once": true,
+   "conditions": {
+    "met": "npc_sia",
+    "friendship_min": {
+     "npc_sia": 30
+    }
+   },
+   "effects": [
+    {
+     "type": "item",
+     "item": "item.clothing.01_05"
+    },
+    {
+     "type": "memory",
+     "npc": "npc_sia",
+     "id": "friend_gift"
+    },
+    {
+     "type": "toast",
+     "text": "시아에게 선물을 받았어요."
+    }
+   ],
+   "lines": [
+    "여행 가방에 달던 작은 장식이에요. 이제 여기 사니까 필요 없어요!"
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_poker_after_win",
+   "npc": "npc_lumi",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_lumi",
+    "poker_unmentioned": "npc_lumi",
+    "poker_last": {
+     "npc_lumi": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_lumi"
+    }
+   ],
+   "lines": [
+    "지난 판 네가 이겼지? 다음엔 내가 모임 주최자 체면 좀 세울게!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_poker_after_loss",
+   "npc": "npc_lumi",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_lumi",
+    "poker_unmentioned": "npc_lumi",
+    "poker_last": {
+     "npc_lumi": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_lumi"
+    }
+   ],
+   "lines": [
+    "저번엔 내가 이겼네. 그래도 같이 앉아 줘서 그게 더 좋았어."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_poker_after",
+   "npc": "npc_lumi",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_lumi",
+    "poker_unmentioned": "npc_lumi"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_lumi"
+    }
+   ],
+   "lines": [
+    "또 한 판 하자! 이번엔 누가 오나 보자."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_poker_after_win",
+   "npc": "npc_kyle",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_kyle",
+    "poker_unmentioned": "npc_kyle",
+    "poker_last": {
+     "npc_kyle": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_kyle"
+    }
+   ],
+   "lines": [
+    "지난 판, 교체 선택이 정확했다. 인정한다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_poker_after_loss",
+   "npc": "npc_kyle",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_kyle",
+    "poker_unmentioned": "npc_kyle",
+    "poker_last": {
+     "npc_kyle": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_kyle"
+    }
+   ],
+   "lines": [
+    "지난 판은 내가 가져갔다. 규칙은 같으니 다음은 모르지."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "kyle_poker_after",
+   "npc": "npc_kyle",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_kyle",
+    "poker_unmentioned": "npc_kyle"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_kyle"
+    }
+   ],
+   "lines": [
+    "비긴 판도 기록해 뒀다. 규칙이 공정했다는 증거다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_poker_after_win",
+   "npc": "npc_rira",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_rira",
+    "poker_unmentioned": "npc_rira",
+    "poker_last": {
+     "npc_rira": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_rira"
+    }
+   ],
+   "lines": [
+    "어머, 지난번엔 저를 이겼죠! 그래서 차를 한 잔 더 드린 거예요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_poker_after_loss",
+   "npc": "npc_rira",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_rira",
+    "poker_unmentioned": "npc_rira",
+    "poker_last": {
+     "npc_rira": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_rira"
+    }
+   ],
+   "lines": [
+    "지난번엔 제가 이겼어요. 미안해서 과자를 하나 더 챙겼어요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_poker_after",
+   "npc": "npc_rira",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_rira",
+    "poker_unmentioned": "npc_rira"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_rira"
+    }
+   ],
+   "lines": [
+    "찻잔 부딪히는 소리처럼 딱 맞는 승부였어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_poker_after_win",
+   "npc": "npc_taeo",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_taeo",
+    "poker_unmentioned": "npc_taeo",
+    "poker_last": {
+     "npc_taeo": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_taeo"
+    }
+   ],
+   "lines": [
+    "지난 판 졌어. 소매 걷고 친 건데."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_poker_after_loss",
+   "npc": "npc_taeo",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_taeo",
+    "poker_unmentioned": "npc_taeo",
+    "poker_last": {
+     "npc_taeo": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_taeo"
+    }
+   ],
+   "lines": [
+    "지난 판은 내가 이겼지. 말 많이 안 할게."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_poker_after",
+   "npc": "npc_taeo",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_taeo",
+    "poker_unmentioned": "npc_taeo"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_taeo"
+    }
+   ],
+   "lines": [
+    "또 치자. 짧게."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_poker_after_win",
+   "npc": "npc_ella",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_ella",
+    "poker_unmentioned": "npc_ella",
+    "poker_last": {
+     "npc_ella": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ella"
+    }
+   ],
+   "lines": [
+    "지난 판 교체, 문양 순서가 예뻤어요! 그렇게 이긴 거죠?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_poker_after_loss",
+   "npc": "npc_ella",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_ella",
+    "poker_unmentioned": "npc_ella",
+    "poker_last": {
+     "npc_ella": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ella"
+    }
+   ],
+   "lines": [
+    "지난 판은 제가 이겼네요. 문양이 제 편이었나 봐요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_poker_after",
+   "npc": "npc_ella",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_ella",
+    "poker_unmentioned": "npc_ella"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ella"
+    }
+   ],
+   "lines": [
+    "다음 판엔 어떤 문양이 올까요? 궁금해요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_poker_after_win",
+   "npc": "npc_haru",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_haru",
+    "poker_unmentioned": "npc_haru",
+    "poker_last": {
+     "npc_haru": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_haru"
+    }
+   ],
+   "lines": [
+    "저, 졌는데요… 재밌었어요. 진짜로요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_poker_after_loss",
+   "npc": "npc_haru",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_haru",
+    "poker_unmentioned": "npc_haru",
+    "poker_last": {
+     "npc_haru": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_haru"
+    }
+   ],
+   "lines": [
+    "제가 이겼어요?! 아직도 안 믿겨요…"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_poker_after",
+   "npc": "npc_haru",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_haru",
+    "poker_unmentioned": "npc_haru"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_haru"
+    }
+   ],
+   "lines": [
+    "한 판 더… 해도 될까요?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_poker_after_win",
+   "npc": "npc_ren",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_ren",
+    "poker_unmentioned": "npc_ren",
+    "poker_last": {
+     "npc_ren": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ren"
+    }
+   ],
+   "lines": [
+    "지난 판 네 승리! 그 판 카드 기록해 뒀어. 교환 불가!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_poker_after_loss",
+   "npc": "npc_ren",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_ren",
+    "poker_unmentioned": "npc_ren",
+    "poker_last": {
+     "npc_ren": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ren"
+    }
+   ],
+   "lines": [
+    "지난 판은 내가 이겼다! 그래도 네 교체가 더 멋있었어."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_poker_after",
+   "npc": "npc_ren",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_ren",
+    "poker_unmentioned": "npc_ren"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_ren"
+    }
+   ],
+   "lines": [
+    "비긴 판도 희귀하지! 앨범에 넣을까?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_poker_after_win",
+   "npc": "npc_juno",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_juno",
+    "poker_unmentioned": "npc_juno",
+    "poker_last": {
+     "npc_juno": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_juno"
+    }
+   ],
+   "lines": [
+    "도전자의 승리였지! 그 판 멘트 아직도 연습 중이야!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_poker_after_loss",
+   "npc": "npc_juno",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_juno",
+    "poker_unmentioned": "npc_juno",
+    "poker_last": {
+     "npc_juno": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_juno"
+    }
+   ],
+   "lines": [
+    "지난 판은 사회자 승! 박수는 네가 쳐 줘!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "juno_poker_after",
+   "npc": "npc_juno",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_juno",
+    "poker_unmentioned": "npc_juno"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_juno"
+    }
+   ],
+   "lines": [
+    "다음 판 예고! 관객 모집 중!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_poker_after_win",
+   "npc": "npc_yul",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_yul",
+    "poker_unmentioned": "npc_yul",
+    "poker_last": {
+     "npc_yul": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_yul"
+    }
+   ],
+   "lines": [
+    "졌다. 간식 걸고 한 판 더?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_poker_after_loss",
+   "npc": "npc_yul",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_yul",
+    "poker_unmentioned": "npc_yul",
+    "poker_last": {
+     "npc_yul": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_yul"
+    }
+   ],
+   "lines": [
+    "이겼다. 간식은 나눠 준다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_poker_after",
+   "npc": "npc_yul",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_yul",
+    "poker_unmentioned": "npc_yul"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_yul"
+    }
+   ],
+   "lines": [
+    "또 앉자. 의자는 튼튼하다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_poker_after_win",
+   "npc": "npc_sia",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_sia",
+    "poker_unmentioned": "npc_sia",
+    "poker_last": {
+     "npc_sia": "win"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_sia"
+    }
+   ],
+   "lines": [
+    "지난 판 졌지만 배운 게 많아요! 다음엔 방문객한테 알려 줄래요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_poker_after_loss",
+   "npc": "npc_sia",
+   "priority": 28,
+   "conditions": {
+    "met": "npc_sia",
+    "poker_unmentioned": "npc_sia",
+    "poker_last": {
+     "npc_sia": "lose"
+    }
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_sia"
+    }
+   ],
+   "lines": [
+    "제가 이겼어요… 처음이에요! 방명록에 적어야겠어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_poker_after",
+   "npc": "npc_sia",
+   "priority": 27,
+   "conditions": {
+    "met": "npc_sia",
+    "poker_unmentioned": "npc_sia"
+   },
+   "effects": [
+    {
+     "type": "poker_mentioned",
+     "npc": "npc_sia"
+    }
+   ],
+   "lines": [
+    "또 해요! 이번엔 손님도 불러서요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_rival_five",
+   "npc": "npc_lumi",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "poker_vs_min": {
+     "npc_lumi": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_lumi",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_lumi",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "벌써 다섯 판째야! 이제 너 없으면 모임이 심심해. 라이벌이라고 불러도 돼?"
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_rival_five",
+   "npc": "npc_rira",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_rira",
+    "poker_vs_min": {
+     "npc_rira": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_rira",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_rira",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "다섯 판째예요! 찻집 벽에 우리 대결 기록표 붙였어요. 괜찮죠?"
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "taeo_rival_five",
+   "npc": "npc_taeo",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_taeo",
+    "poker_vs_min": {
+     "npc_taeo": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_taeo",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_taeo",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "다섯 판. …네 교체 버릇 알 것 같아. 너도 내 거 알겠지."
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ella_rival_five",
+   "npc": "npc_ella",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_ella",
+    "poker_vs_min": {
+     "npc_ella": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_ella",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_ella",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "우리 벌써 다섯 판 했어요! 문양 기록을 보면 당신은 하트를 자주 지켜요."
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "haru_rival_five",
+   "npc": "npc_haru",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_haru",
+    "poker_vs_min": {
+     "npc_haru": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_haru",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_haru",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "다섯 판이나 했어요… 이제 카드룸도 조금 덜 무서워요."
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "yul_rival_five",
+   "npc": "npc_yul",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_yul",
+    "poker_vs_min": {
+     "npc_yul": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_yul",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_yul",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "다섯 판이다. 의자에 네 자리 표시해 뒀다."
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sia_rival_five",
+   "npc": "npc_sia",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_sia",
+    "poker_vs_min": {
+     "npc_sia": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_sia",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_sia",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "다섯 판째! 방문객들한테 '이 마을엔 좋은 라이벌이 있다'고 소개할래요!"
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "ren_rival_five",
+   "npc": "npc_ren",
+   "priority": 42,
+   "once": true,
+   "conditions": {
+    "met": "npc_ren",
+    "poker_vs_min": {
+     "npc_ren": 5
+    }
+   },
+   "effects": [
+    {
+     "type": "rivalry",
+     "npc": "npc_ren",
+     "amount": 5
+    },
+    {
+     "type": "memory",
+     "npc": "npc_ren",
+     "id": "rival_five"
+    }
+   ],
+   "lines": [
+    "다섯 판 달성! 너랑 친 판만 모은 앨범을 만들까 해."
+   ],
+   "choices": [
+    {
+     "text": "다음 판도 해요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.sera_delivery",
+   "npc": "npc_sera",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.sera_delivery",
+    "met": "npc_sera"
+   },
+   "lines": [
+    "꾸러미 불씨, 루미가 벌써 카드룸 등불에 넣었대요. 저녁에 가 보면 밝을 거예요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.nora_postcard",
+   "npc": "npc_nora",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.nora_postcard",
+    "met": "npc_nora"
+   },
+   "lines": [
+    "모아가 초대장 글씨를 읽어 줬어요. 번진 줄이 '누구든'이었대요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.rira_tea",
+   "npc": "npc_rira",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.rira_tea",
+    "met": "npc_rira"
+   },
+   "lines": [
+    "테오가 고른 찻잎, 손님들이 다 좋아해요! 메뉴판에 '테오 추천'이라고 적었어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.rira_tea",
+   "npc": "npc_taeo",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.rira_tea",
+    "met": "npc_taeo"
+   },
+   "lines": [
+    "리라가 내 찻잎을 메뉴에 넣었다던데. …부끄럽게."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.taeo_cushion",
+   "npc": "npc_taeo",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.taeo_cushion",
+    "met": "npc_taeo"
+   },
+   "lines": [
+    "쿠션 안감, 비비 말대로 다시 썼어. 앉아 보면 알아."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.taeo_cushion",
+   "npc": "npc_bibi",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.taeo_cushion",
+    "met": "npc_bibi"
+   },
+   "lines": [
+    "테오가 안감을 다시 썼대요… 버리지 않아서 다행이에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.bibi_parts",
+   "npc": "npc_bibi",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.bibi_parts",
+    "met": "npc_bibi"
+   },
+   "lines": [
+    "세라가 부품을 빌려줬어요… 전시 선반이 완성됐어요. 보러 와요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.ella_symbols",
+   "npc": "npc_ella",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.ella_symbols",
+    "met": "npc_ella"
+   },
+   "lines": [
+    "노아가 알려 준 클로버 뜻, 책에 옮겨 적었어요. 이제 제 책이 더 두꺼워요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.ella_symbols",
+   "npc": "npc_nora",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.ella_symbols",
+    "met": "npc_nora"
+   },
+   "lines": [
+    "엘라가 기록을 옮겨 적었대요. 옛 뜻이 다시 살아났어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.haru_path",
+   "npc": "npc_haru",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.haru_path",
+    "met": "npc_haru"
+   },
+   "lines": [
+    "오나가 길 표지를 세워 줬어요. 저녁길이… 조금 덜 무서워요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.haru_path",
+   "npc": "npc_ona",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.haru_path",
+    "met": "npc_ona"
+   },
+   "lines": [
+    "하루가 이제 저녁 모임에 오겠대. 길을 알려 줘서 고마워."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.ona_glow",
+   "npc": "npc_ona",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.ona_glow",
+    "met": "npc_ona"
+   },
+   "lines": [
+    "하루가 괜찮대. 눈부시지 않다고. 그 말이 제일 듣고 싶었어."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.kyle_rules",
+   "npc": "npc_kyle",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.kyle_rules",
+    "met": "npc_kyle"
+   },
+   "lines": [
+    "모아가 문구를 바꿨다. '틀려도 괜찮아요'가 첫 줄이 됐다. …좋은 문장이다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.kyle_rules",
+   "npc": "npc_moa",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.kyle_rules",
+    "met": "npc_moa"
+   },
+   "lines": [
+    "카일 문구, 아이들도 읽을 수 있게 됐어요! 당신 덕분이에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.juno_poster",
+   "npc": "npc_juno",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.juno_poster",
+    "met": "npc_juno"
+   },
+   "lines": [
+    "포스터에 '누구나 참가 가능' 크게 넣었어! 미리가 글씨 크기까지 재 줬어!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.juno_poster",
+   "npc": "npc_miri",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.juno_poster",
+    "met": "npc_miri"
+   },
+   "lines": [
+    "포스터를 보고 벌써 두 명이 참가 신청했어요. 기록해 뒀어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.miri_budget",
+   "npc": "npc_miri",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.miri_budget",
+    "met": "npc_miri"
+   },
+   "lines": [
+    "리라가 찻잔을 맡아 줬어요. 예산표에 '리라 찻집 협찬'이라고 적었어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.ren_cardcase",
+   "npc": "npc_ren",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.ren_cardcase",
+    "met": "npc_ren"
+   },
+   "lines": [
+    "카드 케이스 주인 이름 적었어! 카일이 알려 준 친구 이름이야. 이제 진짜 보물!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.ren_cardcase",
+   "npc": "npc_kyle",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.ren_cardcase",
+    "met": "npc_kyle"
+   },
+   "lines": [
+    "렌이 출처를 적었다고? 그 케이스 주인도 기뻐하겠군."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.yul_bench",
+   "npc": "npc_yul",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.yul_bench",
+    "met": "npc_yul"
+   },
+   "lines": [
+    "벤치 자리 정했다. 길을 막지 않는다. 비비가 잘 봤다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.sia_welcome",
+   "npc": "npc_sia",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.sia_welcome",
+    "met": "npc_sia"
+   },
+   "lines": [
+    "루미가 손님을 관전석부터 앉혀 줬대요! 손님이 웃으면서 돌아갔어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow_to.sia_welcome",
+   "npc": "npc_lumi",
+   "priority": 31,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.sia_welcome",
+    "met": "npc_lumi"
+   },
+   "lines": [
+    "시아가 데려온 손님, 다음 주에도 온대! 자리 맡아 둘게."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.festival_letters",
+   "npc": "npc_nora",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.festival_letters",
+    "met": "npc_nora"
+   },
+   "lines": [
+    "답장 꾸러미가 주노한테 무사히 갔어요. 주노가 하나하나 소리 내서 읽었대요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "follow.festival_lights",
+   "npc": "npc_sera",
+   "priority": 32,
+   "once": true,
+   "conditions": {
+    "quest_completed": "quest.festival_lights",
+    "met": "npc_sera"
+   },
+   "lines": [
+    "오나가 점검표에 도장을 찍었어요. 축제 날 불빛은 걱정 없어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "job_thanks.post_delivery",
+   "npc": "npc_nora",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "job_done:job.post_delivery"
+    ],
+    "met": "npc_nora"
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_nora",
+     "amount": 2
+    }
+   ],
+   "lines": [
+    "편지 배달, 당신이 했다면서요? 받은 사람이 답장을 벌써 보냈어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "job_thanks.shop_shelving",
+   "npc": "npc_sera",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "job_done:job.shop_shelving"
+    ],
+    "met": "npc_sera"
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_sera",
+     "amount": 2
+    }
+   ],
+   "lines": [
+    "선반이 쪽지대로 정리돼 있어서 손님들이 물건을 금방 찾았대요. 고마워요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "job_thanks.lantern_check",
+   "npc": "npc_ona",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "job_done:job.lantern_check"
+    ],
+    "met": "npc_ona"
+   },
+   "effects": [
+    {
+     "type": "friendship",
+     "npc": "npc_ona",
+     "amount": 2
+    }
+   ],
+   "lines": [
+    "등불 점검 고마워. 셋 다 기분 좋게 빛나더라."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  }
+ ]
+}

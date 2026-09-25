@@ -57,7 +57,7 @@
    "giver": "npc_rira",
    "target": "npc_taeo",
    "unlock": {},
-   "reward": 15,
+   "reward": 10,
    "item_name": "찻잎 견본",
    "offer_lines": [
     "테오가 좋아하는 찻잎을 알아봐 줄래요?",
@@ -81,7 +81,7 @@
    "giver": "npc_taeo",
    "target": "npc_bibi",
    "unlock": {},
-   "reward": 20,
+   "reward": 10,
    "item_name": "쿠션 안감",
    "offer_lines": [
     "이 쿠션 안감, 다시 써도 되는지 비비한테 확인받아 줄래?"
@@ -106,7 +106,7 @@
    "unlock": {
     "project_complete": "board_restoration"
    },
-   "reward": 20,
+   "reward": 25,
    "item_name": "부품 목록",
    "offer_lines": [
     "세라에게 오래된 등불 부품을 빌려 와 줄 수 있나요?",
@@ -158,7 +158,7 @@
    "giver": "npc_haru",
    "target": "npc_ona",
    "unlock": {},
-   "reward": 15,
+   "reward": 10,
    "item_name": "어두운 길 지도",
    "offer_lines": [
     "오나에게 둔치로 가는 어두운 길을 알려 줄래요?",
@@ -182,7 +182,7 @@
    "giver": "npc_ona",
    "target": "npc_haru",
    "unlock": {},
-   "reward": 15,
+   "reward": 10,
    "item_name": "빛 세기 견본 버섯",
    "offer_lines": [
     "하루에게 이 버섯 등불 밝기가 괜찮은지 물어봐 줄래?"
@@ -209,7 +209,7 @@
      "story.act1_complete"
     ]
    },
-   "reward": 20,
+   "reward": 25,
    "item_name": "초보자용 규칙 문구",
    "offer_lines": [
     "초보자를 위한 문구를 모아에게 보여 줘.",
@@ -237,7 +237,7 @@
      "story.act2_started"
     ]
    },
-   "reward": 20,
+   "reward": 25,
    "item_name": "행사 포스터",
    "offer_lines": [
     "짜잔! 행사 포스터야. 미리한테 보여 주고 괜찮은지 물어봐 줄래?"
@@ -264,7 +264,7 @@
      "story.act2_started"
     ]
    },
-   "reward": 20,
+   "reward": 25,
    "item_name": "행사비 내역",
    "offer_lines": [
     "이 행사비 내역을 리라에게 설명해 줄 수 있을까요?",
@@ -288,7 +288,7 @@
    "giver": "npc_ren",
    "target": "npc_kyle",
    "unlock": {},
-   "reward": 15,
+   "reward": 10,
    "item_name": "카드 케이스",
    "offer_lines": [
     "이 카드 케이스, 어디서 온 건지 카일에게 물어봐 줄래?",
@@ -316,7 +316,7 @@
      "story.act1_complete"
     ]
    },
-   "reward": 20,
+   "reward": 25,
    "item_name": "벤치 도면",
    "offer_lines": [
     "비비와 벤치 놓을 자리를 살펴봐 줄래?"
@@ -341,7 +341,7 @@
    "unlock": {
     "project_complete": "guest_cottage"
    },
-   "reward": 20,
+   "reward": 30,
    "item_name": "방문객 질문 쪽지",
    "offer_lines": [
     "손님이 포커를 몰라도 모임에 가도 되냐고 물어요.",
@@ -369,7 +369,7 @@
      "story.act3_started"
     ]
    },
-   "reward": 25,
+   "reward": 30,
    "item_name": "답장 꾸러미",
    "offer_lines": [
     "모두의 답장이 모였어요. 주노에게 전해 줄래요?"
@@ -396,7 +396,7 @@
      "story.act3_started"
     ]
    },
-   "reward": 25,
+   "reward": 30,
    "item_name": "불씨 점검표",
    "offer_lines": [
     "축제 날 밤길 등불이 괜찮은지, 오나에게 확인해 달래요."

@@ -55,6 +55,9 @@ func test_greetings_daily_lines_and_reactions() -> void:
 		var first := DialogueResolver.resolve(db.dialogue, npc, place["loc"], fresh)
 		check_eq(first.get("id", ""), _greeting_id(npc), npc + " greets first")
 		var s := _met_state()
+		for e in db.dialogue:
+			if e.get("once", false):
+				s.events_done[DialogueResolver.once_key(e)] = true
 		for time in ["day", "evening"]:
 			s.time_of_day = time
 			var loc: String = db.npc_place(npc, time, s)["loc"]
@@ -111,7 +114,7 @@ func test_every_episode_completes_once_and_rewards_once() -> void:
 			done += 1
 	check_eq(done, 32, "all 32 episodes reachable and completed")
 	check_eq(s.abilities_unlocked.size(), 8, "episodes unlock the 7 other abilities (8 in total)")
-	check_eq(s.chips_balance, 0, "episodes never pay chips")
+	check_eq(s.chips_balance, 16 * 15, "only the second episode of each resident pays (15 chips, content alpha)")
 
 
 func test_friendship_and_rivalry_are_separate_axes() -> void:

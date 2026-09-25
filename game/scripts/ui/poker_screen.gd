@@ -211,6 +211,7 @@ func start(m: PokerMatch, spectators: Array = []) -> void:
 	# A resumed hand shows what the ability already revealed.
 	var known: Dictionary = m.ability_results.get(_ability.get("id", ""), {})
 	_ability_text = _ability_result_text(known) if not known.is_empty() else ""
+	_notice = Game.poker_opening(m)
 	_help_panel.visible = false
 	_confirm_panel.get_parent().visible = false
 	visible = true
@@ -414,6 +415,7 @@ func _finish() -> void:
 			var names: Array = Game.poker_mode("tournament").get("stage_names", [])
 			var st := int(last_result["tournament_stage"])
 			lines.append("대회 다음 단계: %s (%s)" % [names[st] if st < names.size() else "", Game.data.npc_name(Game.tournament_opponent())])
+	lines.append_array(Game.poker_result_notes(match_ref, last_result))
 	lines.append("보유 칩  %d" % Game.state.chips_balance)
 	_result_detail.text = "\n".join(lines)
 	var outcome := PokerEconomy.outcome_key(match_ref.outcome)

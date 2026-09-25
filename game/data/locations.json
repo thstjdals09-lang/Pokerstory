@@ -271,6 +271,102 @@
        "story.act3_complete"
       ]
      }
+    },
+    {
+     "type": "rect",
+     "rect": [
+      1130,
+      420,
+      80,
+      18
+     ],
+     "color": "#f2c94c",
+     "label": "'모두 환영'",
+     "conditions": {
+      "flags_true": [
+       "story.act1_complete"
+      ]
+     }
+    },
+    {
+     "type": "rect",
+     "rect": [
+      1105,
+      690,
+      90,
+      20
+     ],
+     "color": "#d9534f",
+     "label": "하트 깃발",
+     "conditions": {
+      "flags_true": [
+       "story.festival_suit_heart"
+      ]
+     }
+    },
+    {
+     "type": "rect",
+     "rect": [
+      1105,
+      690,
+      90,
+      20
+     ],
+     "color": "#5cb85c",
+     "label": "클로버 깃발",
+     "conditions": {
+      "flags_true": [
+       "story.festival_suit_clover"
+      ]
+     }
+    },
+    {
+     "type": "rect",
+     "rect": [
+      1105,
+      690,
+      90,
+      20
+     ],
+     "color": "#e8894a",
+     "label": "다이아 깃발",
+     "conditions": {
+      "flags_true": [
+       "story.festival_suit_diamond"
+      ]
+     }
+    },
+    {
+     "type": "rect",
+     "rect": [
+      1105,
+      690,
+      90,
+      20
+     ],
+     "color": "#35507a",
+     "label": "스페이드 깃발",
+     "conditions": {
+      "flags_true": [
+       "story.festival_suit_spade"
+      ]
+     }
+    },
+    {
+     "type": "rect",
+     "rect": [
+      1110,
+      860,
+      80,
+      16
+     ],
+     "color": "#fff3d6",
+     "label": "저녁제 다시 열기",
+     "conditions": {
+      "flags_true": [
+       "story.act3_complete"
+      ]
+     }
     }
    ],
    "buildings": [

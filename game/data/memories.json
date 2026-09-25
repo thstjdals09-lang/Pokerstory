@@ -1,0 +1,22 @@
+{
+  "_comment": "Resident memory ids -> readable text (content alpha). Task ids use the task name.",
+  "memories": {
+    "poker_first": "처음 함께한 포커 판",
+    "poker_beat": "포커에서 당신에게 진 적 있음",
+    "poker_tournament": "네잎 저녁제 대회에서 맞붙음",
+    "poker_challenge": "카드 정원 친선 도전",
+    "poker_house": "당신 집 모임방에서 한 판",
+    "rival_five": "다섯 판을 함께한 라이벌",
+    "friend_gift": "당신에게 선물을 줌",
+    "house_visit": "당신 집에 놀러 감",
+    "house_gathering": "모임방 모임",
+    "act1_welcome": "'모두 환영' 게시판",
+    "festival_suit": "축제 무대 문양",
+    "festival_watched": "축제를 함께 관전함",
+    "festival_helped": "축제 정리를 함께함",
+    "festival_greeted": "축제에서 인사를 나눔",
+    "festival_played": "축제 대회 참가를 지켜봄",
+    "project_help": "함께한 공공사업",
+    "act2_mediation": "둔치에서 두 테이블을 이어 줌"
+  }
+}

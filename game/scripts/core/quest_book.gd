@@ -8,6 +8,7 @@ const NOT_STARTED := "not_started"
 const ACTIVE := "active"
 const COMPLETED := "completed"
 const EPISODE_FRIENDSHIP := 8
+const REQUEST_FRIENDSHIP := 4
 
 
 static func state_of(state: GameState, quest_id: String) -> String:
@@ -36,8 +37,14 @@ static func complete(state: GameState, quest: Dictionary, option: int = -1) -> D
 		effects.append({"type": "friendship", "npc": quest["giver"], "amount": EPISODE_FRIENDSHIP})
 		effects.append({"type": "memory", "npc": quest["giver"], "id": quest_id})
 	else:
-		# Resident requests count toward the festival (act 3) once each.
+		# Resident requests count toward the festival (act 3) once each, and both residents
+		# remember who helped (content alpha).
 		effects.append({"type": "contribution", "id": "quest:" + quest_id})
+		effects.append({"type": "memory", "npc": quest["giver"], "id": quest_id})
+		effects.append({"type": "friendship", "npc": quest["giver"], "amount": REQUEST_FRIENDSHIP})
+		if str(quest.get("target", "")).begins_with("npc_"):
+			effects.append({"type": "memory", "npc": quest["target"], "id": quest_id})
+			effects.append({"type": "friendship", "npc": quest["target"], "amount": 2})
 	var chosen: Dictionary = {}
 	var options: Array = quest.get("options", [])
 	if option >= 0 and option < options.size():

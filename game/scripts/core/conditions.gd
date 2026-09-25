@@ -24,12 +24,29 @@ const KNOWN_KEYS := [
 	"contributions_min", "contributed",
 	"jobs_completed_min",
 	"item_discovered",
+	"act", "day_mod3", "has_memory", "not_memory", "memories_min", "friendship_below",
+	"poker_unmentioned", "poker_last",
 ]
 const ITEM_KEYS := ["placed_item", "not_placed_item", "owns_or_placed_item", "not_owned_or_placed", "item_discovered"]
 const QUEST_KEYS := ["quest_not_started", "quest_active", "quest_completed"]
-const NPC_KEYS := ["met", "not_met"]
-const NPC_MAP_KEYS := ["friendship_min", "rivalry_min", "poker_vs_min", "romance_stage", "romance_consent"]
+const NPC_KEYS := ["met", "not_met", "poker_unmentioned"]
+const NPC_MAP_KEYS := ["friendship_min", "rivalry_min", "poker_vs_min", "romance_stage", "romance_consent",
+	"has_memory", "not_memory", "memories_min", "friendship_below", "poker_last"]
+const ACTS := ["prologue", "act1", "act2", "act3", "postgame"]
 const PROJECT_KEYS := ["project_complete", "project_not_complete"]
+
+
+## Where the main story stands: prologue, act1, act2, act3 or postgame.
+static func current_act(state: GameState) -> String:
+	if state.get_flag("story.postgame") or state.get_flag("story.act3_complete"):
+		return "postgame"
+	if state.get_flag("story.act3_started"):
+		return "act3"
+	if state.get_flag("story.act2_started"):
+		return "act2"
+	if state.get_flag("story.act1_started"):
+		return "act1"
+	return "prologue"
 
 
 static func check(cond: Dictionary, state: GameState, location: String = "") -> bool:
@@ -167,5 +184,34 @@ static func _check_key(key: String, v, state: GameState, location: String) -> bo
 			return state.contributions.has(str(v))
 		"jobs_completed_min":
 			return state.jobs_completed >= int(v)
+		"act":
+			return v.has(current_act(state)) if v is Array else current_act(state) == str(v)
+		"day_mod3":
+			return v.has(state.day_count % 3)
+		"has_memory", "not_memory":
+			for npc in v:
+				var has: bool = state.relation(npc)["memories"].has(str(v[npc]))
+				if has != (key == "has_memory"):
+					return false
+			return true
+		"memories_min":
+			for npc in v:
+				if state.relation(npc)["memories"].size() < int(v[npc]):
+					return false
+			return true
+		"friendship_below":
+			for npc in v:
+				if int(state.relation(npc)["friendship"]) >= int(v[npc]):
+					return false
+			return true
+		"poker_unmentioned":
+			var r := state.relation(str(v))
+			return int(r["poker_hands"]) > int(r.get("poker_talked", 0))
+		"poker_last":
+			for npc in v:
+				var hist: Array = state.poker_history.get(npc, [])
+				if hist.is_empty() or str(hist[hist.size() - 1].get("outcome", "")) != str(v[npc]):
+					return false
+			return true
 	push_error("Unknown condition key: %s" % key)
 	return false

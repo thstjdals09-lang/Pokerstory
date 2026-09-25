@@ -1,0 +1,903 @@
+{
+ "_comment": "Content alpha: residents together, house visits, projects in use.",
+ "entries": [
+  {
+   "id": "pair.juno_miri",
+   "npc": "npc_juno",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_juno",
+    "location": "community_hall",
+    "day_mod3": [
+     1
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "미리랑 진행표 맞추는 중! 내가 멘트 쓰면 미리가 시간을 재."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.miri_juno",
+   "npc": "npc_miri",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_miri",
+    "location": "community_hall",
+    "day_mod3": [
+     1
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ]
+   },
+   "lines": [
+    "주노 멘트가 3분 넘으면 제가 종을 쳐요. 오늘은 두 번 쳤어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.ren_kyle",
+   "npc": "npc_ren",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_ren",
+    "location": "grove",
+    "day_mod3": [
+     1
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "ren_kyle": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "카일한테 규칙 퀴즈 받는 중! 지금까지 3승 2패!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.haru_ella",
+   "npc": "npc_haru",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_haru",
+    "location": "grove",
+    "day_mod3": [
+     1
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "ella_haru": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "엘라랑 지도에 새 표식을 붙이고 있어요. 이번엔 '쉬어 가는 곳'이에요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.bibi_sera",
+   "npc": "npc_bibi",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_bibi",
+    "location": "small_shop",
+    "day_mod3": [
+     2
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "sera_bibi": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "세라한테 부품 빌리러 왔어요… 수다가 길어졌어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.yul_bibi",
+   "npc": "npc_yul",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_yul",
+    "location": "workshop",
+    "day_mod3": [
+     2
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "bibi_yul": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "비비랑 벤치 설계 중이다. 구식과 신식을 반씩 섞는다."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.sia_lumi",
+   "npc": "npc_sia",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_sia",
+    "location": "village_square",
+    "day_mod3": [
+     2
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "sia_lumi": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "루미랑 초보자 안내 연습 중이에요. 제가 손님 역할이에요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.taeo_rira",
+   "npc": "npc_taeo",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_taeo",
+    "location": "tea_house",
+    "day_mod3": [
+     0
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "rira_taeo": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "리라가 새 찻잔 덮개 무늬 골라 달래. …셋 다 예뻐서 문제야."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.nora_moa",
+   "npc": "npc_nora",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_nora",
+    "location": "residential",
+    "day_mod3": [
+     0
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "moa_nora": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "모아랑 화단 앞에서 옛 초대장을 읽어요. 매번 새로운 줄이 보여요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "pair.ona_haru",
+   "npc": "npc_ona",
+   "priority": 26,
+   "conditions": {
+    "met": "npc_ona",
+    "location": "grove",
+    "day_mod3": [
+     2
+    ],
+    "flags_true": [
+     "story.prologue_complete"
+    ],
+    "edge_phase": {
+     "haru_ona": [
+      "bonded",
+      "reconciled"
+     ]
+    }
+   },
+   "lines": [
+    "하루랑 저녁 산책 코스 정하는 중. 제일 어두운 데에 등 하나 더."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.yul_first",
+   "npc": "npc_yul",
+   "priority": 50,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_yul"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_yul",
+     "id": "house_visit"
+    },
+    {
+     "type": "friendship",
+     "npc": "npc_yul",
+     "amount": 4
+    }
+   ],
+   "lines": [
+    "문틀 봐 주러 왔다. 튼튼하군. 간식 있나?"
+   ],
+   "choices": [
+    {
+     "text": "편하게 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.yul_again",
+   "npc": "npc_yul",
+   "priority": 49,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_yul"
+   },
+   "lines": [
+    "또 들렀다. 이 집 의자 편하다."
+   ],
+   "choices": [
+    {
+     "text": "언제든 와요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.sia_first",
+   "npc": "npc_sia",
+   "priority": 50,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_sia"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_sia",
+     "id": "house_visit"
+    },
+    {
+     "type": "friendship",
+     "npc": "npc_sia",
+     "amount": 4
+    }
+   ],
+   "lines": [
+    "집 구경 와도 된다고 해서 왔어요! 방문객 객실보다 훨씬 아늑해요!"
+   ],
+   "choices": [
+    {
+     "text": "편하게 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.sia_again",
+   "npc": "npc_sia",
+   "priority": 49,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_sia"
+   },
+   "lines": [
+    "놀러 왔어요! 오늘은 그냥 앉아 있다 갈게요."
+   ],
+   "choices": [
+    {
+     "text": "언제든 와요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.rira_first",
+   "npc": "npc_rira",
+   "priority": 50,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_rira"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_rira",
+     "id": "house_visit"
+    },
+    {
+     "type": "friendship",
+     "npc": "npc_rira",
+     "amount": 4
+    }
+   ],
+   "lines": [
+    "차 배달 왔어요! 집에서 마시는 차는 찻집이랑 또 다르죠?"
+   ],
+   "choices": [
+    {
+     "text": "편하게 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.rira_again",
+   "npc": "npc_rira",
+   "priority": 49,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_rira"
+   },
+   "lines": [
+    "오늘은 새 찻잎 맛보러 왔어요. 당신 집 창가가 딱이에요."
+   ],
+   "choices": [
+    {
+     "text": "언제든 와요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.haru_first",
+   "npc": "npc_haru",
+   "priority": 50,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_haru"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_haru",
+     "id": "house_visit"
+    },
+    {
+     "type": "friendship",
+     "npc": "npc_haru",
+     "amount": 4
+    }
+   ],
+   "lines": [
+    "저, 저기… 놀러 와도 된다고 해서… 왔어요. 조용하고 좋아요."
+   ],
+   "choices": [
+    {
+     "text": "편하게 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.haru_again",
+   "npc": "npc_haru",
+   "priority": 49,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_haru"
+   },
+   "lines": [
+    "또 와 버렸어요… 여기선 말이 잘 나와요."
+   ],
+   "choices": [
+    {
+     "text": "언제든 와요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.ella_first",
+   "npc": "npc_ella",
+   "priority": 50,
+   "once": true,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_ella"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_ella",
+     "id": "house_visit"
+    },
+    {
+     "type": "friendship",
+     "npc": "npc_ella",
+     "amount": 4
+    }
+   ],
+   "lines": [
+    "집 안에 문양 장식 있나 보러 왔어요! 없으면 제가 그려 드릴게요."
+   ],
+   "choices": [
+    {
+     "text": "편하게 있다 가요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "visit.ella_again",
+   "npc": "npc_ella",
+   "priority": 49,
+   "conditions": {
+    "location": "player_home",
+    "met": "npc_ella"
+   },
+   "lines": [
+    "당신 집 책장에 제 책 한 권 꽂아 둬도 돼요?"
+   ],
+   "choices": [
+    {
+     "text": "언제든 와요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "hall.juno_first",
+   "npc": "npc_juno",
+   "priority": 50,
+   "once": true,
+   "conditions": {
+    "location": "player_home_hall",
+    "met": "npc_juno"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_juno",
+     "id": "house_gathering"
+    },
+    {
+     "type": "friendship",
+     "npc": "npc_juno",
+     "amount": 4
+    }
+   ],
+   "lines": [
+    "모임방 파티 시작! 사회는 내가 볼게. 관객은… 테오 하나지만!"
+   ],
+   "choices": [
+    {
+     "text": "모임방은 늘 열려 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "hall.juno_again",
+   "npc": "npc_juno",
+   "priority": 49,
+   "conditions": {
+    "location": "player_home_hall",
+    "met": "npc_juno"
+   },
+   "lines": [
+    "오늘도 모임방이다! 여기 오면 저녁이 짧아."
+   ],
+   "choices": [
+    {
+     "text": "편하게 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "hall.taeo_first",
+   "npc": "npc_taeo",
+   "priority": 50,
+   "once": true,
+   "conditions": {
+    "location": "player_home_hall",
+    "met": "npc_taeo"
+   },
+   "effects": [
+    {
+     "type": "memory",
+     "npc": "npc_taeo",
+     "id": "house_gathering"
+    },
+    {
+     "type": "friendship",
+     "npc": "npc_taeo",
+     "amount": 4
+    }
+   ],
+   "lines": [
+    "모임방 커튼 길이 재러 왔어. …겸사겸사 논다."
+   ],
+   "choices": [
+    {
+     "text": "모임방은 늘 열려 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "hall.taeo_again",
+   "npc": "npc_taeo",
+   "priority": 49,
+   "conditions": {
+    "location": "player_home_hall",
+    "met": "npc_taeo"
+   },
+   "lines": [
+    "모임방이 편해. 여기 있을게."
+   ],
+   "choices": [
+    {
+     "text": "편하게 있어요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "use.lumi_square_seating",
+   "npc": "npc_lumi",
+   "priority": 25,
+   "conditions": {
+    "met": "npc_lumi",
+    "project_complete": "square_seating",
+    "location": "village_square"
+   },
+   "lines": [
+    "벤치에 앉아 있으면 모임에 올 사람이 먼저 말을 걸어 줘. 이 자리 최고야."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "use.yul_square_seating",
+   "npc": "npc_yul",
+   "priority": 25,
+   "conditions": {
+    "met": "npc_yul",
+    "project_complete": "square_seating",
+    "location": "village_square"
+   },
+   "lines": [
+    "벤치 점검 중이다. 삐걱거리면 바로 고친다. 앉아 봐라."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "use.haru_lantern_path",
+   "npc": "npc_haru",
+   "priority": 25,
+   "conditions": {
+    "met": "npc_haru",
+    "project_complete": "lantern_path",
+    "location": "grove"
+   },
+   "lines": [
+    "등불 켜진 숲길을 걷는 중이에요. 이젠 밤이 무섭지 않아요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "use.bibi_market_awning",
+   "npc": "npc_bibi",
+   "priority": 25,
+   "conditions": {
+    "met": "npc_bibi",
+    "project_complete": "market_awning",
+    "location": "market"
+   },
+   "lines": [
+    "가림막 아래 노점이에요… 비가 와도 가구를 내놓을 수 있어요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "use.moa_card_room_extension",
+   "npc": "npc_moa",
+   "priority": 25,
+   "conditions": {
+    "met": "npc_moa",
+    "project_complete": "card_room_extension",
+    "location": "card_room"
+   },
+   "lines": [
+    "연습 테이블 안내 중이에요! 칩 없이 쳐 보고 싶은 분은 이쪽으로요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "use.juno_festival_decor",
+   "npc": "npc_juno",
+   "priority": 25,
+   "conditions": {
+    "met": "npc_juno",
+    "project_complete": "festival_decor",
+    "location": "village_square"
+   },
+   "lines": [
+    "장식 아래서 개막 멘트 리허설 중! 들어 볼래?"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "romance.notice_lumi",
+   "npc": "npc_moa",
+   "priority": 35,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "romance_stage": {
+     "npc_lumi": [
+      "dating",
+      "committed"
+     ]
+    }
+   },
+   "lines": [
+    "요즘 루미가 모임 끝나고 늦게까지 남아 있어요. 누구 기다리는 것 같던데… 헤헤, 모르는 척할게요!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "romance.notice_kyle",
+   "npc": "npc_ren",
+   "priority": 35,
+   "once": true,
+   "conditions": {
+    "met": "npc_ren",
+    "romance_stage": {
+     "npc_kyle": [
+      "dating",
+      "committed"
+     ]
+    }
+   },
+   "lines": [
+    "카일이 규칙판에 네 이름을 작게 적어 뒀더라. 카일답지 않지? 난 모르는 거야!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "romance.notice_rira",
+   "npc": "npc_taeo",
+   "priority": 35,
+   "once": true,
+   "conditions": {
+    "met": "npc_taeo",
+    "romance_stage": {
+     "npc_rira": [
+      "dating",
+      "committed"
+     ]
+    }
+   },
+   "lines": [
+    "리라가 요즘 찻잔을 두 개씩 꺼내. …누구 건지 안 물어볼게."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "romance.notice_taeo",
+   "npc": "npc_rira",
+   "priority": 35,
+   "once": true,
+   "conditions": {
+    "met": "npc_rira",
+    "romance_stage": {
+     "npc_taeo": [
+      "dating",
+      "committed"
+     ]
+    }
+   },
+   "lines": [
+    "테오가 요즘 단추를 새로 달았어요! 그 사람, 좋아하는 사람 생기면 단추부터 바꾸거든요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "house.stage1_lumi",
+   "npc": "npc_lumi",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "home_stage_min": 1
+   },
+   "lines": [
+    "집 넓혔다며? 등불 옆에 자리 생겼으면 나중에 초대해 줘!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "house.stage3_juno",
+   "npc": "npc_juno",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "met": "npc_juno",
+    "home_stage_min": 3
+   },
+   "lines": [
+    "모임방이 생겼다고?! 첫 파티 사회는 내가 맡는다!"
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "house.stage3_kyle",
+   "npc": "npc_kyle",
+   "priority": 34,
+   "once": true,
+   "conditions": {
+    "met": "npc_kyle",
+    "home_stage_min": 3
+   },
+   "lines": [
+    "모임방 테이블이면 규칙판도 하나 필요하겠군. 만들어 두지."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  }
+ ]
+}

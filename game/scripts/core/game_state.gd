@@ -2,7 +2,7 @@ class_name GameState
 extends RefCounted
 ## All persistent progress of one save slot. SaveSystem writes it as JSON via to_dict().
 
-const SAVE_VERSION := 4
+const SAVE_VERSION := 5
 
 var player_name := "여행자"
 ## Single in-game currency. Never negative; every change is recorded in chips_ledger.
@@ -54,6 +54,8 @@ var poker_history := {}
 ## Festival tournament: stage 0..3 (3 = won), rewarded flag.
 var tournament := {"stage": 0, "rewarded": false}
 var tracked_quest := ""
+## Mornings since the start (content alpha): varies where residents spend their time.
+var day_count := 0
 
 
 # --- chips -------------------------------------------------------------------
@@ -101,7 +103,7 @@ func set_flag(flag_name: String, value: bool = true) -> void:
 func relation(npc_id: String) -> Dictionary:
 	if not relations.has(npc_id):
 		relations[npc_id] = {
-			"met": false, "friendship": 0, "rivalry": 0, "poker_hands": 0, "memories": [],
+			"met": false, "friendship": 0, "rivalry": 0, "poker_hands": 0, "memories": [], "poker_talked": 0,
 			"romance": {"consent": false, "stage": "closed", "seen_dates": []},
 		}
 	return relations[npc_id]
@@ -219,6 +221,7 @@ func to_dict() -> Dictionary:
 		"poker_history": poker_history.duplicate(true),
 		"tournament": tournament.duplicate(),
 		"tracked_quest": tracked_quest,
+		"day_count": day_count,
 	}
 
 
@@ -286,6 +289,7 @@ static func from_dict(d: Dictionary) -> GameState:
 		for m in src.get("memories", []):
 			r["memories"].append(str(m))
 		var rom: Dictionary = src.get("romance", {})
+		r["poker_talked"] = int(src.get("poker_talked", 0))
 		r["romance"]["consent"] = bool(rom.get("consent", false))
 		r["romance"]["stage"] = str(rom.get("stage", "closed"))
 		for sd in rom.get("seen_dates", []):
@@ -318,4 +322,5 @@ static func from_dict(d: Dictionary) -> GameState:
 	var t: Dictionary = d.get("tournament", {})
 	s.tournament = {"stage": clampi(int(t.get("stage", 0)), 0, 3), "rewarded": bool(t.get("rewarded", false))}
 	s.tracked_quest = str(d.get("tracked_quest", ""))
+	s.day_count = maxi(0, int(d.get("day_count", 0)))
 	return s

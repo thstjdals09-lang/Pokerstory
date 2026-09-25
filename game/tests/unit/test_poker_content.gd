@@ -37,7 +37,7 @@ func test_ten_opponents_eight_abilities_modes_and_tournament() -> void:
 	for npc in db.opponents:
 		var o: Dictionary = db.opponents[npc]
 		check(db.npcs.has(npc), npc + " is a resident")
-		check(["steady", "keep_pairs", "cautious", "curious", "friendly"].has(o.get("persona", "")), npc + " persona")
+		check(["steady", "keep_pairs", "cautious", "curious", "friendly", "chaser", "showman"].has(o.get("persona", "")), npc + " persona")
 		for k in ["win", "draw", "lose"]:
 			check(str(o.get("lines", {}).get(k, "")) != "", "%s says something after a %s" % [npc, k])
 	check_eq(db.abilities.size(), 8, "8 abilities")
