@@ -38,6 +38,12 @@ var continued_scene := false
 func _ready() -> void:
 	_world_root = Node2D.new()
 	add_child(_world_root)
+	# run_diorama.bat: the same game drawn in 3D blocks; the 2D world keeps the rules, hidden.
+	if "--view3d" in OS.get_cmdline_user_args():
+		_world_root.visible = false
+		var view3d: Node3D = load("res://scripts/world3d/view3d.gd").new()
+		view3d.main = self
+		add_child(view3d)
 
 	var hud_layer := CanvasLayer.new()
 	hud_layer.layer = 10
