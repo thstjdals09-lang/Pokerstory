@@ -1140,7 +1140,8 @@
       },
       {
        "type": "item",
-       "item": "item.memento.04_08"
+       "item": "item.memento.04_08",
+       "once": "evt:festival_help_memento"
       }
      ]
     },
@@ -1213,7 +1214,7 @@
        "item": "item.memento.04_08"
       }
      ],
-     "once_key": "festival:helper_again"
+     "once_key": "evt:festival_help_memento"
     },
     {
      "text": "닫기",

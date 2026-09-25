@@ -31,6 +31,8 @@ var persona := "steady"
 var ability_id := ""
 var stake := 0
 var locked_index := -1
+## Where the hand was dealt (a tea-house social game bonds Rira and Taeo, 06_integration/01 #10).
+var place := ""
 
 
 ## Deals a new hand from `p_deck`. Pass null to build an empty match (used by from_dict).
@@ -160,6 +162,7 @@ func to_dict() -> Dictionary:
 		"ability_id": ability_id,
 		"stake": stake,
 		"locked_index": locked_index,
+		"place": place,
 	}
 
 
@@ -199,6 +202,7 @@ static func from_dict(d: Dictionary) -> PokerMatch:
 	m.ability_id = str(d.get("ability_id", ""))
 	m.stake = int(d.get("stake", -1))
 	m.locked_index = int(d.get("locked_index", -1))
+	m.place = str(d.get("place", ""))
 	return m
 
 

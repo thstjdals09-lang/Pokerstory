@@ -12,6 +12,8 @@ extends RefCounted
 ##   romance {npc, stage?, consent?, date?}                             contribution {id}
 ##   quest_start {quest}                project {project}               home_stage {stage}
 ##   unlock_ability {ability}           equip {category, item}          toast {text}
+## Any single effect may carry "once": <key>; it is then applied at most once per save even when
+## different scenes grant it (e.g. the festival helper memento on the first and later festivals).
 
 const REL_MAX := 100
 
@@ -28,6 +30,11 @@ static func apply(state: GameState, effects: Array, key: String = "") -> Diction
 		return {"ok": false, "skipped": false, "reason": "not_enough_chips", "need": cost - state.chips_balance, "messages": []}
 	var messages: Array = []
 	for e in effects:
+		var once := str(e.get("once", ""))
+		if once != "":
+			if state.events_done.has(once):
+				continue
+			state.events_done[once] = true
 		_apply_one(state, e, messages)
 	if key != "":
 		state.events_done[key] = true

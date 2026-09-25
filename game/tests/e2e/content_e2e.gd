@@ -7,7 +7,8 @@ extends "res://tests/e2e/first_play_e2e.gd"
 ## Scenarios:
 ##   cc04   every district and functional place: enter, move, interact, return; locked doors;
 ##          time kept while travelling; save and continue inside a district
-##   story  cc01 core: new game, no poker, prologue -> act 1 -> act 2 -> act 3 -> postgame
+##   story / cc01  new game, no poker: odd job -> lamp -> Lumi -> act 1 -> act 2 -> first house
+##          expansion paid with odd jobs -> act 3 festival -> postgame
 ##   cc05   meet all 16 residents (greetings, one place each at day and evening), then offer,
 ##          accept and finish all 32 personal episodes at their real targets
 ##   cc06   rivalry scene vs friendship, romance accepted -> dates -> together -> ended,
@@ -18,6 +19,14 @@ extends "res://tests/e2e/first_play_e2e.gd"
 ##   cc08   poker: free practice, social mix with 7 residents, friendly challenge with 3, card-room
 ##          and house home games, all 8 abilities, ability + quit -> same hand, fold, tournament
 ##          with a lost round, a resumed round and a one-time reward
+##   cc09   quit and continue in every place (day and evening), in every poker mode, during an
+##          odd job, right after funding a project and with an active request
+##   cc10   a v3 save mid-hand resumes and enters the new story; a damaged v3 save is refused
+##   cc11   every one of the 65 items obtained in play (scenes, projects, tournament, shops,
+##          trades), each placeable item shown in the house and each wearable worn
+##   react  cross-system reactions 2-10 caused in play (1 and 11-12 are in cc01)
+##   cc12   declined scene offered again, act 2 scene missed at night then found by day, festival
+##          skipped and slept through then held, festival repeated without a second memento
 
 
 func run(scenario: String) -> void:
@@ -30,7 +39,7 @@ func run(scenario: String) -> void:
 	match scenario:
 		"cc04":
 			await _cc04()
-		"story":
+		"story", "cc01":
 			await _story()
 		"cc05":
 			await _cc05()
@@ -42,6 +51,16 @@ func run(scenario: String) -> void:
 			await _life()
 		"cc08":
 			await _cc08()
+		"cc09":
+			await _cc09()
+		"cc10":
+			await _cc10()
+		"cc11":
+			await _cc11()
+		"cc12":
+			await _cc12()
+		"react":
+			await _react()
 		_:
 			_check(false, "unknown scenario " + scenario)
 	_finish()
@@ -247,6 +266,20 @@ func _story() -> void:
 	_check(Game.state.get_flag("story.act2_complete"), "act 2 complete")
 	await _shot("story_act2")
 
+	# The first house expansion, paid with odd jobs only (after Lumi's first episode opens it).
+	await _accept_offer("npc_lumi", "npc_lumi.bond_01")
+	await _finish_task("npc_lumi.bond_01", 0)
+	var runs := 0
+	while Game.state.chips_balance < 90 and runs < 12:
+		await _travel("village_square")
+		await _start_job()
+		for spot in Game.job.remaining():
+			await _collect_spot(spot)
+		runs += 1
+	_check(runs >= 9, "about nine odd jobs for the first expansion (%d)" % runs)
+	await _upgrade_home(1)
+	_check_eq(Game.state.home_stage, 1, "house expanded without poker")
+
 	# Act 3: the festival, prepared without poker.
 	await _talk_npc("npc_juno")
 	await _close_any()
@@ -284,6 +317,12 @@ func _story() -> void:
 	_check_eq(main.last_entry_id, "scn.postgame_lumi", "postgame morning scene")
 	await _close_any()
 	_check(Game.state.get_flag("story.postgame"), "postgame")
+	# Reactions 11-12: the first festival is talked about; Moa thanks a player who never played.
+	await _talk_until("npc_moa", "moa_no_poker_festival")
+	await _close_any()
+	for npc in ["npc_juno", "npc_kyle", "npc_lumi", "npc_miri"]:
+		await _talk_until(npc, npc.trim_prefix("npc_") + "_festival", 5)
+		await _close_any()
 	_check_eq(Game.state.poker_hands_completed, 0, "the whole story without a single poker hand")
 	_check_ledger()
 
@@ -485,6 +524,10 @@ func _fund(pid: String) -> void:
 func _upgrade_home(stage: int) -> void:
 	await _use("home_blueprint", "player_home")
 	await _read_to_choices()
+	if not main.dialogue._choices.any(func(c): return c.get("action", "") == "upgrade_home"):
+		_check(false, "blueprint offers no upgrade: %s (chips %d)" % [main.dialogue._lines, Game.state.chips_balance])
+		await _close_any()
+		return
 	await _choose("upgrade_home")
 	await _wait_world("player_home")
 	_check_eq(Game.state.home_stage, stage, "house stage %d" % stage)
@@ -903,6 +946,493 @@ func _open_menu_collection(cat: String) -> void:
 	await _frames(1)
 	main.menu.show_collection(cat)
 	await _frames(1)
+
+
+# --- cc09: quitting and restoring anywhere -------------------------------------------------------
+
+func _quit_and_continue(expect_loc: String) -> void:
+	main.return_to_title()
+	await _frames(3)
+	main.title.continue_button.pressed.emit()
+	await _frames(3)
+	for i in 240:
+		if main.ui_mode == "poker" or (main.ui_mode == "world" and main.world != null and main.world.location_id == expect_loc):
+			break
+		await _frames(1)
+	await _physics(2)
+
+
+func _cc09() -> void:
+	await _new_game("중단")
+	_setup_open_town()
+	for npc in Game.data.npc_order:
+		Game.state.relation(npc)["met"] = true
+	for f in ["intro_met_lumi", "moa_met", "sera_met", "lumi_lamp_reaction_seen", "story.act2_started", "story.act2_complete",
+			"story.act3_started", "story.festival_ready", "story.act3_complete", "story.postgame"]:
+		Game.state.set_flag(f)
+	Game.state.home_stage = 3
+	for a in Game.data.abilities:
+		if not Game.state.abilities_unlocked.has(a):
+			Game.state.abilities_unlocked.append(a)
+	_grant_test_chips(600)
+	# Every place: quit from the menu and continue at the same spot and time.
+	for time in ["day", "evening"]:
+		await _rest_until(time)
+		for loc_id in Game.data.locations:
+			if loc_id == "card_room" and time == "day":
+				continue
+			await _travel(loc_id)
+			var pos: Vector2 = main.world.player.position
+			await _quit_and_continue(loc_id)
+			_check_eq(main.world.location_id, loc_id, "%s restored (%s)" % [loc_id, time])
+			_check(main.world.player.position.distance_to(pos) < 4.0, "%s same spot" % loc_id)
+			_check_eq(Game.state.time_of_day, time, "%s same time" % loc_id)
+	# A hand in every mode survives a quit: same cards, same deck, no second stake.
+	var tables := [
+		["practice", "", "village_square", "job_board", "start_poker", "practice|"],
+		["social_mix", "npc_taeo", "village_square", "square_mix_table", "", ""],
+		["friendly_challenge", "npc_ren", "waterfront", "garden_table", "", ""],
+		["homegame", "npc_lumi", "player_home_hall", "home_table", "", ""],
+		["tournament", "npc_ren", "village_square", "festival_booth", "start_poker", "tournament|"],
+	]
+	for t in tables:
+		await _use(t[3], t[2])
+		if t[4] != "":
+			await _choose_arg(t[4], t[5])
+		await _pick_loadout(t[0], t[1], "ability.star_sense")
+		main.poker.ability_button.pressed.emit()
+		await _frames(1)
+		var hand: Array = _codes(main.poker.match_ref.player_hand)
+		var deck: Array = main.poker.match_ref.deck.codes()
+		var stakes := _ledger_count("poker_stake")
+		var chips: int = Game.state.chips_balance
+		var said: String = main.poker._ability_label.text
+		await _quit_and_continue(t[2])
+		_check_eq(main.ui_mode, "poker", t[0] + " hand resumes")
+		_check_eq(main.poker.match_ref.mode, t[0], t[0] + " same table")
+		_check_eq(_codes(main.poker.match_ref.player_hand), hand, t[0] + " same cards")
+		_check_eq(main.poker.match_ref.deck.codes(), deck, t[0] + " no reshuffle")
+		_check_eq(main.poker._ability_label.text, said, t[0] + " same ability result")
+		_check_eq(_ledger_count("poker_stake"), stakes, t[0] + " no second stake")
+		_check_eq(Game.state.chips_balance, chips, t[0] + " no refund")
+		await _stand_and_check(Game.match_opponent(main.poker.match_ref), "win")
+		await _leave_table()
+	# An odd job interrupted by quitting pays nothing and can be started again.
+	await _rest_until("day")
+	await _travel("village_square")
+	await _start_job()
+	await _collect_spot(Game.job.remaining()[0])
+	var before_job: int = Game.state.chips_balance
+	await _quit_and_continue("village_square")
+	_check(Game.job == null, "an unfinished job does not survive quitting")
+	_check_eq(Game.state.chips_balance, before_job, "and pays nothing")
+	await _start_job()
+	for spot in Game.job.remaining():
+		await _collect_spot(spot)
+	_check_eq(Game.state.chips_balance, before_job + 10, "a new run pays once")
+	# Funding a project and quitting at once: done once, paid once.
+	Game.state.projects.erase("square_seating")
+	var chips_before: int = Game.state.chips_balance
+	await _fund("square_seating")
+	await _quit_and_continue("community_hall")
+	_check(Game.state.project_done("square_seating"), "project kept after quitting")
+	_check_eq(Game.state.chips_balance, chips_before - int(Game.data.projects["square_seating"]["cost"]), "paid once")
+	_check_eq(Game.state.owned_count("item.memento.05_08"), 1, "project gift once")
+	# An accepted request stays active across a restart.
+	Game.state.quests.erase("quest.ren_cardcase")
+	await _accept_offer("npc_ren", "quest.ren_cardcase")
+	await _quit_and_continue(main.world.location_id)
+	_check_eq(QuestBook.state_of(Game.state, "quest.ren_cardcase"), QuestBook.ACTIVE, "request still active")
+	_check(main.hud.quest_text().contains(str(Game.data.quests["quest.ren_cardcase"]["name"])), "HUD still tracks it")
+	_check_ledger()
+
+
+# --- cc10: saves from earlier builds ---------------------------------------------------------------
+
+func _cc10() -> void:
+	# A v3 save (first-play build) in the middle of a card-room hand.
+	var m := PokerMatch.new(Deck.stacked(DECKS["win"]))
+	var hand := m.to_dict()
+	for k in ["mode", "opponent_id", "persona", "ability_id", "stake", "locked_index", "place"]:
+		hand.erase(k)
+	var v3 := {
+		"save_version": 3, "player_name": "셋째", "chips_balance": 73,
+		"chips_ledger": [{"seq": 1, "delta": 93, "reason": "starting_chips", "balance": 93}, {"seq": 2, "delta": -20, "reason": "poker_stake", "balance": 73}],
+		"flags": {"intro_met_lumi": true, "moa_met": true, "sera_met": true, "lumi_lamp_reaction_seen": true, "tutorial_done": true, "sera_quest_thanked": true},
+		"poker_hands_completed": 2, "poker_record": {"win": 1, "draw": 0, "lose": 1, "fold": 0},
+		"owned_items": {}, "collection": ["furniture.lamp_small"],
+		"home_placements": [{"slot": "slot_window", "item": "furniture.lamp_small"}],
+		"current_scene": "card_room", "player_position": [480, 560], "time_of_day": "evening",
+		"quests": {"quest.sera_delivery": "completed"}, "pending_poker_stake": 20, "jobs_completed": 3,
+		"poker_in_progress": hand,
+	}
+	_write_save(JSON.stringify(v3))
+	main.show_title()
+	await _frames(2)
+	main.title.continue_button.pressed.emit()
+	for i in 240:
+		if main.ui_mode == "poker":
+			break
+		await _frames(1)
+	_check_eq(main.ui_mode, "poker", "v3 hand resumes")
+	_check_eq(_codes(main.poker.match_ref.player_hand), WIN_PLAYER, "same v3 cards")
+	_check_eq(Game.state.chips_balance, 73, "v3 balance kept")
+	_check_eq(main.poker.match_ref.mode, "homegame", "v3 hand is the card-room home game")
+	_check_eq(Game.match_opponent(main.poker.match_ref), "npc_lumi", "against Lumi as before")
+	_check_eq(int(_saved().get("save_version", -1)), GameState.SAVE_VERSION, "rewritten as the current version")
+	main.poker.stand_button.pressed.emit()
+	await _frames(2)
+	_check_eq(Game.state.chips_balance, 113, "win pays 40 once")
+	_check_eq(_ledger_count("poker_stake"), 1, "no second stake")
+	await _leave_table()
+	_check(Game.state.is_item_placed("furniture.lamp_small"), "lamp still placed")
+	_check(Game.state.has_met("npc_lumi") and Game.state.has_met("npc_moa") and Game.state.has_met("npc_sera"), "met residents kept")
+	_check_eq(QuestBook.state_of(Game.state, "quest.sera_delivery"), QuestBook.COMPLETED, "request kept")
+	_check_eq(Game.state.jobs_completed, 3, "job count kept")
+	# The old player continues straight into the new story.
+	await _talk_npc("npc_moa")
+	_check_eq(main.last_entry_id, "scn.missing_invitation", "act 1 opens for an old save")
+	await _choose_text("찾아볼게요")
+	_check(Game.state.get_flag("story.act1_started"), "act 1 started")
+	_check_ledger()
+	# A v3 save with a stake but no cards is damaged (R2 exception is v2-only) and left untouched.
+	var broken := v3.duplicate(true)
+	broken["poker_in_progress"] = {}
+	var text := JSON.stringify(broken)
+	_write_save(text)
+	main.show_title()
+	await _frames(2)
+	main.title.continue_button.pressed.emit()
+	await _frames(4)
+	_check_eq(main.ui_mode, "title", "damaged v3 save refused")
+	_check_eq(FileAccess.get_file_as_string(Game.save_path), text, "file left as it was")
+
+
+# --- cc11: the collection ------------------------------------------------------------------------
+
+func _cc11() -> void:
+	await _new_game("수집")
+	_setup_open_town()
+	for npc in Game.data.npc_order:
+		Game.state.relation(npc)["met"] = true
+	for f in ["intro_met_lumi", "moa_met", "sera_met"]:
+		Game.state.set_flag(f)
+	Game.state.projects.erase("board_restoration")
+	Game.state.projects.erase("guest_cottage")
+	for f in ["story.clue_postbox", "story.clue_grove", "story.act1_complete"]:
+		Game.state.set_flag(f, false)
+	for a in Game.data.abilities:
+		if not Game.state.abilities_unlocked.has(a):
+			Game.state.abilities_unlocked.append(a)
+	_grant_test_chips(6000)
+	# Mementos from their own scenes (each scene jumped to with the story flags it needs;
+	# the whole chain in order is cc01).
+	await _use("grove_sign_west", "grove")
+	await _close_any()
+	await _use("grove_sign_east", "grove")
+	await _close_any()
+	await _use("postbox_stamp_spot", "residential")
+	await _close_any()
+	await _use("card_room_board", "village_square")
+	await _choose_text("친구와")
+	await _choose_text("좋아요")
+	for f in ["story.act2_heard_lumi", "story.act2_heard_kyle", "story.act2_prep_done"]:
+		Game.state.set_flag(f)
+	await _talk_npc("npc_lumi")
+	await _choose_text("친목")
+	await _choose_text("좋아요")
+	await _fund("board_restoration")
+	await _fund("square_seating")
+	Game.state.contributions = ["prep:juno", "prep:spectate", "quest:quest.festival_letters"]
+	await _use("hall_meeting", "community_hall")
+	await _choose_text("다이아")
+	await _rest_until("evening")
+	await _use("festival_booth", "village_square")
+	await _choose_text("정리")
+	await _choose_text("좋은 저녁")
+	await _use("lantern_path_marker", "grove")
+	_check_eq(main.last_entry_id, "evt_sky_lantern", "sky lantern evening")
+	await _close_any()
+	# Tournament card back.
+	for npc in ["npc_ren", "npc_rira", "npc_kyle"]:
+		await _use("festival_booth", "village_square")
+		await _choose_arg("start_poker", "tournament|")
+		await _pick_loadout("tournament", npc, "ability.star_sense")
+		main.poker.stand_button.pressed.emit()
+		await _frames(2)
+		await _leave_table()
+	await _rest_until("day")
+	await _talk_until("npc_lumi", "scn.postgame_lumi")
+	await _close_any()
+	for i in 8:
+		_check(Game.state.collection.has("item.memento.0%d_08" % (i + 1)), "memento %d from its scene" % (i + 1))
+	_check(Game.state.collection.has("item.card_back.08_06"), "tournament card back")
+	# Everything the shops sell, bought through the shop screen.
+	Game.state.projects["market_awning"] = "complete"
+	var shops := [["npc_sera", "sera_shop", ""], ["npc_bibi", "bibi_workshop", ""], ["npc_taeo", "taeo_tailor", ""], ["npc_ren", "swap_shop", ""]]
+	for sh in shops:
+		await _open_shop_via(sh[0], sh[1])
+		for item_id in Game.shop_items(sh[1]):
+			if Game.state.owned_count(item_id) == 0 and main.shop.buy_buttons.has(item_id):
+				main.shop.buy_buttons[item_id].pressed.emit()
+				await _frames(1)
+		main.shop.close()
+		await _frames(2)
+	# Show every placeable item in the house once, then put it back; wear every wearable once.
+	await _travel("player_home")
+	await _go_to("home_edit", "home_decorate")
+	await _press("interact")
+	var shown := 0
+	for id in Game.data.item_order:
+		if not Game.is_placeable(id):
+			continue
+		if Game.state.owned_count(id) <= 0:
+			continue
+		main.home_edit.item_buttons[id].pressed.emit()
+		await _frames(1)
+		main.home_edit.slot_buttons["slot_table"].pressed.emit()
+		await _frames(1)
+		main.home_edit.confirm_button.pressed.emit()
+		await _frames(1)
+		_check_eq(Game.state.placement_at("slot_table"), id, id + " on display")
+		main.home_edit.slot_buttons["slot_table"].pressed.emit()
+		await _frames(1)
+		main.home_edit.store_button.pressed.emit()
+		await _frames(1)
+		_check(Game.state.collection.has(id), id + " stays in the book")
+		shown += 1
+	main.home_edit.close_button.pressed.emit()
+	await _frames(2)
+	var worn := 0
+	for cat in DataDB.EQUIP_CATEGORIES:
+		await _open_menu_collection(cat)
+		for id in Game.data.item_order:
+			if str(Game.data.items[id]["category"]) != cat or not main.menu.equip_buttons.has(id):
+				continue
+			main.menu.equip_buttons[id].pressed.emit()
+			await _frames(1)
+			_check_eq(Game.state.equipped.get(cat, ""), id, id + " worn")
+			worn += 1
+		main.menu.resume_button.pressed.emit()
+		await _frames(2)
+	var placeable := Game.data.item_order.filter(func(id): return Game.is_placeable(id)).size()
+	_check_eq(shown, placeable, "every placeable item shown in the house")
+	_check_eq(worn, 24, "every clothing, card back and chip style worn")
+	# Trades: buy the second copy of each traded item at Sera's, then exchange at the stall.
+	await _open_shop_via("npc_sera", "sera_shop")
+	for t in Game.data.trades:
+		main.shop.buy_buttons[t["give"]].pressed.emit()
+		await _frames(1)
+		_check(Game.state.owned_count(t["give"]) >= 2, "second %s bought" % t["give"])
+	main.shop.close()
+	await _frames(2)
+	for t in Game.data.trades:
+		await _use("swap_stall", "market")
+		await _choose_arg("trade", t["id"])
+		_check(Game.state.events_done.has("trade:" + str(t["id"])), t["id"] + " traded")
+	_check_eq(Game.state.collection.size(), Game.data.item_order.size(), "every item found (%d)" % Game.data.item_order.size())
+	for id in Game.data.item_order:
+		_check(Game.state.collection.has(id), id + " in the book")
+	await _open_menu_collection("memento")
+	_check(main.menu._book_title.text.contains("%d / %d" % [Game.data.item_order.size(), Game.data.item_order.size()]), "book complete")
+	await _shot("cc11_book")
+	main.menu.resume_button.pressed.emit()
+	await _frames(2)
+	_check_ledger()
+
+
+## Talks to a shop owner until the shop choice is offered (one-time lines may come first).
+func _open_shop_via(npc: String, shop_id: String) -> void:
+	for i in 5:
+		await _talk_npc(npc)
+		await _read_to_choices()
+		for c in main.dialogue._choices:
+			if c.get("action", "") == "open_shop" and c.get("arg", "") == shop_id:
+				await _choose_arg("open_shop", shop_id)
+				_check_eq(main.ui_mode, "shop", shop_id + " open")
+				return
+		await _close_any()
+	_check(false, "%s never offered %s" % [npc, shop_id])
+
+
+# --- cc12: time changes, missed events, festival again ---------------------------------------
+
+func _cc12() -> void:
+	await _new_game("시간")
+	_setup_open_town()
+	for f in ["story.act1_started", "story.clue_postbox", "story.clue_grove", "story.act1_complete"]:
+		Game.state.set_flag(f, false)
+	Game.state.set_flag("intro_met_lumi")
+	Game.state.set_flag("lumi_lamp_reaction_seen")
+	# Declining a story scene does not lose it.
+	await _talk_npc("npc_moa")
+	await _close_any()
+	await _talk_npc("npc_moa")
+	_check_eq(main.last_entry_id, "scn.missing_invitation", "invitation offered")
+	await _choose_text("나중에요")
+	await _rest_until("evening")
+	await _rest_until("day")
+	await _talk_npc("npc_moa")
+	_check_eq(main.last_entry_id, "scn.missing_invitation", "offered again after a day passes")
+	await _choose_text("찾아볼게요")
+	# The act 2 meeting is a daytime scene; in the evening Lumi says when to come.
+	for f in ["story.act1_complete", "story.act2_started", "story.act2_heard_lumi", "story.act2_heard_kyle", "story.act2_prep_done"]:
+		Game.state.set_flag(f)
+	Game.state.relation("npc_kyle")["met"] = true
+	await _rest_until("evening")
+	await _talk_until("npc_lumi", "scn.act2_evening_hint")
+	_check_eq(main.world.location_id, "card_room", "Lumi in the card room at night")
+	await _close_any()
+	await _rest_until("day")
+	await _talk_npc("npc_lumi")
+	_check_eq(main.world.location_id, "waterfront", "Lumi at the waterfront by day")
+	_check_eq(main.last_entry_id, "scn.two_tables_argument_lumi", "the scene was not missed")
+	await _choose_text("규칙 설명")
+	await _choose_text("좋아요")
+	# The festival waits: skipped in the day, slept through, still there in the evening.
+	Game.state.contributions = ["prep:juno", "prep:spectate", "quest:quest.festival_lights"]
+	await _use("hall_meeting", "community_hall")
+	await _choose_text("스페이드")
+	await _use("festival_booth", "village_square")
+	_check_eq(main.last_entry_id, "scn.fourleaf_wait", "booth waits for the evening")
+	await _choose_text("나중에")
+	await _rest_until("evening")
+	await _rest_until("day")
+	await _rest_until("evening")
+	await _use("festival_booth", "village_square")
+	_check_eq(main.last_entry_id, "scn.fourleaf_evening", "festival still ready after a missed evening")
+	await _choose_text("정리")
+	await _choose_text("좋은 저녁")
+	_check(Game.state.get_flag("story.act3_complete"), "festival held")
+	# Holding it again: more evenings, never a second memento.
+	for i in 2:
+		await _use("festival_booth", "village_square")
+		_check_eq(main.last_entry_id, "festival_booth_again", "festival again")
+		await _choose_text("정리 돕기")
+		await _close_any()
+	_check_eq(Game.state.owned_count("item.memento.04_08"), 1, "helper memento once")
+	# Everyone can still be found after the story, at both times.
+	for time in ["day", "evening"]:
+		await _rest_until(time)
+		for npc in ["npc_lumi", "npc_kyle", "npc_moa", "npc_juno"]:
+			await _talk_npc(npc)
+			_check_eq(main.ui_mode, "dialogue", "%s reachable (%s)" % [npc, time])
+			await _close_any()
+	_check_ledger()
+
+
+# --- react: the 12 cross-system reactions in play (06_integration/01) ----------------------------
+# 1 (lamp -> Lumi) and 11-12 (festival) are played in cc01; 2-10 here.
+
+func _react() -> void:
+	await _new_game("반응")
+	Game.state.set_flag("tutorial_done")
+	main.tutorial.visible = false
+	for a in Game.data.abilities:
+		if not Game.state.abilities_unlocked.has(a):
+			Game.state.abilities_unlocked.append(a)
+	# 2. The parcel: Sera asks, Lumi receives and thanks, Sera thanks afterwards.
+	await _talk_npc("npc_sera")
+	await _choose_arg("dialogue", "sera_quest_offer")
+	await _choose_arg("accept_quest", "quest.sera_delivery")
+	await _finish_task("quest.sera_delivery", 0)
+	await _talk_until("npc_sera", "sera_quest_done")
+	await _close_any()
+	# 3. A plaza job, then Miri at the hall has noticed.
+	await _travel("village_square")
+	await _start_job()
+	for spot in Game.job.remaining():
+		await _collect_spot(spot)
+	await _talk_npc("npc_miri")
+	await _close_any()
+	await _talk_until("npc_miri", "miri_cleanup_praise")
+	await _close_any()
+	# Scene gates for the rest (story order is cc01): prologue and act 1 done, chips for projects.
+	for f in ["intro_met_lumi", "lumi_lamp_reaction_seen", "story.prologue_complete", "story.act1_started", "story.clue_postbox", "story.clue_grove", "story.act1_complete", "story.act2_started", "story.act2_heard_lumi"]:
+		Game.state.set_flag(f)
+	_grant_test_chips(1500)
+	# 4. Three card-room hands with Lumi (any result) -> her rivalry line.
+	await _rest_until("evening")
+	for i in 3:
+		for t in 4:
+			await _talk_npc("npc_lumi")
+			await _read_to_choices()
+			if main.dialogue._choices.any(func(c): return c.get("action", "") == "start_poker" and str(c.get("arg", "")) == ""):
+				break
+			await _close_any()
+		await _choose_arg("start_poker", "")
+		await _pick_loadout("homegame", "", "ability.star_sense", "lose" if i == 1 else "win")
+		main.poker.stand_button.pressed.emit()
+		await _frames(2)
+		await _leave_table()
+	await _talk_until("npc_lumi", "lumi_rivalry")
+	await _close_any()
+	# 5. Talking with Kyle changes how Lumi wants to run the gathering.
+	await _talk_npc("npc_kyle")
+	await _close_any()
+	await _talk_until("npc_kyle", "scn.kyle_view")
+	await _close_any()
+	await _talk_until("npc_lumi", "lumi_after_kyle")
+	await _close_any()
+	await _rest_until("day")
+	# 7. Board restoration opens the workshop: Sera's stock line, Bibi inside.
+	await _fund("board_restoration")
+	await _talk_until("npc_sera", "sera_town")
+	await _close_any()
+	await _travel("workshop")
+	_check(main.world.npc_nodes.has("npc_bibi"), "Bibi in the workshop")
+	await _talk_npc("npc_bibi")
+	await _close_any()
+	await _talk_until("npc_bibi", "bibi_town")
+	await _close_any()
+	# 6. The postbox garden: Nora and Moa move there and talk about it.
+	Game.state.quests["npc_nora.bond_01"] = QuestBook.COMPLETED
+	await _fund("postbox_garden")
+	await _travel("residential")
+	_check(main.world.npc_nodes.has("npc_moa") and main.world.npc_nodes["npc_moa"].position == Vector2(820, 320), "Moa by the garden")
+	_check(main.world.npc_nodes["npc_nora"].position == Vector2(640, 300), "Nora by the garden")
+	await _talk_until("npc_moa", "moa_town")
+	await _close_any()
+	await _talk_until("npc_nora", "nora_town")
+	await _close_any()
+	# 8. The lantern path: Haru and Ona talk about the walk.
+	Game.state.quests["npc_haru.bond_01"] = QuestBook.COMPLETED
+	await _fund("lantern_path")
+	await _talk_npc("npc_haru")
+	await _close_any()
+	await _talk_until("npc_haru", "haru_town")
+	await _close_any()
+	await _talk_npc("npc_ona")
+	await _close_any()
+	await _talk_until("npc_ona", "ona_town")
+	await _close_any()
+	# 9. A bigger house: Yul comes to check the door frames.
+	await _upgrade_home(1)
+	await _upgrade_home(2)
+	await _talk_npc("npc_yul")
+	await _close_any()
+	await _talk_until("npc_yul", "yul_home_visit")
+	await _close_any()
+	# 10. A social game at the tea house: Rira and Taeo grow closer.
+	Game.state.set_flag("story.act2_complete")  # the act 2 preparation offer would come first otherwise
+	await _rest_until("evening")
+	for npc in ["npc_rira", "npc_taeo"]:
+		await _talk_npc(npc)
+		await _close_any()
+	await _use("tea_social_table", "tea_house")
+	await _pick_loadout("social_mix", "npc_taeo", "ability.star_sense")
+	_check_eq([main.poker.match_ref.mode, main.poker.match_ref.place], ["social_mix", "tea_house"], "social game at the tea house")
+	main.poker.stand_button.pressed.emit()
+	await _frames(2)
+	await _leave_table()
+	_check(Game.state.get_flag("tea.social_played"), "tea social remembered")
+	await _talk_until("npc_rira", "rira_tea_social")
+	await _close_any()
+	_check_eq(Game.state.edge_phase("rira_taeo"), "bonded", "Rira and Taeo bonded")
+	await _talk_until("npc_taeo", "taeo_rira_edge")
+	await _close_any()
+	await _shot("react_tea")
+	_check_ledger()
 
 
 # --- helpers ------------------------------------------------------------------------------

@@ -3338,6 +3338,60 @@
      "action": "close"
     }
    ]
+  },
+  {
+   "id": "lumi_after_kyle",
+   "npc": "npc_lumi",
+   "priority": 66,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "story.act2_heard_kyle",
+     "story.act2_heard_lumi"
+    ],
+    "flags_false": [
+     "story.act2_complete"
+    ]
+   },
+   "lines": [
+    "카일이랑 이야기했다며? …규칙을 먼저 알려 주면 처음 온 사람도 덜 긴장하겠지.",
+    "나도 모임 시작할 때 규칙판을 한 번 읽어 줄까 봐."
+   ],
+   "choices": [
+    {
+     "text": "좋은 생각이에요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "rira_tea_social",
+   "npc": "npc_rira",
+   "priority": 44,
+   "once": true,
+   "conditions": {
+    "flags_true": [
+     "tea.social_played"
+    ],
+    "met": "npc_rira"
+   },
+   "effects": [
+    {
+     "type": "edge",
+     "pair": "rira_taeo",
+     "phase": "bonded"
+    }
+   ],
+   "lines": [
+    "어제 찻집 모임, 테오도 끝까지 앉아 있었죠?",
+    "그 사람이 먼저 차를 따라 준 건 처음이에요. 다음 모임에도 같이 부르려고요."
+   ],
+   "choices": [
+    {
+     "text": "잘됐네요",
+     "action": "close"
+    }
+   ]
   }
  ]
 }

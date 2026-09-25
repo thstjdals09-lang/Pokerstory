@@ -778,7 +778,7 @@ func _maybe_start_e2e() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--e2e="):
 			var scenario := arg.get_slice("=", 1)
-			var script_path := "res://tests/e2e/content_e2e.gd" if scenario.begins_with("cc") or scenario in ["story", "life"] else "res://tests/e2e/first_play_e2e.gd"
+			var script_path := "res://tests/e2e/content_e2e.gd" if scenario.begins_with("cc") or scenario in ["story", "life", "react"] else "res://tests/e2e/first_play_e2e.gd"
 			var driver: Node = load(script_path).new()
 			driver.main = self
 			add_child(driver)

@@ -16,8 +16,8 @@
 | 설계 수정 02 / 경제 v0.2.1 | [수정 기록](docs/design/Project20_Design_Correction_02.md), [경제 (승인)](docs/design/Project20_Economy_v0.2.1.md) |
 | 설계 검토 03 / 경제 v0.2.2 | [검토 03 기록](docs/design/Project20_Design_Review_03.md) (승인됨) |
 | 설계 검토 04 | [검토 04 기록](docs/design/Project20_Design_Review_04.md) — R1·R2 승인, Gate 2 준비 |
-| **첫 플레이 프로토타입** | **검토 04 반영 및 자동 검증 완료.** 그레이박스 그래픽 |
-| Gate 2 (플레이어 시각 검수) | 대기 중 |
+| 첫 플레이 프로토타입 | 검토 04 반영 및 자동 검증 완료 |
+| **콘텐츠 v0.3 (1~6단계)** | **브랜치 `feature/content-v0.3`에서 구현·자동 검증 완료 — [구현 기록과 cc01~cc12 보고](docs/dev/CONTENT_V0.3_IMPLEMENTATION_LOG.md).** 임시 도형 그래픽, 수동 완주 검수 대기 |
 
 첫 플레이에서 할 수 있는 것: 칩 40개로 시작 → 광장의 루미와 인사 → 등불(50칩)을 사려면 저녁 카드룸 포커(참가금 20, 승리 시 40 반환), 세라의 배달 의뢰(+30), 광장 아르바이트(+10, 반복 가능) 중 원하는 방법으로 칩 모으기 → 등불 구매·배치 → 루미가 등불을 알아봄 → 저장·이어하기(진행 중인 포커 판도 그대로 이어짐).
 개발 내용, 검증 결과, 명세와 다르게 구현한 부분: [docs/dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md)
@@ -29,7 +29,13 @@
 
 조작: WASD·방향키 이동 / E·Enter 대화·입장 / Esc 메뉴 / Tab 목표 접기 / 마우스로 카드·가구 선택
 
-테스트: `tools/run_tests.sh` (Git Bash). 단위 테스트 60개와 게임을 자동으로 조작하는 E2E 8개 시나리오(첫 플레이 경로 A~D 포함)를 실행합니다.
+콘텐츠 v0.3에서는 마을 지구 5곳과 주민 16명, 3막 이야기와 후일담, 주민 사건·의뢰·아르바이트, 집 확장, 공공사업, 수집 도감, 포커 테이블 여러 종류와 축제 대회가 추가됩니다. 이야기는 포커를 한 판도 하지 않고 끝까지 진행할 수 있습니다.
+
+테스트: `tools/run_tests.sh` (Git Bash). 단위 테스트 94개와, 게임을 자동으로 조작하는 E2E 19개 시나리오(첫 플레이 경로 A~D, 콘텐츠 검수 cc01~cc12, 생활, 상호 반응)를 실행합니다.
+
+| 광장 | 교류 모임 | 수집 도감 |
+|---|---|---|
+| ![광장](docs/screenshots/content_v0.3/cc04_loc_village_square.png) | ![교류 모임](docs/screenshots/content_v0.3/cc08_cc08_social_npc_rira.png) | ![도감](docs/screenshots/content_v0.3/cc11_cc11_book.png) |
 
 ## 스크린샷
 
@@ -52,6 +58,8 @@
 | [design/Project20_Design_Review_03.md](docs/design/Project20_Design_Review_03.md) | 설계 검토 03: D1~D7 결정, Economy v0.2.2, 포커 판 복원 방식 |
 | [design/Project20_Design_Review_04.md](docs/design/Project20_Design_Review_04.md) | 설계 검토 04: R1·R2 승인과 조건 반영 |
 | [dev/FIRST_PLAY_BUILD_NOTES.md](docs/dev/FIRST_PLAY_BUILD_NOTES.md) | 구현 구조, 저장 형식, 검증 결과, 알려진 문제 |
+| [design/content_v0.3/](docs/design/content_v0.3/) | 콘텐츠 기획 팩 v0.3 (원본) |
+| [dev/CONTENT_V0.3_IMPLEMENTATION_LOG.md](docs/dev/CONTENT_V0.3_IMPLEMENTATION_LOG.md) | 콘텐츠 v0.3 구현 기록, 호환 결정, cc01~cc12 결과, 미완료 |
 | [preproduction/](docs/preproduction/) | 엔진·그래픽·시스템·워크플로 조사, 기획 결정 필요 사항 |
 | [CLAUDE.md](CLAUDE.md) | AI 개발 규칙 |
 

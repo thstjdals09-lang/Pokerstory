@@ -274,6 +274,7 @@ func create_poker_match(mode: String = "homegame", opponent: String = "", abilit
 	var aid := str(data.ability_aliases.get(ability_id, ability_id))
 	m.ability_id = aid if state.abilities_unlocked.has(aid) else str(poker_rules().get("player_ability", data.poker.get("player_ability", "")))
 	m.stake = stake
+	m.place = state.current_scene
 	# The stake and the dealt cards are saved together, so a restart resumes this exact hand.
 	state.poker_in_progress = m.to_dict()
 	save_game()
@@ -338,6 +339,8 @@ func _after_hand(m: PokerMatch, result: Dictionary) -> void:
 		{"type": "rivalry", "npc": opp, "amount": RIVALRY_PER_HAND},
 		{"type": "contribution", "id": "poker:first"},
 	])
+	if m.mode == "social_mix" and m.place == "tea_house":
+		state.set_flag("tea.social_played")
 	if m.mode == "tournament":
 		var stage := int(state.tournament.get("stage", 0))
 		var seen: Array = poker_mode("tournament").get("stage_flags", [])
