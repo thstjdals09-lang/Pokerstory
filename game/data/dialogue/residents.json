@@ -3167,6 +3167,157 @@
      "action": "close"
     }
    ]
+  },
+  {
+   "id": "moa_day",
+   "npc": "npc_moa",
+   "priority": 11,
+   "conditions": {
+    "time": "day"
+   },
+   "lines": [
+    "낮에는 광장 게시판 옆에서 모임 안내를 적어요.",
+    "포커 모임은 저녁 카드룸에서 열려요. 구경만 와도 괜찮아요!"
+   ],
+   "choices": [
+    {
+     "text": "규칙 자세히 듣기",
+     "action": "dialogue",
+     "arg": "moa_rules"
+    },
+    {
+     "text": "족보 보기",
+     "action": "dialogue",
+     "arg": "moa_hands"
+    },
+    {
+     "text": "나중에 할게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_evening",
+   "npc": "npc_sera",
+   "priority": 11,
+   "conditions": {
+    "time": "evening"
+   },
+   "lines": [
+    "저녁엔 불씨 병을 닦으며 가게를 정리해요.",
+    "필요한 게 있으면 천천히 골라요."
+   ],
+   "choices": [
+    {
+     "text": "상점 보기",
+     "action": "open_shop",
+     "arg": "sera_shop"
+    },
+    {
+     "text": "또 올게요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "nora_moa_edge",
+   "npc": "npc_nora",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "edge_phase": {
+     "moa_nora": "bonded"
+    }
+   },
+   "lines": [
+    "모아랑 우편함 앞에서 옛 안내문을 같이 읽었어요.",
+    "글씨가 번져도, 둘이 읽으니 다 보이더라고요."
+   ],
+   "choices": [
+    {
+     "text": "또 봐요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_sia_edge",
+   "npc": "npc_lumi",
+   "priority": 33,
+   "once": true,
+   "conditions": {
+    "edge_phase": {
+     "sia_lumi": "bonded"
+    }
+   },
+   "lines": [
+    "시아가 어제 처음 온 손님을 데려왔어!",
+    "내가 옆자리에 앉아 있었더니 금방 웃더라. 네 덕분이야."
+   ],
+   "choices": [
+    {
+     "text": "잘됐다!",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "lumi_poker_react",
+   "npc": "npc_lumi",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "met": "npc_lumi",
+    "min_poker_hands": 1
+   },
+   "lines": [
+    "첫 판 어땠어? 이기든 지든 같이 앉아 준 게 제일 좋았어!"
+   ],
+   "choices": [
+    {
+     "text": "또 하자!",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "moa_poker_react",
+   "npc": "npc_moa",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "met": "npc_moa",
+    "min_poker_hands": 1
+   },
+   "lines": [
+    "카드를 바꾸는 손이 벌써 익숙해 보여요!",
+    "족보가 헷갈리면 언제든 물어봐요."
+   ],
+   "choices": [
+    {
+     "text": "고마워요",
+     "action": "close"
+    }
+   ]
+  },
+  {
+   "id": "sera_poker_react",
+   "npc": "npc_sera",
+   "priority": 30,
+   "once": true,
+   "conditions": {
+    "met": "npc_sera",
+    "min_poker_hands": 1
+   },
+   "lines": [
+    "카드룸에 다녀왔다면서요? 칩이 모자라면 무리하지 말고, 아르바이트도 있다는 걸 잊지 마요."
+   ],
+   "choices": [
+    {
+     "text": "네, 고마워요",
+     "action": "close"
+    }
+   ]
   }
  ]
 }

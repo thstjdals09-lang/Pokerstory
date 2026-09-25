@@ -282,6 +282,16 @@ func open_object(target: Dictionary) -> void:
 	if not entry.is_empty():
 		_show_entry(entry)
 		return
+	# Built-in panels: a task that ends here (hand-over, episode choice) is offered first.
+	var tasks: Array = Game.entry_choices({}, _dialogue_npc, world.location_id)
+	if not tasks.is_empty():
+		tasks.insert(tasks.size() - 1, {"text": "%s 보기" % str(target.get("title", target.get("prompt", "그대로"))), "action": "object_default", "arg": id})
+		_show_lines(_dialogue_npc, ["여기서 할 일이 있어요."], tasks)
+		return
+	_open_object_panel(id, target)
+
+
+func _open_object_panel(id: String, target: Dictionary) -> void:
 	match id:
 		"project_board":
 			_open_project_board()
@@ -411,6 +421,9 @@ func _on_dialogue_choice_picked(c: Dictionary) -> void:
 			enter_location(parts[1], parts[2])
 		"poker_loadout":
 			_start_poker_with(arg)
+		"object_default":
+			var obj: Dictionary = world.find_interactable("object", arg)
+			_open_object_panel(arg, obj)
 		"board":
 			_open_board_page(arg)
 		"effects":

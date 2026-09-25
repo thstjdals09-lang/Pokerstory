@@ -6,7 +6,7 @@ extends RefCounted
 const DIALOGUE_ACTIONS := [
 	"close", "start_poker", "open_shop", "dialogue", "accept_quest", "complete_quest",
 	"effects", "fund_project", "upgrade_home", "start_job", "trade", "set_time",
-	"quest_offer", "job_deliver", "shelve", "board", "poker_loadout", "wait_and_enter",
+	"quest_offer", "job_deliver", "shelve", "board", "poker_loadout", "wait_and_enter", "object_default",
 ]
 const TIMES := ["day", "evening"]
 const ECONOMY_KEYS := ["starting_chips", "stake", "payout_win", "payout_draw", "payout_lose"]

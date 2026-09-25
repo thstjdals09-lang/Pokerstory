@@ -520,6 +520,9 @@ func entry_choices(entry: Dictionary, speaker: String, location: String) -> Arra
 	for o in offers:
 		out.insert(insert_at, o)
 		insert_at += 1
+	# Anything added to an entry without its own goodbye still gets a way out.
+	if not out.is_empty() and base.size() < out.size() and not _has_choice(out, "close", ""):
+		out.append({"text": "그만두기", "action": "close"})
 	return out
 
 

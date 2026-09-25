@@ -8,6 +8,10 @@ extends "res://tests/e2e/first_play_e2e.gd"
 ##   cc04   every district and functional place: enter, move, interact, return; locked doors;
 ##          time kept while travelling; save and continue inside a district
 ##   story  cc01 core: new game, no poker, prologue -> act 1 -> act 2 -> act 3 -> postgame
+##   cc05   meet all 16 residents (greetings, one place each at day and evening), then offer,
+##          accept and finish all 32 personal episodes at their real targets
+##   cc06   rivalry scene vs friendship, romance accepted -> dates -> together -> ended,
+##          romance declined, resident pair bonded by an episode and its reaction
 
 
 func run(scenario: String) -> void:
@@ -22,6 +26,10 @@ func run(scenario: String) -> void:
 			await _cc04()
 		"story":
 			await _story()
+		"cc05":
+			await _cc05()
+		"cc06":
+			await _cc06()
 		_:
 			_check(false, "unknown scenario " + scenario)
 	_finish()
@@ -268,6 +276,173 @@ func _story() -> void:
 	_check_ledger()
 
 
+# --- cc05: residents and episodes -----------------------------------------------------------
+
+const GREETINGS := {"npc_lumi": "lumi_intro", "npc_moa": "moa_first", "npc_sera": "sera_first"}
+
+
+func _setup_open_town() -> void:
+	# Scene gates only (covered by cc04/story): lamp placed, act 1 reached, workshop, cottage and
+	# tailor open. Nothing here meets residents or starts episodes.
+	var s: GameState = Game.state
+	s.set_flag("tutorial_done")
+	main.tutorial.visible = false
+	s.grant_item("furniture.lamp_small")
+	s.place_item("slot_window", "furniture.lamp_small")
+	s.quests["quest.sera_delivery"] = QuestBook.COMPLETED
+	for f in ["sera_quest_thanked", "story.prologue_complete", "story.act1_started", "story.clue_postbox", "story.clue_grove", "story.act1_complete"]:
+		s.set_flag(f)
+	for pid in ["board_restoration", "guest_cottage"]:
+		s.projects[pid] = "complete"
+
+
+func _cc05() -> void:
+	await _new_game("이웃")
+	_setup_open_town()
+	# Each resident stands in exactly one place, by day and by evening.
+	for time in ["day", "evening"]:
+		Game.state.time_of_day = time
+		var seen := {}
+		for loc_id in Game.data.locations:
+			if (loc_id == "card_room" and time == "day") or not _reachable(loc_id):
+				continue
+			await _travel(loc_id)
+			for npc in main.world.npc_nodes:
+				_check(not seen.has(npc), "%s appears once in the %s (%s)" % [npc, time, loc_id])
+				seen[npc] = loc_id
+		_check_eq(seen.size(), 16, "all 16 residents somewhere in the %s" % time)
+	await _rest_until("day")
+	# First greetings.
+	for npc in Game.data.npc_order:
+		await _talk_npc(npc)
+		var want: String = GREETINGS.get(npc, npc.trim_prefix("npc_") + "_greet")
+		_check_eq(main.last_entry_id, want, npc + " first greeting")
+		await _close_any()
+		_check(Game.state.has_met(npc), npc + " met")
+		if npc == "npc_lumi":
+			# The lamp reaction belongs to the story scenario; mark it seen so episodes can start.
+			Game.state.set_flag("lumi_lamp_reaction_seen")
+	_check_eq(Game.state.residents_met(), 16, "16 residents met")
+	await _shot("cc05_greetings")
+	# Personal episodes, offered by the resident and finished at the real target.
+	var done := 0
+	for round in 3:
+		for id in Game.data.quest_order:
+			var q: Dictionary = Game.data.quests[id]
+			if q.get("kind", "quest") != "episode" or not Game.quest_available(id):
+				continue
+			await _accept_offer(str(q["giver"]), id)
+			var f0: int = Game.state.relation(q["giver"])["friendship"]
+			await _finish_task(id, done % 2)
+			_check_eq(QuestBook.state_of(Game.state, id), QuestBook.COMPLETED, id + " completed in play")
+			_check_eq(int(Game.state.relation(q["giver"])["friendship"]), mini(100, f0 + 8), id + " friendship +8")
+			done += 1
+	_check_eq(done, 32, "32 episodes finished in play")
+	_check_eq(Game.state.abilities_unlocked.size(), 8, "8 abilities unlocked through episodes")
+	_check_ledger()
+
+
+## Goes to a task's target (resident or object), picks option `pick` (or the hand-over) and
+## reads the response.
+func _finish_task(id: String, pick: int) -> void:
+	var q: Dictionary = Game.data.quests[id]
+	var target := str(q["target"])
+	if Game.data.npcs.has(target):
+		await _talk_npc(target)
+	else:
+		await _use(target, _location_of(target))
+	await _read_to_choices()
+	var options: Array = []
+	for i in main.dialogue._choices.size():
+		var c: Dictionary = main.dialogue._choices[i]
+		if c.get("action", "") == "complete_quest" and str(c.get("arg", "")).get_slice("|", 0) == id:
+			options.append(i)
+	_check(not options.is_empty(), "%s can be finished at %s" % [id, target])
+	if options.is_empty():
+		await _close_any()
+		return
+	main.dialogue.choice_buttons[options[mini(pick, options.size() - 1)]].pressed.emit()
+	await _frames(2)
+	await _close_any()
+
+
+func _location_of(object_id: String) -> String:
+	for loc_id in Game.data.locations:
+		for it in Game.data.locations[loc_id].get("interactables", []):
+			if it["id"] == object_id:
+				return loc_id
+	return ""
+
+
+## Talks to a resident until entry `want` shows (other one-time lines may come first).
+func _talk_until(npc: String, want: String, tries: int = 4) -> void:
+	for i in tries:
+		await _talk_npc(npc)
+		if main.last_entry_id == want:
+			return
+		await _close_any()
+	_check_eq(main.last_entry_id, want, "%s eventually says %s" % [npc, want])
+
+
+# --- cc06: relationships ----------------------------------------------------------------------
+
+func _cc06() -> void:
+	await _new_game("관계")
+	_setup_open_town()
+	for npc in Game.data.npc_order:
+		Game.state.relation(npc)["met"] = true
+	for f in ["intro_met_lumi", "moa_met", "sera_met", "lumi_lamp_reaction_seen"]:
+		Game.state.set_flag(f)
+	for id in ["npc_kyle.bond_01", "npc_lumi.bond_01", "npc_moa.bond_01"]:
+		Game.state.quests[id] = QuestBook.COMPLETED
+	# Kyle's second episode through play, then a rivalry scene that leaves friendship alone.
+	await _accept_offer("npc_kyle", "npc_kyle.bond_02")
+	await _finish_task("npc_kyle.bond_02", 0)
+	var fk: int = Game.state.relation("npc_kyle")["friendship"]
+	await _talk_until("npc_kyle", "kyle_rivalry")
+	await _close_any()
+	_check_eq(int(Game.state.relation("npc_kyle")["rivalry"]), 10, "rivalry +10")
+	_check_eq(int(Game.state.relation("npc_kyle")["friendship"]), fk, "friendship unchanged by rivalry")
+	# Romance: opt in, two dates, together, then end it kindly.
+	await _talk_until("npc_kyle", "kyle.romance_offer")
+	await _choose_text("더 알아가고")
+	await _close_any()
+	for want in ["kyle.date1", "kyle.date2"]:
+		await _talk_until("npc_kyle", want)
+		await _close_any()
+	await _talk_until("npc_kyle", "kyle.decide")
+	await _choose_text("함께")
+	await _close_any()
+	_check_eq(Game.state.relation("npc_kyle")["romance"]["stage"], "committed", "together")
+	await _shot("cc06_together")
+	await _talk_until("npc_kyle", "kyle.together")
+	await _choose_text("정리")
+	await _close_any()
+	_check_eq(Game.state.relation("npc_kyle")["romance"]["stage"], "closed", "ended")
+	_check(not Game.state.relation("npc_kyle")["romance"]["consent"], "consent withdrawn")
+	_check_eq(int(Game.state.relation("npc_kyle")["friendship"]), fk, "friendship stays after ending")
+	# Declining: Lumi stays a friend and never asks again.
+	await _accept_offer("npc_lumi", "npc_lumi.bond_02")
+	await _finish_task("npc_lumi.bond_02", 1)
+	var fl: int = Game.state.relation("npc_lumi")["friendship"]
+	await _talk_until("npc_lumi", "lumi.romance_offer")
+	await _choose_text("친구로")
+	await _close_any()
+	_check_eq(Game.state.relation("npc_lumi")["romance"]["stage"], "closed", "declined")
+	_check_eq(int(Game.state.relation("npc_lumi")["friendship"]), fl, "declining costs nothing")
+	for i in 3:
+		await _talk_npc("npc_lumi")
+		_check(not main.last_entry_id.begins_with("lumi.romance") and not main.last_entry_id.begins_with("lumi.date"), "no pressure after declining")
+		await _close_any()
+	# A resident pair bonded by an episode, and the other resident notices.
+	await _accept_offer("npc_moa", "npc_moa.bond_02")
+	await _finish_task("npc_moa.bond_02", 1)
+	_check_eq(Game.state.edge_phase("moa_nora"), "bonded", "Moa and Nora bonded")
+	await _talk_until("npc_nora", "nora_moa_edge")
+	await _close_any()
+	_check_ledger()
+
+
 # --- helpers ------------------------------------------------------------------------------
 
 ## Door route from the current location to `dest` over the location data (breadth-first).
@@ -291,6 +466,16 @@ func _route(from: String, dest: String) -> Array:
 		hops.push_front(prev[at]["door"])
 		at = prev[at]["from"]
 	return hops
+
+
+## True when every door on the route to `loc_id` is unlocked right now.
+func _reachable(loc_id: String) -> bool:
+	var at: String = main.world.location_id
+	for door in _route(at, loc_id):
+		if not Conditions.check(door.get("unlock", {}), Game.state, at):
+			return false
+		at = str(door["target"])
+	return true
 
 
 func _travel(dest: String) -> void:
