@@ -199,8 +199,10 @@ func start(m: PokerMatch) -> void:
 	last_result = {}
 	_ability = Game.player_ability()
 	_selected.clear()
-	_ability_text = ""
 	_notice = ""
+	# A resumed hand shows what the ability already revealed.
+	var known: Dictionary = m.ability_results.get(_ability.get("id", ""), {})
+	_ability_text = _ability_result_text(known) if not known.is_empty() else ""
 	_help_panel.visible = false
 	_confirm_panel.get_parent().visible = false
 	visible = true
@@ -263,9 +265,19 @@ func toggle_card(i: int) -> void:
 
 
 func use_ability() -> void:
-	var r := match_ref.use_ability(_ability)
+	var r: Dictionary = Game.use_poker_ability(match_ref, _ability)
 	if r["ok"]:
-		_ability_text = str(_ability["result_true"] if r["pair_or_better"] else _ability["result_false"])
+		_ability_text = _ability_result_text(r)
+	refresh()
+
+
+func _ability_result_text(r: Dictionary) -> String:
+	return str(_ability["result_true"] if r.get("pair_or_better", false) else _ability["result_false"])
+
+
+## A one-off message in the message line (cleared by the next card selection).
+func show_notice(text: String) -> void:
+	_notice = text
 	refresh()
 
 

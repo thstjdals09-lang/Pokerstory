@@ -1,8 +1,9 @@
 extends "res://tests/test_case.gd"
-## Chip economy (Economy v0.2.1): fixed stake 20, win returns 40, draw returns 20, loss returns 0,
-## no loss reward, no first-play bonus.
+## Chip economy (Economy v0.2.2): fixed stake 20, win returns 40, draw returns 20, loss returns 0,
+## no loss reward, no first-play bonus. Unfinished hands are saved and resumed, never refunded.
 
-const ECONOMY := {"starting_chips": 100, "stake": 20, "payout_win": 40, "payout_draw": 20, "payout_lose": 0}
+const ECONOMY := {"starting_chips": 40, "stake": 20, "payout_win": 40, "payout_draw": 20, "payout_lose": 0}
+const STAR_SENSE := {"id": "ability.star_sense", "uses_per_match": 1, "effect": "reveal_opponent_pair_or_better"}
 const LAMP := "furniture.lamp_small"
 const ORDERS := {
 	"win": ["AS", "QS", "AH", "QH", "KD", "9D", "7C", "5C", "2S", "3H", "4D", "8S", "JC"],
@@ -112,15 +113,77 @@ func test_fold_keeps_the_stake_lost() -> void:
 	check(not PokerEconomy.fold(s, m)["ok"], "cannot fold twice")
 
 
-func test_interrupted_hand_is_refunded_once() -> void:
-	var s := _state_with(100)
+func _codes(cards: Array) -> Array:
+	var out: Array = []
+	for c in cards:
+		out.append(c.code())
+	return out
+
+
+## Simulates quit + restart: the hand goes through JSON like a save file.
+func _reload(m: PokerMatch) -> PokerMatch:
+	return PokerMatch.from_dict(JSON.parse_string(JSON.stringify(m.to_dict())))
+
+
+func test_interrupted_hand_restores_exactly() -> void:
+	var s := _state_with(40)
 	PokerEconomy.place_stake(s, ECONOMY)
-	var reloaded := GameState.from_dict(JSON.parse_string(JSON.stringify(s.to_dict())))
-	check_eq(reloaded.chips_balance, 80, "stake was saved as taken")
-	check_eq(PokerEconomy.void_pending(reloaded), 20, "refund on load")
-	check_eq(reloaded.chips_balance, 100, "balance restored")
-	check_eq(PokerEconomy.void_pending(reloaded), 0, "second refund impossible")
-	check_eq(reloaded.chips_ledger.back()["reason"], "poker_void_refund", "refund recorded")
+	var m := PokerMatch.new(Deck.shuffled(2024))
+	m.use_ability(STAR_SENSE)
+	s.poker_in_progress = m.to_dict()
+	var saved := GameState.from_dict(JSON.parse_string(JSON.stringify(s.to_dict())))
+	check_eq(saved.chips_balance, 20, "stake taken once")
+	check_eq(saved.pending_poker_stake, 20, "stake still pending")
+	var r := PokerMatch.from_dict(saved.poker_in_progress)
+	check(r != null, "hand restored")
+	check_eq(_codes(r.player_hand), _codes(m.player_hand), "same player hand")
+	check_eq(_codes(r.opponent_hand), _codes(m.opponent_hand), "same opponent hand")
+	check_eq(r.deck.codes(), m.deck.codes(), "same remaining deck order")
+	check(not r.can_use_ability(STAR_SENSE), "ability stays used")
+	check_eq(r.ability_results, m.ability_results, "ability result kept")
+	check_eq(r.phase, PokerMatch.Phase.DRAW, "still before the draw")
+
+
+func test_restart_cannot_change_the_result() -> void:
+	for seed_value in [3, 77, 4096, 90210]:
+		var original := PokerMatch.new(Deck.shuffled(seed_value))
+		var resumed := _reload(original)
+		original.player_draw([0, 1])
+		resumed.player_draw([0, 1])
+		check_eq(_codes(resumed.player_hand), _codes(original.player_hand), "same draws seed %d" % seed_value)
+		check_eq(_codes(resumed.opponent_hand), _codes(original.opponent_hand), "same opponent draw seed %d" % seed_value)
+		check_eq(resumed.outcome, original.outcome, "same outcome seed %d" % seed_value)
+
+
+func test_resumed_hand_settles_once() -> void:
+	var s := _state_with(40)
+	PokerEconomy.place_stake(s, ECONOMY)
+	var m := PokerMatch.new(Deck.stacked(ORDERS["win"]))
+	s.poker_in_progress = m.to_dict()
+	var s2 := GameState.from_dict(JSON.parse_string(JSON.stringify(s.to_dict())))
+	var r := PokerMatch.from_dict(s2.poker_in_progress)
+	r.player_draw([])
+	check(PokerEconomy.settle(s2, r, ECONOMY)["ok"], "settled after resume")
+	check_eq(s2.chips_balance, 60, "win after resume: 20 + 40")
+	check(not PokerEconomy.settle(s2, r, ECONOMY)["ok"], "no second settlement")
+	var stakes := 0
+	for e in s2.chips_ledger:
+		if e["reason"] == "poker_stake":
+			stakes += 1
+	check_eq(stakes, 1, "stake charged once in total")
+
+
+func test_invalid_saved_hand_is_rejected() -> void:
+	var good := PokerMatch.new(Deck.shuffled(5)).to_dict()
+	var dup := good.duplicate(true)
+	dup["player_hand"][0] = dup["opponent_hand"][0]
+	check(PokerMatch.from_dict(dup) == null, "duplicate card rejected")
+	var short := good.duplicate(true)
+	short["deck"].pop_back()
+	check(PokerMatch.from_dict(short) == null, "missing card rejected")
+	var done := good.duplicate(true)
+	done["phase"] = PokerMatch.Phase.SHOWDOWN
+	check(PokerMatch.from_dict(done) == null, "finished hand is never restored")
 
 
 func test_purchase_and_placement() -> void:
@@ -148,6 +211,7 @@ func test_serialization_round_trip() -> void:
 	s.quests["quest.sera_delivery"] = "completed"
 	s.jobs_completed = 2
 	s.pending_poker_stake = 20
+	s.poker_in_progress = PokerMatch.new(Deck.shuffled(11)).to_dict()
 	s.current_scene = "player_home"
 	s.player_position = Vector2(120, 340)
 	s.has_player_position = true

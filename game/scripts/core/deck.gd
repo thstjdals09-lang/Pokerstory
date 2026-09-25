@@ -48,6 +48,28 @@ static func stacked(top_codes: Array) -> Deck:
 	return deck
 
 
+## Rebuilds a deck in exactly this order (used to restore an interrupted hand).
+## Returns null if a code is invalid or repeated.
+static func from_codes(codes: Array) -> Deck:
+	var deck := Deck.new()
+	var used := {}
+	for c in codes:
+		var card := Card.from_code(str(c))
+		if card == null or used.has(card.code()):
+			return null
+		used[card.code()] = true
+		deck._cards.append(card)
+	return deck
+
+
+## Remaining cards, top first.
+func codes() -> Array:
+	var out: Array = []
+	for c in _cards:
+		out.append(c.code())
+	return out
+
+
 func draw_one() -> Card:
 	if _cards.is_empty():
 		push_error("Deck is empty")

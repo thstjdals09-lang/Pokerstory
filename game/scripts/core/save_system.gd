@@ -39,7 +39,12 @@ static func load_state(path: String) -> Dictionary:
 			return _fail("unsupported_old", "이 저장 파일(v%d)은 지원하지 않는 이전 버전이에요." % version)
 		parsed = next
 		version = int(parsed["save_version"])
-	return {"ok": true, "state": GameState.from_dict(parsed)}
+	var state := GameState.from_dict(parsed)
+	# An unfinished hand must restore exactly; otherwise the save is treated as damaged
+	# rather than inventing a refund.
+	if not state.poker_in_progress.is_empty() and PokerMatch.from_dict(state.poker_in_progress) == null:
+		return _fail("corrupt", "저장된 진행 중 포커 판을 복원할 수 없어요. 파일이 손상되었을 수 있어요.")
+	return {"ok": true, "state": state}
 
 
 static func delete(path: String) -> void:
@@ -61,6 +66,12 @@ static func _migrate(data: Dictionary, from_version: int) -> Dictionary:
 			d["quests"] = {}
 			d["pending_poker_stake"] = 0
 			d["jobs_completed"] = 0
+			return d
+		2:
+			# v2 -> v3 (Design Review 03): unfinished hands are saved instead of refunded.
+			var d := data.duplicate(true)
+			d["save_version"] = 3
+			d["poker_in_progress"] = {}
 			return d
 	return {}
 

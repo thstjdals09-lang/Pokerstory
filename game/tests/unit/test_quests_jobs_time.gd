@@ -35,7 +35,7 @@ func test_quest_pays_once() -> void:
 func test_job_pays_only_after_every_spot() -> void:
 	var s := GameState.new()
 	var run := _job_run(7)
-	check_eq(run.total(), 5, "five spots")
+	check_eq(run.total(), 3, "three spots (Design Review 03, D5)")
 	var ids: Array = run.spots.keys()
 	var first: String = ids[0]
 	check(run.collect(s, first)["ok"], "first pickup")
@@ -119,13 +119,28 @@ func test_v1_save_migrates_without_touching_chips() -> void:
 	check_eq(s.time_of_day, "evening", "saved in the card room -> evening")
 	check_eq(s.quests, {}, "no quests yet")
 	check_eq(s.pending_poker_stake, 0, "nothing pending")
-	check_eq(s.to_dict()["save_version"], 2, "written back as v2")
+	check_eq(s.poker_in_progress, {}, "no saved hand")
+	check_eq(s.to_dict()["save_version"], 3, "written back as v3")
+	SaveSystem.delete(PATH)
+
+
+func test_saved_hand_that_cannot_restore_is_reported_not_refunded() -> void:
+	var s := GameState.new()
+	s.add_chips(40, "start")
+	PokerEconomy.place_stake(s, {"stake": 20})
+	var hand := PokerMatch.new(Deck.shuffled(8)).to_dict()
+	hand["deck"] = hand["deck"].slice(0, 10)
+	s.poker_in_progress = hand
+	SaveSystem.save(s, PATH)
+	var r := SaveSystem.load_state(PATH)
+	check(not r["ok"], "damaged hand is not loaded")
+	check_eq(r["error"], "corrupt", "reported as damaged")
 	SaveSystem.delete(PATH)
 
 
 func test_goals_follow_the_loop() -> void:
 	var s := GameState.new()
-	s.add_chips(100, "start")
+	s.add_chips(40, "start")
 	var goal := func() -> String:
 		for g in db.goals:
 			if Conditions.check(g["conditions"], s, "village_square"):
@@ -133,7 +148,10 @@ func test_goals_follow_the_loop() -> void:
 		return ""
 	check(goal.call().contains("루미에게 인사"), "goal: greet")
 	s.set_flag("intro_met_lumi")
-	check(goal.call().contains("포커 모임"), "goal: poker")
+	var g: String = goal.call()
+	check(g.contains("아르바이트") and g.contains("부탁") and g.contains("포커"), "goal: every chip source, poker optional (%s)" % g)
+	s.add_chips(10, "job")
+	check(goal.call().contains("잡화점에서 작은 등불 사기"), "goal: buy the lamp at 50 chips")
 	s.quests[QUEST] = "active"
 	check(goal.call().contains("꾸러미"), "goal: delivery while quest active")
 	s.quests[QUEST] = "completed"

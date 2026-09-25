@@ -13,6 +13,7 @@
         "참가금은 칩 {stake}개야. 규칙은 저기 칩 요정 모아가 알려 줄 거야. 준비되면 나랑 한 판 하자!"
       ],
       "choices": [
+        { "text": "꾸러미 건네기", "action": "complete_quest", "arg": "quest.sera_delivery", "conditions": { "quest_active": "quest.sera_delivery" } },
         { "text": "좋아, 한 판 하자!", "action": "start_poker" },
         { "text": "조금 둘러볼게", "action": "close" }
       ]
@@ -30,6 +31,7 @@
         "칩 {stake}개를 걸고 하는 가벼운 판이야. 칩이 모자라면 광장 아르바이트 게시판도 있으니까 걱정 마!"
       ],
       "choices": [
+        { "text": "꾸러미 건네기", "action": "complete_quest", "arg": "quest.sera_delivery", "conditions": { "quest_active": "quest.sera_delivery" } },
         { "text": "포커 모임은 어떻게 해?", "action": "dialogue", "arg": "lumi_poker_info" },
         { "text": "또 봐, 루미!", "action": "close" }
       ]

@@ -1,14 +1,14 @@
 {
-  "_comment": "The first matching goal is shown in the HUD. An active odd job overrides this list (see Game.current_goal).",
+  "_comment": "The first matching goal is shown in the HUD. An active odd job overrides this list (see Game.current_goal). Goals suggest every chip source equally; poker is never required (Design Review 03).",
   "goals": [
     { "text": "루미에게 인사하기 (낮: 광장 · 저녁: 카드룸)", "conditions": { "flags_false": ["intro_met_lumi"] } },
     { "text": "루미에게 마법 불씨 꾸러미 전해 주기 (낮: 광장 · 저녁: 카드룸)", "conditions": { "quest_active": "quest.sera_delivery" } },
-    { "text": "광장 게시판 아르바이트로 칩 모으기 (포커 참가금 {stake}칩)", "conditions": { "max_chips": 19 } },
-    { "text": "♣ 카드룸의 저녁 포커 모임에 가 보기 (참가금 {stake}칩)", "conditions": { "max_poker_hands": 0 } },
+    { "text": "칩을 모아 작은 등불({price_furniture.lamp_small}칩) 사기 — 광장 아르바이트 · 세라의 부탁 · 저녁 포커 모임", "conditions": { "not_owned_or_placed": "furniture.lamp_small", "max_chips": 49 } },
     { "text": "세라의 잡화점에서 작은 등불 사기 ({price_furniture.lamp_small}칩)", "conditions": { "not_owned_or_placed": "furniture.lamp_small" } },
     { "text": "집 보관함에서 등불 배치하기", "conditions": { "not_placed_item": "furniture.lamp_small" } },
     { "text": "루미에게 다시 말 걸기", "conditions": { "flags_false": ["lumi_lamp_reaction_seen"] } },
     { "text": "세라에게 부탁할 일이 없는지 물어보기", "conditions": { "quest_not_started": "quest.sera_delivery" } },
+    { "text": "광장 게시판 아르바이트로 칩 모으기 (포커 참가금 {stake}칩)", "conditions": { "max_chips": 19 } },
     { "text": "자유롭게 지내기 — 포커, 아르바이트, 집 꾸미기", "conditions": {} }
   ]
 }

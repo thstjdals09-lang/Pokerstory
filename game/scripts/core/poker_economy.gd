@@ -3,8 +3,9 @@ extends RefCounted
 ## Fixed-stake settlement (Economy v0.2.1, docs/design/Project20_Economy_v0.2.1.md).
 ## The player and the opponent each put in `stake`; the winner takes the pot.
 ## The player's stake leaves the balance when the hand starts and is tracked in
-## GameState.pending_poker_stake until the hand is settled, folded, or voided,
-## so a chip is never paid twice and never disappears without a ledger entry.
+## GameState.pending_poker_stake until the hand is settled or folded, so a chip is never
+## paid twice and never disappears without a ledger entry. An interrupted hand is not
+## refunded: it is saved and resumed (Design Review 03, D2).
 ## Amounts come from data/poker.json "economy": stake, payout_win, payout_draw, payout_lose.
 
 
@@ -63,13 +64,3 @@ static func fold(state: GameState, m: PokerMatch) -> Dictionary:
 	state.poker_record["fold"] = int(state.poker_record.get("fold", 0)) + 1
 	return {"ok": true, "stake": paid_in}
 
-
-## A hand left unresolved by a crash or forced kill: the stake is returned once on the next load.
-## Returns the refunded amount (0 when nothing was pending).
-static func void_pending(state: GameState) -> int:
-	var paid_in := state.pending_poker_stake
-	if paid_in <= 0:
-		return 0
-	state.pending_poker_stake = 0
-	state.add_chips(paid_in, "poker_void_refund")
-	return paid_in

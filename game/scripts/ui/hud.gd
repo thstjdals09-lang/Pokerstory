@@ -7,6 +7,7 @@ signal menu_pressed
 
 var _chips_label: Label
 var _goal_label: Label
+var _quest_label: Label
 var _goal_toggle: Button
 var _goal_collapsed := false
 var _location_label: Label
@@ -38,6 +39,8 @@ func _ready() -> void:
 	row.add_child(_goal_toggle)
 	_goal_label = UiKit.label("", 17, UiKit.ACCENT)
 	col.add_child(_goal_label)
+	_quest_label = UiKit.label("", 16, Color("#35507a"))
+	col.add_child(_quest_label)
 
 	var top_right := HBoxContainer.new()
 	top_right.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
@@ -68,7 +71,7 @@ func _ready() -> void:
 
 	_toast_panel = UiKit.panel(Color("#3b2a20"), 12)
 	_toast_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	_toast_panel.offset_top = 90
+	_toast_panel.offset_top = 150
 	_toast_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_toast_label = UiKit.label("", 18, Color("#fff3d6"))
 	_toast_panel.add_child(_toast_label)
@@ -83,6 +86,14 @@ func refresh() -> void:
 	_chips_label.text = "● 칩 %d" % Game.state.chips_balance
 	_goal_label.text = "목표 · " + Game.current_goal()
 	_goal_label.visible = not _goal_collapsed
+	# Quests in progress stay visible even when the goal line is collapsed.
+	var quests: Array = Game.active_quest_lines()
+	_quest_label.text = "\n".join(quests)
+	_quest_label.visible = not quests.is_empty()
+
+
+func quest_text() -> String:
+	return _quest_label.text if _quest_label.visible else ""
 
 
 func toggle_goal() -> void:

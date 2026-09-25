@@ -2,7 +2,7 @@ class_name GameState
 extends RefCounted
 ## All persistent progress of one save slot. SaveSystem writes it as JSON via to_dict().
 
-const SAVE_VERSION := 2
+const SAVE_VERSION := 3
 
 var player_name := "여행자"
 ## Single in-game currency. Never negative; every change is recorded in chips_ledger.
@@ -13,8 +13,10 @@ var flags := {}
 var poker_hands_completed := 0
 var poker_record := {"win": 0, "draw": 0, "lose": 0, "fold": 0}
 ## Stake already taken from the balance for a hand that has not been settled yet.
-## Non-zero only while a hand is in progress (or after a crash mid-hand; see PokerEconomy.void_pending).
+## Non-zero exactly while a hand is in progress; the hand itself is in poker_in_progress.
 var pending_poker_stake := 0
+## PokerMatch.to_dict() of the unfinished hand, or empty. Restored on load (Design Review 03, D2).
+var poker_in_progress := {}
 ## "day" or "evening". Changes only through player actions (rest, waiting for the gathering).
 var time_of_day := "day"
 ## quest_id -> "active" | "completed". Missing = not started.
@@ -144,6 +146,7 @@ func to_dict() -> Dictionary:
 		"poker_hands_completed": poker_hands_completed,
 		"poker_record": poker_record.duplicate(),
 		"pending_poker_stake": pending_poker_stake,
+		"poker_in_progress": poker_in_progress.duplicate(true),
 		"time_of_day": time_of_day,
 		"quests": quests.duplicate(),
 		"jobs_completed": jobs_completed,
@@ -175,6 +178,12 @@ static func from_dict(d: Dictionary) -> GameState:
 	for k in s.poker_record:
 		s.poker_record[k] = int(rec.get(k, 0))
 	s.pending_poker_stake = maxi(0, int(d.get("pending_poker_stake", 0)))
+	var hand = d.get("poker_in_progress", {})
+	if hand is Dictionary and not hand.is_empty():
+		# Normalise through PokerMatch (JSON numbers arrive as floats). An unrestorable hand is kept
+		# as-is so SaveSystem can report the save as damaged.
+		var m := PokerMatch.from_dict(hand)
+		s.poker_in_progress = m.to_dict() if m != null else hand.duplicate(true)
 	s.time_of_day = "evening" if str(d.get("time_of_day", "day")) == "evening" else "day"
 	var q: Dictionary = d.get("quests", {})
 	for k in q:

@@ -20,11 +20,16 @@ var outcome := 0
 ## Set by PokerEconomy.settle or fold so a hand is resolved exactly once.
 var settled := false
 var _ability_uses := {}
+## ability_id -> last result, so an interrupted hand shows what the player already learned.
+var ability_results := {}
 
 
-func _init(p_deck: Deck, p_max_discards: int = 3, hand_size: int = 5) -> void:
+## Deals a new hand from `p_deck`. Pass null to build an empty match (used by from_dict).
+func _init(p_deck: Deck = null, p_max_discards: int = 3, hand_size: int = 5) -> void:
 	deck = p_deck
 	max_discards = p_max_discards
+	if deck == null:
+		return
 	for i in hand_size:
 		player_hand.append(deck.draw_one())
 		opponent_hand.append(deck.draw_one())
@@ -53,7 +58,65 @@ func use_ability(ability: Dictionary) -> Dictionary:
 		_:
 			return {"ok": false, "reason": "unknown_effect"}
 	_ability_uses[ability["id"]] = int(_ability_uses.get(ability["id"], 0)) + 1
+	ability_results[ability["id"]] = result.duplicate()
 	return result
+
+
+# --- persistence (Design Review 03, D2) ----------------------------------------
+# A hand in the DRAW phase is saved as it is: both hands, the remaining deck in order,
+# and ability use. Restoring it gives exactly the same cards and the same later draws,
+# so quitting and restarting cannot change the result.
+
+func to_dict() -> Dictionary:
+	return {
+		"phase": phase,
+		"max_discards": max_discards,
+		"player_hand": _codes(player_hand),
+		"opponent_hand": _codes(opponent_hand),
+		"deck": deck.codes(),
+		"deck_seed": deck.seed_used,
+		"ability_uses": _ability_uses.duplicate(),
+		"ability_results": ability_results.duplicate(true),
+	}
+
+
+## Returns null when the data is not a valid unfinished hand.
+static func from_dict(d: Dictionary) -> PokerMatch:
+	if int(d.get("phase", -1)) != Phase.DRAW:
+		return null
+	var m := PokerMatch.new(null, int(d.get("max_discards", 3)))
+	m.deck = Deck.from_codes(d.get("deck", []))
+	if m.deck == null:
+		return null
+	m.deck.seed_used = int(d.get("deck_seed", 0))
+	var seen := {}
+	for c in m.deck.codes():
+		seen[c] = true
+	for pair in [[d.get("player_hand", []), m.player_hand], [d.get("opponent_hand", []), m.opponent_hand]]:
+		if (pair[0] as Array).size() != 5:
+			return null
+		for code in pair[0]:
+			var card := Card.from_code(str(code))
+			if card == null or seen.has(card.code()):
+				return null
+			seen[card.code()] = true
+			pair[1].append(card)
+	if seen.size() != 52:
+		return null
+	var uses: Dictionary = d.get("ability_uses", {})
+	for k in uses:
+		m._ability_uses[str(k)] = int(uses[k])
+	var results: Dictionary = d.get("ability_results", {})
+	for k in results:
+		m.ability_results[str(k)] = results[k]
+	return m
+
+
+static func _codes(cards: Array) -> Array:
+	var out: Array = []
+	for c in cards:
+		out.append(c.code())
+	return out
 
 
 ## The player replaces the cards at `indices` (may be empty), then the opponent draws,

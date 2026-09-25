@@ -16,9 +16,10 @@ func test_data_loads_without_errors() -> void:
 
 
 func test_spec_values() -> void:
-	# Economy v0.2.1 (approved)
+	# Economy v0.2.2 (approved)
 	var econ: Dictionary = db.poker["economy"]
-	check_eq(int(econ["starting_chips"]), 100, "start 100")
+	check_eq(int(econ["starting_chips"]), 40, "start 40")
+	check_eq(int(db.jobs["job.plaza_cleanup"]["count"]), 3, "job collects 3")
 	check_eq(int(econ["stake"]), 20, "stake 20")
 	check_eq(int(econ["payout_win"]), 40, "win returns 40")
 	check_eq(int(econ["payout_draw"]), 20, "draw returns 20")
@@ -68,6 +69,25 @@ func test_quest_dialogue_progression() -> void:
 	check_eq(_entry("npc_sera", "small_shop", s), "sera_default", "then back to default")
 	var offer_choice: Dictionary = DialogueResolver.find(db.dialogue, "sera_default")["choices"][1]
 	check(not Conditions.check(offer_choice["conditions"], s), "offer choice hidden after completion")
+
+
+func test_first_meeting_can_hand_over_the_parcel() -> void:
+	# Design Review 03, D4: intro first, then the delivery choice in the same conversation.
+	var s := GameState.new()
+	s.quests["quest.sera_delivery"] = "active"
+	for loc in ["village_square", "card_room"]:
+		var entry := DialogueResolver.resolve(db.dialogue, "npc_lumi", loc, s)
+		check(str(entry["id"]).begins_with("lumi_intro"), "intro first at " + loc)
+		var offered := false
+		for c in entry["choices"]:
+			if c["action"] == "complete_quest" and Conditions.check(c.get("conditions", {}), s, loc):
+				offered = true
+		check(offered, "delivery choice in the intro at " + loc)
+	s.quests["quest.sera_delivery"] = "completed"
+	var after := DialogueResolver.resolve(db.dialogue, "npc_lumi", "village_square", s)
+	for c in after["choices"]:
+		if c["action"] == "complete_quest":
+			check(not Conditions.check(c.get("conditions", {}), s), "no delivery choice once completed")
 
 
 func test_format_line() -> void:

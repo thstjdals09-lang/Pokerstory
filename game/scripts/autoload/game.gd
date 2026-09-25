@@ -35,6 +35,8 @@ var debug_deck_queue: Array = []
 var last_deck_seed := 0
 ## The odd job in progress (not saved), or null.
 var job: PlazaJob = null
+## An unfinished hand restored by load_game, waiting for Main to reopen the table.
+var resumed_match: PokerMatch = null
 var _rng := RandomNumberGenerator.new()
 
 
@@ -80,11 +82,18 @@ func load_game() -> Dictionary:
 	if result["ok"]:
 		state = result["state"]
 		job = null
-		# A hand interrupted by a crash or forced kill: its stake comes back once.
-		var refunded := PokerEconomy.void_pending(state)
-		result["refunded_stake"] = refunded
-		if refunded > 0:
+		resumed_match = null
+		# An interrupted hand continues exactly where it stopped (Design Review 03, D2).
+		if not state.poker_in_progress.is_empty():
+			resumed_match = PokerMatch.from_dict(state.poker_in_progress)
+		elif state.pending_poker_stake > 0:
+			# Save from the previous build (v2): the stake was paid but the cards were not saved.
+			# The paid stake carries over to a newly dealt hand; nothing is refunded or charged again.
+			resumed_match = _deal_match()
+			state.poker_in_progress = resumed_match.to_dict()
 			save_game()
+			result["legacy_hand"] = true
+		result["resumed_hand"] = resumed_match != null
 		state_changed.emit()
 	return result
 
@@ -103,6 +112,14 @@ func save_game() -> bool:
 func end_session() -> void:
 	state = null
 	job = null
+	resumed_match = null
+
+
+## Hands the restored unfinished hand to the caller once.
+func take_resumed_match() -> PokerMatch:
+	var m := resumed_match
+	resumed_match = null
+	return m
 
 
 func set_location(location_id: String) -> void:
@@ -140,7 +157,21 @@ func text_vars() -> Dictionary:
 		vars["reward_" + id] = int(data.quests[id].get("reward", 0))
 	for id in data.jobs:
 		vars["reward_" + id] = int(data.jobs[id].get("reward", 0))
+		vars["count_" + id] = int(data.jobs[id].get("count", 0))
 	return vars
+
+
+## HUD lines for quests in progress (Design Review 03, D6): the parcel is tracked as quest state,
+## not as an inventory item, so the HUD is where the player sees it.
+func active_quest_lines() -> Array:
+	var lines: Array = []
+	if state == null:
+		return lines
+	for id in data.quests:
+		if QuestBook.state_of(state, id) == QuestBook.ACTIVE:
+			var q: Dictionary = data.quests[id]
+			lines.append("의뢰 중 · %s (%s 소지)" % [q["name"], q.get("item_name", "")])
+	return lines
 
 
 func current_goal() -> String:
@@ -180,8 +211,15 @@ func can_join_poker() -> bool:
 func create_poker_match() -> PokerMatch:
 	if not PokerEconomy.place_stake(state, poker_economy()):
 		return null
+	var m := _deal_match()
+	# The stake and the dealt cards are saved together, so a restart resumes this exact hand.
+	state.poker_in_progress = m.to_dict()
 	save_game()
 	state_changed.emit()
+	return m
+
+
+func _deal_match() -> PokerMatch:
 	var deck: Deck
 	if not debug_deck_queue.is_empty():
 		deck = Deck.stacked(debug_deck_queue.pop_front())
@@ -192,10 +230,20 @@ func create_poker_match() -> PokerMatch:
 	return PokerMatch.new(deck, int(poker_rules().get("max_discards", 3)), int(poker_rules().get("hand_size", 5)))
 
 
+## Uses an ability on the current hand and saves the hand, so the use survives a restart.
+func use_poker_ability(m: PokerMatch, ability: Dictionary) -> Dictionary:
+	var result := m.use_ability(ability)
+	if result["ok"]:
+		state.poker_in_progress = m.to_dict()
+		save_game()
+	return result
+
+
 ## Pays out a finished hand once, then saves.
 func settle_match(m: PokerMatch) -> Dictionary:
 	var result := PokerEconomy.settle(state, m, poker_economy())
 	if result["ok"]:
+		state.poker_in_progress = {}
 		save_game()
 		state_changed.emit()
 	return result
@@ -205,6 +253,7 @@ func settle_match(m: PokerMatch) -> Dictionary:
 func fold_match(m: PokerMatch) -> Dictionary:
 	var result := PokerEconomy.fold(state, m)
 	if result["ok"]:
+		state.poker_in_progress = {}
 		save_game()
 		state_changed.emit()
 	return result

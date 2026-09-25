@@ -5,8 +5,8 @@
     "opponent": "npc_lumi"
   },
   "economy": {
-    "_source": "Economy v0.2.1 (approved). docs/design/Project20_Economy_v0.2.1.md",
-    "starting_chips": 100,
+    "_source": "Economy v0.2.2 (approved): v0.2.1 with starting_chips 40. docs/design/Project20_Design_Review_03.md",
+    "starting_chips": 40,
     "stake": 20,
     "payout_win": 40,
     "payout_draw": 20,

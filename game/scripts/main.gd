@@ -144,8 +144,12 @@ func continue_game() -> void:
 	var pos = s.player_position if s.has_player_position else null
 	var loc_id := s.current_scene if Game.data.locations.has(s.current_scene) else "village_square"
 	await enter_location(loc_id, "default", pos)
-	if int(result.get("refunded_stake", 0)) > 0:
-		hud.show_toast("끝나지 않았던 지난 판의 참가금 %d칩을 돌려받았어요." % int(result["refunded_stake"]))
+	var unfinished: PokerMatch = Game.take_resumed_match()
+	if unfinished != null:
+		set_mode("poker")
+		hud.visible = false
+		poker.start(unfinished)
+		poker.show_notice("중단된 판을 이어서 해요. 참가금은 이미 걸려 있어요.")
 
 
 func return_to_title() -> void:
@@ -161,9 +165,7 @@ func quit_game() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and Game.state != null:
-		# Closing the window mid-hand counts as leaving the table (fold), same as the in-game button.
-		if ui_mode == "poker" and poker.match_ref != null:
-			Game.fold_match(poker.match_ref)
+		# An unfinished hand is already saved with its cards; it resumes on the next start.
 		Game.save_game()
 
 
