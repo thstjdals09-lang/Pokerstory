@@ -1,3 +1,4 @@
+@tool
 extends Node3D
 ## 3D view of the whole game (run_diorama.bat, started with -- --view3d).
 ## The 2D World keeps every rule (movement, collision, doors, talk, jobs, home editing); it is only
@@ -8,8 +9,9 @@ extends Node3D
 ##   1  buildings, doors and gates, residents, the player: full height, strong colour, big labels
 ##   2  things you can use (boards, tables, bed, shelves, signs): a floating marker and a label
 ##   3  decoration (trees, flower beds, rugs, lamps): low and muted, no label
-## Camera settings (distance, zoom, look-down angle, turn, blur, talk camera) come from the diorama
-## scene (diorama/diorama.tscn, the Diorama node's Inspector in edit_diorama.bat), read at start.
+## Camera settings (distance, zoom, look-down angle, turn, blur, talk camera) come from
+## scenes/game_camera_3d.tscn (edit_camera3d.bat), read at start. That scene previews a place with this
+## same code in the editor (build_preview), so what it shows is what the game shows.
 ## Camera: follows the player with a little look-ahead; in a talk with a resident it glides to a side
 ## view of the pair; walking into a door pushes toward it, and a new place settles in from further out.
 ## Layout: "angle3d" (degrees) on a building or decor turns it in 3D only (buildings around their
@@ -20,6 +22,13 @@ const FONT := preload("res://assets/fonts/ui_font.tres")
 const WALL_H := 2.4
 
 var main: Node
+## Editor preview (scenes/game_camera_3d.tscn): builds a place from data only, no running game.
+var preview := false
+## The place being shown (the 2D world's location, or the preview's).
+var _loc := {}
+var _evening := false
+## Indoors the camera comes this much closer.
+var interior_zoom := 0.8
 var _world: Node2D
 var _dirty := false
 var _root: Node3D
@@ -64,8 +73,6 @@ var talk_fov := 30.0
 var talk_pitch := 17.0
 var talk_side := 0.75
 var talk_lift := 0.85
-## Rooms are smaller than the square: the camera comes this much closer indoors.
-const INTERIOR_ZOOM := 0.8
 var _labels: Array = []
 var _talk_hidden: Array = []
 ## Glide time into a talk; --instant-camera (screenshots in tests) makes it near instant.
@@ -74,23 +81,9 @@ var _instant := false
 
 
 func _ready() -> void:
-	_env = Environment.new()
-	_env.background_mode = Environment.BG_SKY
-	var sky := Sky.new()
-	sky.sky_material = ProceduralSkyMaterial.new()
-	_env.sky = sky
-	_env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	_env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	_env.ssao_enabled = true
-	_env.glow_enabled = true
-	var we := WorldEnvironment.new()
-	we.environment = _env
-	add_child(we)
-	_sun = DirectionalLight3D.new()
-	_sun.shadow_enabled = true
-	_sun.directional_shadow_max_distance = 40.0
-	_sun.rotation_degrees = Vector3(-50, -30, 0)
-	add_child(_sun)
+	if Engine.is_editor_hint() or preview:
+		return
+	_make_environment()
 	_load_camera_settings()
 	_cam = Camera3D.new()
 	_cam.fov = cam_fov
@@ -113,21 +106,47 @@ func _ready() -> void:
 		_instant = true
 
 
-## Reads the camera, blur and talk-camera values saved in the diorama scene without building it:
-## values the scene overrides come from its SceneState, the rest are the script's defaults.
+func _make_environment() -> void:
+	if _env != null:
+		return
+	_env = Environment.new()
+	_env.background_mode = Environment.BG_SKY
+	var sky := Sky.new()
+	sky.sky_material = ProceduralSkyMaterial.new()
+	_env.sky = sky
+	_env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	_env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	_env.ssao_enabled = true
+	_env.glow_enabled = true
+	var we := WorldEnvironment.new()
+	we.environment = _env
+	add_child(we)
+	_sun = DirectionalLight3D.new()
+	_sun.shadow_enabled = true
+	_sun.directional_shadow_max_distance = 40.0
+	_sun.rotation_degrees = Vector3(-50, -30, 0)
+	add_child(_sun)
+
+
+const CAMERA_SCENE := "res://scenes/game_camera_3d.tscn"
+const CAMERA_SCRIPT := "res://scripts/world3d/game_camera_3d.gd"
+
+
+## Reads the camera, blur and talk-camera values saved in scenes/game_camera_3d.tscn without building
+## it: values the scene overrides come from its SceneState, the rest are the script's defaults.
 func _load_camera_settings() -> void:
-	var script: Script = load("res://diorama/diorama.gd")
+	var script: Script = load(CAMERA_SCRIPT)
 	var names := {"cam_distance": "cam_dist", "cam_fov": "cam_fov", "cam_pitch": "cam_pitch", "cam_yaw": "cam_yaw",
 		"blur_on": "blur_on", "blur_amount": "blur_amount", "blur_near_start": "blur_near_start",
 		"blur_far_start": "blur_far_start", "blur_softness": "blur_softness", "talk_distance": "talk_distance",
 		"talk_fov": "talk_fov", "talk_pitch": "talk_pitch", "talk_side": "talk_side", "talk_lift": "talk_lift",
-		"talk_glide": "talk_glide"}
+		"talk_glide": "talk_glide", "interior_zoom": "interior_zoom"}
 	if script != null:
 		for from in names:
 			var v = script.get_property_default_value(from)
 			if v != null:
 				set(names[from], v)
-	var packed: PackedScene = load("res://diorama/diorama.tscn")
+	var packed: PackedScene = load(CAMERA_SCENE)
 	if packed == null:
 		return
 	var st := packed.get_state()
@@ -138,6 +157,10 @@ func _load_camera_settings() -> void:
 
 
 func _apply_blur(dist: float) -> void:
+	if _cam == null:
+		return
+	if not (_cam.attributes is CameraAttributesPractical):
+		_cam.attributes = CameraAttributesPractical.new()
 	var a: CameraAttributesPractical = _cam.attributes
 	a.dof_blur_far_enabled = blur_on
 	a.dof_blur_near_enabled = blur_on
@@ -149,6 +172,8 @@ func _apply_blur(dist: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint() or preview:
+		return
 	_t += delta
 	var w: Node2D = main.world if main != null else null
 	if w != _world or (_dirty and w != null):
@@ -193,7 +218,32 @@ func _rebuild() -> void:
 		c.visible = false
 	var loc: Dictionary = _world.loc
 	var id: String = _world.location_id
-	var evening: bool = Game.state.time_of_day == "evening"
+	_evening = Game.state.time_of_day == "evening"
+	_build_static(loc, id)
+	_player = Node3D.new()
+	_root.add_child(_player)
+	_player_body = _figure(_player, Color("#3a7bd5"), Color("#f6d7bd"), 1.05)
+	_box(_player_body, Vector3(0.1, 0.1, 0.18), Vector3(0, 0.95, 0.24), _mat(Color.WHITE))
+	for npc_id in _world.npc_nodes:
+		var node: Node2D = _world.npc_nodes[npc_id]
+		var def: Dictionary = Game.data.npcs[npc_id]
+		var look: Dictionary = def.get("look", {})
+		var n := Node3D.new()
+		n.position = _v(node.position)
+		_root.add_child(n)
+		var h := 0.75 if str(look.get("shape", "")) in ["fairy", "stone"] else 1.0
+		_figure(n, Color(str(look.get("color", "#cccccc"))), Color(str(look.get("accent", "#ffffff"))), h)
+		_label(n, str(def["name"]), Vector3(0, h + 0.35, 0), 30, Color.WHITE)
+		var sig := _label(n, "", Vector3(0, h + 0.8, 0), 64, Color("#ffd23f"))
+		_npcs[npc_id] = n
+		_signals[npc_id] = sig
+	_light_for(loc)
+
+
+## Ground, buildings, gates, exits, signs, decoration and usable things of a place: everything that
+## comes from the data alone (the editor preview builds only this).
+func _build_static(loc: Dictionary, id: String) -> void:
+	_loc = loc
 	if loc.get("interior", false):
 		_interior(loc)
 	else:
@@ -212,28 +262,39 @@ func _rebuild() -> void:
 	for it in loc.get("interactables", []):
 		if _shown(it, id):
 			_usable(it)
-	_player = Node3D.new()
-	_root.add_child(_player)
-	_player_body = _figure(_player, Color("#3a7bd5"), Color("#f6d7bd"), 1.05)
-	_box(_player_body, Vector3(0.1, 0.1, 0.18), Vector3(0, 0.95, 0.24), _mat(Color.WHITE))
-	for npc_id in _world.npc_nodes:
-		var node: Node2D = _world.npc_nodes[npc_id]
-		var def: Dictionary = Game.data.npcs[npc_id]
-		var look: Dictionary = def.get("look", {})
-		var n := Node3D.new()
-		n.position = _v(node.position)
-		_root.add_child(n)
-		var h := 0.75 if str(look.get("shape", "")) in ["fairy", "stone"] else 1.0
-		_figure(n, Color(str(look.get("color", "#cccccc"))), Color(str(look.get("accent", "#ffffff"))), h)
-		_label(n, str(def["name"]), Vector3(0, h + 0.35, 0), 30, Color.WHITE)
-		var sig := _label(n, "", Vector3(0, h + 0.8, 0), 64, Color("#ffd23f"))
-		_npcs[npc_id] = n
-		_signals[npc_id] = sig
-	_apply_time(evening)
+
+
+func _light_for(loc: Dictionary) -> void:
+	_apply_time(_evening)
 	if loc.get("interior", false):
 		# indoors: the room light matters, not the sun
 		_sun.light_energy *= 0.35
 		_env.ambient_light_energy = 0.6
+
+
+## Editor preview: rebuild `loc` from data only (no residents, conditional decoration hidden).
+func build_preview(loc_id: String, loc: Dictionary, evening: bool) -> void:
+	preview = true
+	_make_environment()
+	if _root != null:
+		_root.queue_free()
+	_root = Node3D.new()
+	add_child(_root)
+	_doors.clear()
+	_labels.clear()
+	_night.clear()
+	_glows.clear()
+	_evening = evening
+	_build_static(loc, loc_id)
+	_light_for(loc)
+
+
+## The follow camera's transform looking at `focus` (look-ahead and effects added by the caller).
+func follow_xf(focus: Vector3, interior: bool, dist_scale: float = 1.0) -> Transform3D:
+	var pitch := deg_to_rad(cam_pitch)
+	var dist := cam_dist * (interior_zoom if interior else 1.0) * dist_scale
+	var back := Vector3(0, sin(pitch), cos(pitch)).rotated(Vector3.UP, deg_to_rad(cam_yaw))
+	return Transform3D(Basis(), focus + back * dist).looking_at(focus, Vector3.UP)
 
 
 func _exterior(loc: Dictionary) -> void:
@@ -264,7 +325,7 @@ func _interior(loc: Dictionary) -> void:
 	var light := OmniLight3D.new()
 	light.position = Vector3(size.x / 2, 2.2, size.z / 2)
 	light.omni_range = maxf(size.x, size.z)
-	light.light_energy = 1.6 if Game.state.time_of_day == "evening" else 1.0
+	light.light_energy = 1.6 if _evening else 1.0
 	light.light_color = Color("#ffd9a8")
 	_root.add_child(light)
 
@@ -292,7 +353,7 @@ func _building(b: Dictionary, loc_id: String) -> void:
 	ri.rotation.y = PI / 2
 	parent.add_child(ri)
 	var door := Vector3.ZERO
-	var open: bool = Conditions.check(b.get("unlock", {}), Game.state, loc_id)
+	var open: bool = preview or Conditions.check(b.get("unlock", {}), Game.state, loc_id)
 	var door_mat := _door_mat(Color("#6b3f24") if open else Color("#4a4440"))
 	_doors[str(b["id"])] = door_mat
 	_box(parent, Vector3(0.9, 1.5, 0.08), Vector3(door.x, 0.75, fp.end.y + 0.04), door_mat)
@@ -452,7 +513,7 @@ func _sync(delta: float) -> void:
 
 
 func _camera(delta: float, pos: Vector3, vel: Vector3, mode: String, npc_id: String) -> void:
-	var interior: bool = _world.loc.get("interior", false)
+	var interior: bool = _loc.get("interior", false)
 	# look a little ahead of where the player walks
 	var ahead := Vector3(vel.x, 0, vel.z) * 0.35
 	if ahead.length() > 1.4:
@@ -462,11 +523,8 @@ func _camera(delta: float, pos: Vector3, vel: Vector3, mode: String, npc_id: Str
 	_door_push = move_toward(_door_push, 1.0 if mode == "transition" else 0.0, delta / 0.35)
 	_arrive = move_toward(_arrive, 0.0, delta / 1.1)
 	var focus := (pos + _look).lerp(_door_at, _door_push * 0.6)
-	var pitch := deg_to_rad(cam_pitch)
-	var base_dist := cam_dist * (INTERIOR_ZOOM if interior else 1.0)
-	var dist := base_dist * (1.0 - 0.3 * _door_push) * (1.0 + 0.35 * smoothstep(0.0, 1.0, _arrive))
-	var back := Vector3(0, sin(pitch), cos(pitch)).rotated(Vector3.UP, deg_to_rad(cam_yaw))
-	var want := Transform3D(Basis(), focus + back * dist).looking_at(focus, Vector3.UP)
+	var base_dist := cam_dist * (interior_zoom if interior else 1.0)
+	var want := follow_xf(focus, interior, (1.0 - 0.3 * _door_push) * (1.0 + 0.35 * smoothstep(0.0, 1.0, _arrive)))
 	if not _follow_ready:
 		_follow_xf = want
 		_follow_ready = true
@@ -503,14 +561,14 @@ func _talk_shot(p: Vector3, n: Vector3, interior: bool) -> Transform3D:
 		axis = Vector3.RIGHT
 	axis = axis.normalized()
 	var perp := Vector3(-axis.z, 0, axis.x)
-	var size := _v(Geo.vec(_world.loc["size"]))
+	var size := _v(Geo.vec(_loc["size"]))
 	var to_centre := Vector3(size.x / 2.0 - mid.x, 0, size.z / 2.0 - mid.z)
 	# first choice: the side away from the centre (looking across the place), south side on a tie
 	if perp.dot(to_centre) - perp.z * 2.0 > 0.0:
 		perp = -perp
 	var aim := mid + Vector3(0, 0.6 - talk_lift, 0)
 	var pitch := deg_to_rad(talk_pitch)
-	var near := talk_distance * (INTERIOR_ZOOM * 0.75 if interior else 1.0)
+	var near := talk_distance * (interior_zoom * 0.75 if interior else 1.0)
 	for side_sign in [1.0, -1.0]:
 		for turn in [talk_side, talk_side * 0.66, talk_side * 0.33]:
 			for dist in [near, near * 0.8, near * 0.6]:
@@ -528,12 +586,12 @@ func _clear_view(eye: Vector3, mid: Vector3, interior: bool, size: Vector3) -> b
 	var e := Vector2(eye.x, eye.z)
 	var m := Vector2(mid.x, mid.z)
 	if interior:
-		var inset := float(_world.loc.get("bounds_inset", 28)) * PX
+		var inset := float(_loc.get("bounds_inset", 28)) * PX
 		return e.x > inset + 0.2 and e.x < size.x - inset - 0.2 and e.y > inset + 0.2 and e.y < size.z + 1.5
 	var blocks: Array = []
-	for b in _world.loc.get("buildings", []):
+	for b in _loc.get("buildings", []):
 		blocks.append(b["rect"])
-	for d in _world.loc.get("decor", []):
+	for d in _loc.get("decor", []):
 		if str(d.get("type", "")) == "house":
 			blocks.append(d["rect"])
 	for r in blocks:
@@ -654,6 +712,8 @@ func _v(p: Vector2) -> Vector3:
 
 
 func _shown(d: Dictionary, loc_id: String) -> bool:
+	if preview:
+		return not d.has("conditions")
 	return not d.has("conditions") or Conditions.check(d["conditions"], Game.state, loc_id)
 
 

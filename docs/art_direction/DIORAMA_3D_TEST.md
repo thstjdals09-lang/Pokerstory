@@ -104,3 +104,9 @@
   - 방문객 객실 (guest_cottage): 침대는 창가 구석, 탁자는 방명록 쪽으로 살짝 돌아 손님을 맞는다
 - 2D에도 보이는 변경: 내 집·카드룸·작은 방 러그 위치와 크기, 모임방 원탁 반지름 90→96, 찻집 탁자 반지름 46→52
 - 카메라 값: 게임 전체 3D(run_diorama)는 시작할 때 `game/diorama/diorama.tscn`의 Diorama 노드 값(거리, 줌, 내려다보는 각도, 좌우 회전, 흐림, 대화 카메라)을 읽어 씀. `edit_diorama.bat`에서 Inspector 값을 바꾸고 저장하면 다음 실행부터 그대로 적용. 실내는 0.8배 가까이. 현재 값: 거리 31.03, 화각 20, 각도 20.5, 흐림 0.05(앞 8.6m·뒤 11.9m부터). 스크린샷: `docs/screenshots/diorama_3d/game3d_camera.png`
+
+## 게임 3D 카메라 편집 (edit_camera3d.bat)
+- `edit_camera3d.bat` → `game/scenes/game_camera_3d.tscn`. 루트 노드 GameCamera3D의 Inspector 값이 run_diorama.bat 카메라(거리, 줌, 각도, 좌우 회전, 실내 배율, 흐림, 대화 카메라)
+- 뷰포트에는 게임과 같은 코드(view3d.gd의 build_preview)로 만든 실제 장소가 보임. preview_location으로 장소를 바꾸고, Player 마커를 끌어 서 있는 자리를 정하면 Camera3D를 선택하고 Preview로 게임 화면 그대로 확인
+- preview_talk를 켜면 Player와 Resident 사이 대화 카메라를 미리 봄
+- 이전의 diorama.tscn 값(거리 31.03, 각도 20.5, 흐림)을 기본값으로 옮김. diorama.tscn은 이제 광장 구도 시험용일 뿐 게임 카메라와 연결되지 않음
